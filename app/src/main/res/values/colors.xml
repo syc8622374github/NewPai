@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#ff2626</color>
+    <color name="colorPrimaryDark">#ff2626</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="tabItemColor">#ff4340</color>
+
+    <color name="divider">#f1f1f1</color>
+
+    <color name="color_list_bg">#f5f5f5</color>
+
+    <color name="color_home_shop_count_down">#fe770a</color>
+    <color name="color_home_shop_prompt">#666666</color>
+</resources>
