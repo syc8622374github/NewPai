@@ -11,6 +11,7 @@ public class HomeShopDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(toolbar!=null){
+            toolbar.setTitle("sssssssss");
         }
     }
 
@@ -22,5 +23,10 @@ public class HomeShopDetailActivity extends BaseActivity {
     @Override
     protected boolean getToolbarAvailable() {
         return true;
+    }
+
+    @Override
+    protected int getOptionsMenuId() {
+        return R.menu.navigation;
     }
 }

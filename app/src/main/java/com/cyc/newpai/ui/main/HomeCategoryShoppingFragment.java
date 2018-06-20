@@ -1,5 +1,6 @@
 package com.cyc.newpai.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cyc.newpai.R;
-import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.ui.main.adapter.GridDivider;
 import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
@@ -57,8 +57,7 @@ public class HomeCategoryShoppingFragment extends BaseFragment {
         beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
         beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
         adapter.setListNotify(beanList);
-        adapter.setOnClickItemListener((view, itemBean, position) -> {
-        });
+        adapter.setOnClickItemListener((view, itemBean, position) -> startActivity(new Intent(getContext(),HomeShopDetailActivity.class)));
         rvMain.setAdapter(adapter);
     }
 
