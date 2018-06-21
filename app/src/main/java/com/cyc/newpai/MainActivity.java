@@ -24,8 +24,8 @@ public class MainActivity extends BaseActivity {
                     .replace(R.id.fragment_container, HomeFragment.newInstance())
                     .commitNow();
         }
-        mTabLayout = (TabLayout) findViewById(R.id.tl_tab_layout);
         mFragmensts = DataGenerator.getFragments("");
+        mTabLayout = (TabLayout) findViewById(R.id.tl_tab_layout);
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {

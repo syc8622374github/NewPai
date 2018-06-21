@@ -8,7 +8,10 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <include layout="@layout/main_custom_toolbar"></include>
+    <com.cyc.newpai.widget.CustomToolbar
+        android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
 
     <FrameLayout
         android:id="@+id/fragment_container"

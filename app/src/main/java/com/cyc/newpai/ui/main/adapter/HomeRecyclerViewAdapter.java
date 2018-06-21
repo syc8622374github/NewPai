@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
@@ -26,7 +27,14 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerAdapter<HomeBean> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        ViewHolderGeneral holderGeneral = (ViewHolderGeneral) holder;
+        bindListener(holderGeneral,position);
+    }
 
+    private void bindListener(ViewHolderGeneral holderGeneral, int position) {
+        holderGeneral.mView.setOnClickListener(view -> {
+            mListener.onItemClickListener(view,mList.get(position),position);
+        });
     }
 
     public static class ViewHolderGeneral extends RecyclerView.ViewHolder {

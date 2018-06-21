@@ -37,7 +37,7 @@
         <ImageView
             android:layout_width="70dp"
             android:layout_height="40dp"
-            android:src="@mipmap/icon_home_auction_new"/>
+            android:src="@drawable/icon_home_auction_new"/>
         
         <TextView
             android:layout_width="wrap_content"

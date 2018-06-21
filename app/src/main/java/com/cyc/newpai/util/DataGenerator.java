@@ -16,8 +16,8 @@ import com.cyc.newpai.ui.transaction.CompleteTransactionFragment;
 
 public class DataGenerator {
 
-    public static final int []mTabRes = new int[]{R.mipmap.tab_home_selector,R.mipmap.tab_complete_no_selector,R.mipmap.tab_category_no_selector,R.mipmap.tab_me_no_selector};
-    public static final int []mTabResPressed = new int[]{R.mipmap.tab_home_selector,R.mipmap.tab_complete_selector,R.mipmap.tab_category_selector,R.mipmap.tab_me_selector};
+    public static final int []mTabRes = new int[]{R.drawable.tab_home_selector,R.drawable.tab_complete_no_selector,R.drawable.tab_category_no_selector,R.drawable.tab_me_no_selector};
+    public static final int []mTabResPressed = new int[]{R.drawable.tab_home_selector,R.drawable.tab_complete_selector,R.drawable.tab_category_selector,R.drawable.tab_me_selector};
     public static final String []mTabTitle = new String[]{"首页","最新成交","分类","我的"};
 
     public static Fragment[] getFragments(String from){

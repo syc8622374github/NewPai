@@ -8,40 +8,27 @@ import android.view.Menu;
 import android.view.View;
 
 import com.cyc.newpai.R;
+import com.cyc.newpai.widget.CustomToolbar;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    protected Toolbar toolbar;
-
-    protected void initToolbar(){
-        toolbar = findViewById(R.id.toolbar);
-        if(toolbar !=null&&getToolbarAvailable()){
-            setSupportActionBar(toolbar);
-        }
-    }
+    protected CustomToolbar ctb_toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
+        ctb_toolbar = findViewById(R.id.ctb_toolbar);
         initToolbar();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        if (getOptionsMenuId() != 0) {
-            getMenuInflater().inflate(getOptionsMenuId(), menu);
+    protected void initToolbar() {
+        if(ctb_toolbar!=null){
+            ctb_toolbar.setLeftAction1(R.drawable.ic_toolbar_back, view -> finish());
+            ctb_toolbar.setTitle(getTitle().toString());
         }
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    protected int getOptionsMenuId(){
-        return 0;
     }
 
     public abstract int getLayoutId();
 
-    protected boolean getToolbarAvailable(){
-        return false;
-    }
 }

@@ -3,4 +3,13 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+
+    <string name="title_shop_detail">商品详情</string>
+
+    <string name="content_shop_detail_rule">
+        1.规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则。\n
+        2.规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则。\n
+        3.规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则。\n
+        4.sdjlkfjsldkfjlksd规则规则规则规则规则规则规则规则规则规则规则规则规则规则jdfklasjflksadjflk规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则。\n
+    </string>
 </resources>

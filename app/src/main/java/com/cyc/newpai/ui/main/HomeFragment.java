@@ -8,22 +8,17 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
-
-import com.bartoszlipinski.recyclerviewheader2.RecyclerViewHeader;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.adapter.HomeWindowRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.entity.HomeBean;
 import com.cyc.newpai.ui.main.entity.HomeWindowBean;
-import com.cyc.newpai.util.DataGenerator;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.loader.ImageLoader;
@@ -126,18 +121,18 @@ public class HomeFragment extends BaseFragment {
         HomeRecyclerViewAdapter adapter  = new HomeRecyclerViewAdapter(rvMain);
         List<HomeBean> beanList = new ArrayList<>();
         beanList.add(new HomeBean());
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.mipmap.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
         adapter.setListNotify(beanList);
         rvMain.setAdapter(adapter);
     }
@@ -146,11 +141,11 @@ public class HomeFragment extends BaseFragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(),5));
         HomeWindowRecyclerViewAdapter adapter  = new HomeWindowRecyclerViewAdapter(recyclerView);
         List<HomeWindowBean> beanList = new ArrayList<>();
-        beanList.add(new HomeWindowBean("师徒分享", R.mipmap.ic_home_window_share));
-        beanList.add(new HomeWindowBean("大转盘",R.mipmap.ic_home_window_turntable));
-        beanList.add(new HomeWindowBean("每日签到",R.mipmap.ic_home_window_sign));
-        beanList.add(new HomeWindowBean("充值",R.mipmap.ic_home_window_recharge));
-        beanList.add(new HomeWindowBean("幸运晒单",R.mipmap.ic_home_window_luckytime));
+        beanList.add(new HomeWindowBean("师徒分享", R.drawable.ic_home_window_share));
+        beanList.add(new HomeWindowBean("大转盘",R.drawable.ic_home_window_turntable));
+        beanList.add(new HomeWindowBean("每日签到",R.drawable.ic_home_window_sign));
+        beanList.add(new HomeWindowBean("充值",R.drawable.ic_home_window_recharge));
+        beanList.add(new HomeWindowBean("幸运晒单",R.drawable.ic_home_window_luckytime));
         adapter.setListNotify(beanList);
         recyclerView.setAdapter(adapter);
     }
@@ -163,7 +158,7 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void displayImage(Context context, Object path, ImageView imageView) {
                 //Glide.with(context).load(path).into(imageView);
-                imageView.setBackgroundResource(R.mipmap.test111);
+                imageView.setBackgroundResource(R.drawable.test111);
             }
         });
         List<String> images = new ArrayList<>();

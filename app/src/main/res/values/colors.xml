@@ -12,4 +12,8 @@
 
     <color name="color_home_shop_count_down">#fe770a</color>
     <color name="color_home_shop_prompt">#666666</color>
+
+    <color name="color_default_gray_font">#9F9F9F</color>
+
+    <color name="color_shop_detail_new_price_bg">#fffcea</color>
 </resources>

@@ -5,6 +5,7 @@
 
     <dimen name="home_shop_count_down">36px</dimen>
     <dimen name="home_shop_prompt">32px</dimen>
-    
+
     <dimen name="home_shop_btn_text">26px</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>
