@@ -18,6 +18,7 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerAdapter<HomeBean> {
         super(mRecyclerView);
     }
 
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_main_item,parent,false);
@@ -28,13 +29,11 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerAdapter<HomeBean> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ViewHolderGeneral holderGeneral = (ViewHolderGeneral) holder;
-        bindListener(holderGeneral,position);
+        onBindListener(holderGeneral,position);
     }
 
-    private void bindListener(ViewHolderGeneral holderGeneral, int position) {
-        holderGeneral.mView.setOnClickListener(view -> {
-            mListener.onItemClickListener(view,mList.get(position),position);
-        });
+    private void onBindListener(ViewHolderGeneral holderGeneral, int position) {
+        holderGeneral.mView.setOnClickListener(view -> mListener.onItemClickListener(view,mList.get(position),position));
     }
 
     public static class ViewHolderGeneral extends RecyclerView.ViewHolder {

@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#ff2626</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="colorPrimaryLight">#f79090</color>
     <color name="tabItemColor">#ff4340</color>
 
     <color name="divider">#f1f1f1</color>

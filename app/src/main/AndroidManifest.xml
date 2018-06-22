@@ -24,8 +24,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.main.HomeShopDetailActivity"
-            android:label="@string/title_shop_detail"></activity>
+        <activity
+            android:name=".ui.main.HomeShopDetailActivity"
+            android:label="@string/title_shop_detail" />
+        <activity android:name=".ui.common.RechargeActivity"></activity>
     </application>
 
 </manifest>

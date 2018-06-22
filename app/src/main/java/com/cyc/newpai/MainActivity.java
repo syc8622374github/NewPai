@@ -3,6 +3,8 @@ package com.cyc.newpai;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,26 +17,22 @@ public class MainActivity extends BaseActivity {
 
     private Fragment []mFragmensts;
     private TabLayout mTabLayout;
+    private Fragment showPositionFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, HomeFragment.newInstance())
-                    .commitNow();
-        }
         mFragmensts = DataGenerator.getFragments("");
-        mTabLayout = (TabLayout) findViewById(R.id.tl_tab_layout);
+        mTabLayout = findViewById(R.id.tl_tab_layout);
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                onTabItemSelected(tab.getPosition());
+                onTabItemSelected(mFragmensts[tab.getPosition()]);
                 // Tab 选中之后，改变各个Tab的状态
                 for (int i=0;i<mTabLayout.getTabCount();i++){
                     View view = mTabLayout.getTabAt(i).getCustomView();
-                    ImageView icon = (ImageView) view.findViewById(R.id.tab_content_image);
-                    TextView text = (TextView) view.findViewById(R.id.tab_content_text);
+                    ImageView icon = view.findViewById(R.id.tab_content_image);
+                    TextView text = view.findViewById(R.id.tab_content_text);
                     if(i == tab.getPosition()){ // 选中状态
                         icon.setImageResource(DataGenerator.mTabResPressed[i]);
                         text.setTextColor(getResources().getColor(android.R.color.black));
@@ -43,6 +41,8 @@ public class MainActivity extends BaseActivity {
                         text.setTextColor(getResources().getColor(android.R.color.darker_gray));
                     }
                 }
+                ctb_toolbar.setTitle(((TextView)tab.getCustomView().findViewById(R.id.tab_content_text)).getText().toString());
+
             }
 
             @Override
@@ -63,29 +63,27 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    protected void initToolbar() {
+        super.initToolbar();
+        ctb_toolbar.setLeftAction1(R.drawable.ic_search,null);
+        ctb_toolbar.setRightAction1(R.drawable.ic_notification,null);
+    }
+
+    @Override
     public int getLayoutId() {
         return R.layout.activity_main;
     }
 
-    private void onTabItemSelected(int position){
-        Fragment fragment = null;
-        switch (position){
-            case 0:
-                fragment = mFragmensts[0];
-                break;
-            case 1:
-                fragment = mFragmensts[1];
-                break;
-            case 2:
-                fragment = mFragmensts[2];
-                break;
-            case 3:
-                fragment = mFragmensts[3];
-                break;
+    private void onTabItemSelected(Fragment fragment){
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if(fragment!=null&&!fragment.isAdded()) {
+            fragmentTransaction.add(R.id.fragment_container,fragment,fragment.getClass().getName());
         }
-        if(fragment!=null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,fragment).commit();
+        if(showPositionFragment!=null){
+            fragmentTransaction.hide(showPositionFragment);
         }
+        fragmentTransaction.show(fragment).commit();
+        showPositionFragment = fragment;
     }
 
 }

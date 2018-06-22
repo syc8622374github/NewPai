@@ -21,6 +21,8 @@ public class GridDivider extends RecyclerView.ItemDecoration {
     private int column_num;
     private Paint colorPaint;
 
+
+
     public GridDivider(Context context, int num,int color) {
         final TypedArray a = context.obtainStyledAttributes(ATTRS);
         mDivider = a.getDrawable(0);

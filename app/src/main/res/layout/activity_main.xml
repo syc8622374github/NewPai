@@ -9,6 +9,7 @@
     tools:context=".MainActivity">
 
     <com.cyc.newpai.widget.CustomToolbar
+        android:id="@+id/ctb_toolbar"
         android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="50dp"/>

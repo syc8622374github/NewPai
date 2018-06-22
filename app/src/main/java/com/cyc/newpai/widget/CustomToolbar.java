@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -13,8 +14,8 @@ import com.cyc.newpai.R;
 
 public class CustomToolbar extends RelativeLayout {
 
-    public ImageView iv_left_action1;
-    public ImageView iv_right_action1;
+    public ImageButton iv_left_action1;
+    public ImageButton iv_right_action1;
     public TextView tv_title;
 
     public CustomToolbar(Context context) {

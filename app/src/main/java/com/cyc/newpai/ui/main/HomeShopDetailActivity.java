@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.base.BaseActivity;
+import com.cyc.newpai.ui.main.adapter.HistoryCompleteTransactionAdapter;
 import com.cyc.newpai.util.DataGenerator;
 import com.cyc.newpai.widget.CustomToolbar;
 import com.youth.banner.Banner;
@@ -24,7 +25,7 @@ public class HomeShopDetailActivity extends BaseActivity {
 
 
     private TabLayout tabLayout;
-    private String[] shopCategorys = new String[]{"往期成交","幸运晒单","竞拍规则"};
+    private String[] shopCategory = new String[]{"往期成交","幸运晒单","竞拍规则"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +34,12 @@ public class HomeShopDetailActivity extends BaseActivity {
         initBanner(banner);
         tabLayout = findViewById(R.id.tl_shop_detail_tab);
         initTab(tabLayout);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fl_shop_detail_container,HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionFragment.COMPLETE_TRANSACTION_TYPE)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fl_shop_detail_container,HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE)).commit();
     }
 
     private void initTab(TabLayout mTabLayout) {
         // 提供自定义的布局添加Tab
-        for(String title : shopCategorys){
+        for(String title : shopCategory){
             tabLayout.addTab(tabLayout.newTab().setText(title));
         }
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -63,13 +64,13 @@ public class HomeShopDetailActivity extends BaseActivity {
         Fragment fragment = null;
         switch (position){
             case 0:
-                fragment = HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionFragment.COMPLETE_TRANSACTION_TYPE);
+                fragment = HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE);
                 break;
             case 1:
-                fragment = HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionFragment.LUCKY_TIME_TYPE);
+                fragment = HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionAdapter.LUCKY_TIME_TYPE);
                 break;
             case 2:
-                fragment = HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionFragment.RULE_TYPE);
+                fragment = HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionAdapter.RULE_TYPE);
                 break;
         }
         if(fragment!=null) {
@@ -102,10 +103,9 @@ public class HomeShopDetailActivity extends BaseActivity {
     @Override
     protected void initToolbar() {
         super.initToolbar();
-        ctb_toolbar.setRightAction1(R.drawable.ic_shop_share, view -> {
+        ctb_toolbar.setRightAction1(0, view -> {
 
         });
-        ctb_toolbar.iv_right_action1.setImageResource(0);
         ctb_toolbar.tv_title.setTextColor(Color.BLACK);
     }
 

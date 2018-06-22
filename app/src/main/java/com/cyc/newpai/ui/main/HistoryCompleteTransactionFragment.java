@@ -20,9 +20,6 @@ import java.util.List;
 
 public class HistoryCompleteTransactionFragment extends BaseFragment {
 
-    public static final int COMPLETE_TRANSACTION_TYPE = 0x10001;
-    public static final int LUCKY_TIME_TYPE = 0x10002;
-    public static final int RULE_TYPE = 0x10003;
     public static int type;
 
     public static HistoryCompleteTransactionFragment newInstance(int type) {
@@ -40,7 +37,7 @@ public class HistoryCompleteTransactionFragment extends BaseFragment {
         type = getArguments().getInt("type");
         RecyclerView recyclerView = view.findViewById(R.id.list);
         TextView rule = view.findViewById(R.id.tv_rule);
-        if(type == RULE_TYPE){
+        if(type == HistoryCompleteTransactionAdapter.RULE_TYPE){
             recyclerView.setVisibility(View.GONE);
             rule.setVisibility(View.VISIBLE);
         }else{
