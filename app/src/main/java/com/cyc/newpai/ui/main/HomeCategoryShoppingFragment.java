@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.base.BaseFragment;
+import com.cyc.newpai.ui.common.RechargeActivity;
 import com.cyc.newpai.ui.main.adapter.GridDivider;
 import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.entity.HomeBean;
@@ -57,7 +58,7 @@ public class HomeCategoryShoppingFragment extends BaseFragment {
         beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
         beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
         adapter.setListNotify(beanList);
-        adapter.setOnClickItemListener((view, itemBean, position) -> startActivity(new Intent(getContext(),HomeShopDetailActivity.class)));
+        adapter.setOnClickItemListener((view, itemBean, position) -> startActivity(new Intent(getContext(),RechargeActivity.class)));
         rvMain.setAdapter(adapter);
     }
 

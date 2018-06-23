@@ -4,20 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    android:background="@drawable/selector_recharge_amount"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/iv_home_window_icon"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
-        android:src="@mipmap/ic_launcher"/>
-
     <TextView
-        android:id="@+id/tv_home_window_title"
+        android:id="@+id/tv_recharge_amount_pai_bi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#333333"
-        android:textSize="12sp"
-        android:text="default"/>
+        android:textColor="@color/colorPrimary"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:text="60拍币"/>
+
+    <TextView
+        android:id="@+id/tv_recharge_amount_rmb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FF6A6A"
+        android:textSize="16sp"
+        android:text="售价50元"/>
 
 </LinearLayout>
