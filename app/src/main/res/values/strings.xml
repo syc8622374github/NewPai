@@ -12,4 +12,7 @@
         3.规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则。\n
         4.sdjlkfjsldkfjlksd规则规则规则规则规则规则规则规则规则规则规则规则规则规则jdfklasjflksadjflk规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则。\n
     </string>
+
+    <string name="pay_method_alipay">支付宝支付</string>
+    <string name="pay_method_wechat">支付宝支付</string>
 </resources>
