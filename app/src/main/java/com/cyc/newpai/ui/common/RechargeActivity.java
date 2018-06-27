@@ -34,7 +34,7 @@ public class RechargeActivity extends BaseActivity {
     protected void initToolbar() {
         super.initToolbar();
         ctb_toolbar.setTitle(getTitle().toString());
-        ctb_toolbar.tv_title.setTextColor(Color.BLACK);
+        ctb_toolbar.tv_title.setTextColor(getResources().getColor(R.color.color_toolbar_title_black));
     }
 
     private void initPayMethod() {
@@ -66,7 +66,6 @@ public class RechargeActivity extends BaseActivity {
         amountBeans.add(new AmountBean("600","500",false));
         amountBeans.add(new AmountBean("1200","1000",false));
         amountBeans.add(new AmountBean("2400","2000",false));
-
         MyGridView gridView = findViewById(R.id.gv_recharge_amount);
         GridViewAdapter gridViewAdapter = new GridViewAdapter(this,amountBeans);
         gridView.setAdapter(gridViewAdapter);
@@ -129,7 +128,7 @@ public class RechargeActivity extends BaseActivity {
             }else{
                 convertView.setBackgroundResource(R.drawable.shape_border_red_line);
                 holderView.tvPaiPi.setTextColor(getResources().getColor(R.color.colorPrimary));
-                holderView.tvRmb.setTextColor(getResources().getColor(R.color.colorPrimary));
+                holderView.tvRmb.setTextColor(getResources().getColor(R.color.color_recharge_rmb));
             }
             return convertView;
         }

@@ -70,6 +70,8 @@ public class GridDivider extends RecyclerView.ItemDecoration {
                 bottom = top + mDivider.getIntrinsicHeight();
                 mDivider.setBounds(left, top, right, bottom);
                 mDivider.draw(c);
+                if(colorPaint!=null)
+                    c.drawRect(left,top,right,bottom,colorPaint);
                 //画item下面的分割线
                 top = child.getBottom() + params.bottomMargin;
                 bottom = top + mDivider.getIntrinsicHeight();

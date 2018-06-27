@@ -1,5 +1,7 @@
 package com.cyc.newpai.framework.adapter;
 
+import android.support.annotation.NonNull;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.View;
@@ -66,6 +68,7 @@ public class HeaderAndFooterRecyclerViewAdapter extends RecyclerView.Adapter<Rec
 
     /**
      * 设置adapter
+     *
      * @param adapter
      */
     public void setAdapter(RecyclerView.Adapter<RecyclerView.ViewHolder> adapter) {
@@ -111,18 +114,20 @@ public class HeaderAndFooterRecyclerViewAdapter extends RecyclerView.Adapter<Rec
 
     /**
      * 返回第一个FoView
+     *
      * @return
      */
     public View getFooterView() {
-        return  getFooterViewsCount()>0 ? mFooterViews.get(0) : null;
+        return getFooterViewsCount() > 0 ? mFooterViews.get(0) : null;
     }
 
     /**
      * 返回第一个HeaderView
+     *
      * @return
      */
     public View getHeaderView() {
-        return  getHeaderViewsCount()>0 ? mHeaderViews.get(0) : null;
+        return getHeaderViewsCount() > 0 ? mHeaderViews.get(0) : null;
     }
 
     public void removeHeaderView(View view) {
@@ -155,6 +160,7 @@ public class HeaderAndFooterRecyclerViewAdapter extends RecyclerView.Adapter<Rec
     /**
      * 根据 viewType 和 headerViewsCountCount 的数量
      * 决定创建的 ViewHolder是 使用List<View> mHeaderViews 还是内部adapter的 onCreateViewHolder
+     *
      * @param parent
      * @param viewType
      * @return
@@ -189,6 +195,7 @@ public class HeaderAndFooterRecyclerViewAdapter extends RecyclerView.Adapter<Rec
     /**
      * head和foot的视图不复用 不需要特别的 onBindViewHolder
      * 只是在 使用StaggeredGridLayoutManager 瀑布流时候 让head和foot 视图占据满格 setFullSpan(true)
+     *
      * @param holder
      * @param position
      */
@@ -199,7 +206,7 @@ public class HeaderAndFooterRecyclerViewAdapter extends RecyclerView.Adapter<Rec
             mInnerAdapter.onBindViewHolder(holder, position - headerViewsCountCount);
         } else {
             ViewGroup.LayoutParams layoutParams = holder.itemView.getLayoutParams();
-            if(layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
+            if (layoutParams instanceof StaggeredGridLayoutManager.LayoutParams) {
                 ((StaggeredGridLayoutManager.LayoutParams) layoutParams).setFullSpan(true);
             }
         }
@@ -219,7 +226,7 @@ public class HeaderAndFooterRecyclerViewAdapter extends RecyclerView.Adapter<Rec
         } else if (headerViewsCountCount <= position && position < headerViewsCountCount + innerCount) {
 
             int innerItemViewType = mInnerAdapter.getItemViewType(position - headerViewsCountCount);
-            if(innerItemViewType >= Integer.MAX_VALUE / 2) {
+            if (innerItemViewType >= Integer.MAX_VALUE / 2) {
                 throw new IllegalArgumentException("your adapter's return value of getViewTypeCount() must < Integer.MAX_VALUE / 2");
             }
             return innerItemViewType + Integer.MAX_VALUE / 2;
@@ -228,7 +235,37 @@ public class HeaderAndFooterRecyclerViewAdapter extends RecyclerView.Adapter<Rec
         }
     }
 
-    public  class ViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        mInnerAdapter.onAttachedToRecyclerView(recyclerView);
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if (layoutManager instanceof GridLayoutManager) {
+            final GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+            final GridLayoutManager.SpanSizeLookup spanSizeLookup = gridLayoutManager.getSpanSizeLookup();
+            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    int viewType = getItemViewType(position);
+                    /*if (mHeaderViews.size() != nu) {
+                        return ((GridLayoutManager) layoutManager).getSpanCount();
+                    } else if (mFooterViews.get(viewType) != null) {
+                        return ((GridLayoutManager) layoutManager).getSpanCount();
+                    }
+                    return 1;
+*/
+                    int headerViewsCountCount = getHeaderViewsCount();
+                    if (viewType < TYPE_HEADER_VIEW + headerViewsCountCount) {
+                        return ((GridLayoutManager) layoutManager).getSpanCount();
+                    } else if (viewType >= TYPE_FOOTER_VIEW && viewType < Integer.MAX_VALUE / 2) {
+                        return ((GridLayoutManager) layoutManager).getSpanCount();
+                    }
+                    return 1;
+                }
+            });
+        }
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public ViewHolder(View itemView) {
             super(itemView);
         }

@@ -10,12 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cyc.newpai.framework.base.BaseActivity;
+import com.cyc.newpai.framework.base.BaseFragment;
+import com.cyc.newpai.ui.category.CategoryFragment;
 import com.cyc.newpai.ui.main.HomeFragment;
 import com.cyc.newpai.util.DataGenerator;
 
 public class MainActivity extends BaseActivity {
 
-    private Fragment []mFragmensts;
+    private BaseFragment []mFragmensts;
     private TabLayout mTabLayout;
     private Fragment showPositionFragment;
 
@@ -27,7 +29,8 @@ public class MainActivity extends BaseActivity {
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                onTabItemSelected(mFragmensts[tab.getPosition()]);
+                BaseFragment fragment = mFragmensts[tab.getPosition()];
+                onTabItemSelected(fragment);
                 // Tab 选中之后，改变各个Tab的状态
                 for (int i=0;i<mTabLayout.getTabCount();i++){
                     View view = mTabLayout.getTabAt(i).getCustomView();
@@ -40,6 +43,11 @@ public class MainActivity extends BaseActivity {
                         icon.setImageResource(DataGenerator.mTabRes[i]);
                         text.setTextColor(getResources().getColor(android.R.color.darker_gray));
                     }
+                }
+                if(fragment.getClass().getName() == CategoryFragment.getFlag()){
+                    ctb_toolbar.divider.setVisibility(View.GONE);
+                }else{
+                    ctb_toolbar.divider.setVisibility(View.VISIBLE);
                 }
                 ctb_toolbar.setTitle(((TextView)tab.getCustomView().findViewById(R.id.tab_content_text)).getText().toString());
 

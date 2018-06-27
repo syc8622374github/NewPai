@@ -13,6 +13,7 @@
         4.sdjlkfjsldkfjlksd规则规则规则规则规则规则规则规则规则规则规则规则规则规则jdfklasjflksadjflk规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则规则。\n
     </string>
 
-    <string name="pay_method_alipay">支付宝支付</string>
-    <string name="pay_method_wechat">支付宝支付</string>
+    <string name="text_foot_loading">正在加载</string>
+    <string name="text_foot_error">错误</string>
+    <string name="text_foot_end">已经到底</string>
 </resources>

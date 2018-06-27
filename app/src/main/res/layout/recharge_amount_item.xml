@@ -2,10 +2,10 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:gravity="center"
-    android:paddingTop="15dp"
-    android:paddingBottom="15dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
     android:background="@drawable/selector_recharge_amount"
     android:orientation="vertical">
 
@@ -22,7 +22,7 @@
         android:id="@+id/tv_recharge_amount_rmb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#FF6A6A"
+        android:textColor="@color/color_recharge_rmb"
         android:textSize="16sp"
         android:text="售价50元"/>
 

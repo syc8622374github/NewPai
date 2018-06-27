@@ -17,6 +17,7 @@ public class CustomToolbar extends RelativeLayout {
     public ImageButton iv_left_action1;
     public ImageButton iv_right_action1;
     public TextView tv_title;
+    public View divider;
 
     public CustomToolbar(Context context) {
         super(context,null);
@@ -28,6 +29,7 @@ public class CustomToolbar extends RelativeLayout {
         iv_left_action1 = view.findViewById(R.id.iv_left_action1);
         iv_right_action1 = view.findViewById(R.id.iv_right_action1);
         tv_title = view.findViewById(R.id.tv_title);
+        divider = view.findViewById(R.id.v_divider);
     }
 
     public void setLeftAction1(int imgResId,OnClickListener listener){

@@ -5,12 +5,39 @@ public class CategoryDetailBean {
     private String title;
     private String price;
     private String countDown;
+    private int parentFlag;
+    private int flag;
+
+    public CategoryDetailBean(int iconResId, String title, String price, String countDown, int parentFlag, int flag) {
+        this.iconResId = iconResId;
+        this.title = title;
+        this.price = price;
+        this.countDown = countDown;
+        this.parentFlag = parentFlag;
+        this.flag = flag;
+    }
 
     public CategoryDetailBean(int iconResId, String title, String price, String countDown) {
         this.iconResId = iconResId;
         this.title = title;
         this.price = price;
         this.countDown = countDown;
+    }
+
+    public int getParentFlag() {
+        return parentFlag;
+    }
+
+    public void setParentFlag(int parentFlag) {
+        this.parentFlag = parentFlag;
+    }
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public void setFlag(int flag) {
+        this.flag = flag;
     }
 
     public int getIconResId() {

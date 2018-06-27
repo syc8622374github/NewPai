@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cyc.newpai.R;
+import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.ui.category.CategoryFragment;
 import com.cyc.newpai.ui.main.HomeFragment;
 import com.cyc.newpai.ui.me.MeFragment;
@@ -20,8 +21,8 @@ public class DataGenerator {
     public static final int []mTabResPressed = new int[]{R.drawable.tab_home_selector,R.drawable.tab_complete_selector,R.drawable.tab_category_selector,R.drawable.tab_me_selector};
     public static final String []mTabTitle = new String[]{"首页","最新成交","分类","我的"};
 
-    public static Fragment[] getFragments(String from){
-        Fragment fragments[] = new Fragment[4];
+    public static BaseFragment[] getFragments(String from){
+        BaseFragment fragments[] = new BaseFragment[4];
         fragments[0] = HomeFragment.newInstance();
         fragments[1] = CompleteTransactionFragment.newInstance();
         fragments[2] = CategoryFragment.newInstance();

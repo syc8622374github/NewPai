@@ -10,4 +10,11 @@ import android.view.ViewGroup;
 
 
 public abstract class BaseFragment extends Fragment {
+    public void updateFragmentData(){
+
+    }
+
+    public void refreshFragmentData(){
+
+    }
 }
