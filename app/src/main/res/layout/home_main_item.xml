@@ -20,6 +20,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tv_home_category_count_down"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00:10"
@@ -27,6 +28,7 @@
             android:textColor="@color/color_home_shop_count_down"/>
 
         <TextView
+            android:id="@+id/tv_home_category_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="￥500"

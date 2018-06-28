@@ -1,6 +1,7 @@
 package com.cyc.newpai;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,24 +14,31 @@ import com.cyc.newpai.framework.base.BaseActivity;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.ui.category.CategoryFragment;
 import com.cyc.newpai.ui.main.HomeFragment;
+import com.cyc.newpai.ui.me.MeFragment;
+import com.cyc.newpai.ui.transaction.CompleteTransactionFragment;
 import com.cyc.newpai.util.DataGenerator;
 
 public class MainActivity extends BaseActivity {
 
     private BaseFragment []mFragmensts;
     private TabLayout mTabLayout;
-    private Fragment showPositionFragment;
+    private static int showPosition;
+    private boolean isRestoreActivity;
+    private String showFragmentTag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFragmensts = DataGenerator.getFragments("");
+        if(savedInstanceState!=null){
+            isRestoreActivity = savedInstanceState.getBoolean("isRestoreActivity");
+            showFragmentTag = savedInstanceState.getString("showFragmentTag");
+        }
         mTabLayout = findViewById(R.id.tl_tab_layout);
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                BaseFragment fragment = mFragmensts[tab.getPosition()];
-                onTabItemSelected(fragment);
+                onTabItemSelected(tab.getPosition());
                 // Tab 选中之后，改变各个Tab的状态
                 for (int i=0;i<mTabLayout.getTabCount();i++){
                     View view = mTabLayout.getTabAt(i).getCustomView();
@@ -44,13 +52,7 @@ public class MainActivity extends BaseActivity {
                         text.setTextColor(getResources().getColor(android.R.color.darker_gray));
                     }
                 }
-                if(fragment.getClass().getName() == CategoryFragment.getFlag()){
-                    ctb_toolbar.divider.setVisibility(View.GONE);
-                }else{
-                    ctb_toolbar.divider.setVisibility(View.VISIBLE);
-                }
                 ctb_toolbar.setTitle(((TextView)tab.getCustomView().findViewById(R.id.tab_content_text)).getText().toString());
-
             }
 
             @Override
@@ -63,11 +65,22 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-
         // 提供自定义的布局添加Tab
         for(int i=0;i<4;i++){
             mTabLayout.addTab(mTabLayout.newTab().setCustomView(DataGenerator.getTabView(this,i)));
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        /*FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        for(Fragment fragment : mFragmensts){
+            fragmentTransaction.remove(fragment);
+        }
+        fragmentTransaction.commitNowAllowingStateLoss();*/
+        outState.putBoolean("isRestoreActivity",true);
+        outState.putString("showFragmentTag",mFragmensts[showPosition].getClass().getName());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -82,16 +95,40 @@ public class MainActivity extends BaseActivity {
         return R.layout.activity_main;
     }
 
-    private void onTabItemSelected(Fragment fragment){
+    private void onTabItemSelected(int position){
+        BaseFragment fragment = mFragmensts[position];
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if(isRestoreActivity){
+            Fragment oldShowFragment = getSupportFragmentManager().findFragmentByTag(showFragmentTag);
+            if(oldShowFragment!=null){
+                fragmentTransaction.remove(oldShowFragment);
+            }
+            isRestoreActivity = false;
+        }
         if(fragment!=null&&!fragment.isAdded()) {
             fragmentTransaction.add(R.id.fragment_container,fragment,fragment.getClass().getName());
         }
-        if(showPositionFragment!=null){
-            fragmentTransaction.hide(showPositionFragment);
+        if(mFragmensts[showPosition]!=null){
+            fragmentTransaction.hide(mFragmensts[showPosition]);
         }
         fragmentTransaction.show(fragment).commit();
-        showPositionFragment = fragment;
+        showPosition = position;
+        if(fragment instanceof CategoryFragment){
+            ctb_toolbar.divider.setVisibility(View.GONE);
+            ctb_toolbar.setLeftAction1(0,null);
+            ctb_toolbar.setRightAction1(0,null);
+        }else if(fragment instanceof CompleteTransactionFragment){
+            ctb_toolbar.setLeftAction1(0,null);
+            ctb_toolbar.setRightAction1(0,null);
+        }else if(fragment instanceof MeFragment){
+            ctb_toolbar.divider.setVisibility(View.GONE);
+            ctb_toolbar.setLeftAction1(R.drawable.ic_me_setting,null);
+            ctb_toolbar.setRightAction1(R.drawable.ic_notification,null);
+        }else{
+            //ctb_toolbar.divider.setVisibility(View.VISIBLE);
+            ctb_toolbar.setLeftAction1(R.drawable.ic_search,null);
+            ctb_toolbar.setRightAction1(R.drawable.ic_notification,null);
+        }
     }
 
 }

@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
@@ -21,9 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.base.BaseFragment;
-import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.adapter.HomeWindowRecyclerViewAdapter;
-import com.cyc.newpai.ui.main.entity.HomeBean;
 import com.cyc.newpai.ui.main.entity.HomeWindowBean;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -50,6 +49,11 @@ public class HomeFragment extends BaseFragment {
     }
 
     public class MyHandler extends Handler{
+
+        public MyHandler(Looper looper) {
+            super(looper);
+        }
+
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
@@ -60,7 +64,7 @@ public class HomeFragment extends BaseFragment {
         }
     }
 
-    public MyHandler handler = new MyHandler();
+    public MyHandler handler = new MyHandler(Looper.getMainLooper());
 
     private String[] shopCategorys = new String[]{"正在热拍","我在拍","我的收藏"};
 

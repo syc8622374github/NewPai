@@ -251,8 +251,8 @@ public class HeaderAndFooterRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                     } else if (mFooterViews.get(viewType) != null) {
                         return ((GridLayoutManager) layoutManager).getSpanCount();
                     }
-                    return 1;
-*/
+                    return 1;*/
+
                     int headerViewsCountCount = getHeaderViewsCount();
                     if (viewType < TYPE_HEADER_VIEW + headerViewsCountCount) {
                         return ((GridLayoutManager) layoutManager).getSpanCount();

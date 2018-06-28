@@ -3,16 +3,18 @@ package com.cyc.newpai.ui.main.entity;
 public class HomeBean {
     private int imageRes;
     private String imageUrl;
-    private String countdown;
+    private Integer countdown;
     private String prompt;
+    private Integer price;
 
     public HomeBean() {
     }
 
-    public HomeBean(int imageRes, String countdown, String prompt) {
+    public HomeBean(int imageRes, Integer countdown, String prompt,Integer price) {
         this.imageRes = imageRes;
         this.countdown = countdown;
         this.prompt = prompt;
+        this.price = price;
     }
 
     public int getImageRes() {
@@ -31,11 +33,11 @@ public class HomeBean {
         this.imageUrl = imageUrl;
     }
 
-    public String getCountdown() {
+    public Integer getCountdown() {
         return countdown;
     }
 
-    public void setCountdown(String countdown) {
+    public void setCountdown(Integer countdown) {
         this.countdown = countdown;
     }
 
@@ -45,5 +47,13 @@ public class HomeBean {
 
     public void setPrompt(String prompt) {
         this.prompt = prompt;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 }

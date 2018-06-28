@@ -2,11 +2,13 @@ package com.cyc.newpai.ui.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,9 @@ import com.cyc.newpai.widget.LoadingFooter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HomeCategoryShoppingFragment extends BaseFragment {
 
@@ -31,8 +36,25 @@ public class HomeCategoryShoppingFragment extends BaseFragment {
     private List<HomeBean> beanList;
     private LoadingFooter mFooterView;
 
+    public class MyHandler extends Handler {
+
+        public MyHandler(Looper looper) {
+            super(looper);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    adapter.notifyDataSetChanged();
+                    break;
+            }
+        }
+    }
+
+    public MyHandler handler = new MyHandler(Looper.getMainLooper());
+
     public static HomeCategoryShoppingFragment newInstance() {
-        
         Bundle args = new Bundle();
         HomeCategoryShoppingFragment fragment = new HomeCategoryShoppingFragment();
         fragment.setArguments(args);
@@ -54,42 +76,39 @@ public class HomeCategoryShoppingFragment extends BaseFragment {
         rvMain.addItemDecoration(new GridDivider(getContext(),2,getResources().getColor(R.color.divider)));
         adapter.setOnClickItemListener((view, itemBean, position) -> startActivity(new Intent(getContext(),RechargeActivity.class)));
         rvMain.setHasFixedSize(true);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
+        rvMain.setLayoutManager(gridLayoutManager);
         rvMain.setAdapter(headerAndFooterRecyclerViewAdapter);
         if (getFootView() != null) {
             RecyclerViewUtil.addFootView(rvMain, getFootView());
         }
-        rvMain.setLayoutManager(new GridLayoutManager(getContext(),2));
         beanList = new ArrayList<>();
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:10","暂未拍得"));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
         adapter.setListNotify(beanList);
+        Timer timer = new Timer();
+        Random random = new Random();
+        /*timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                for(HomeBean bean : beanList){
+                    bean.setCountdown(bean.getCountdown()-1);
+                    bean.setPrice(bean.getPrice()+random.nextInt(10));
+                }
+                handler.sendEmptyMessage(1);
+            }
+        },1000,1000);*/
     }
 
     @Override
     public void updateFragmentData() {
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,"00:00:9","暂未拍得"));
-        adapter.notifyDataSetChanged();
+        adapter.addListNotify(beanList);
     }
 
     protected View getFootView() {

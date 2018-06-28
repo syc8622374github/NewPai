@@ -29,6 +29,8 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerAdapter<HomeBean> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ViewHolderGeneral holderGeneral = (ViewHolderGeneral) holder;
+        holderGeneral.price.setText(mList.get(position).getPrice()+"");
+        holderGeneral.countDown.setText("00:00:0"+mList.get(position).getCountdown()+"");
         onBindListener(holderGeneral,position);
     }
 
@@ -39,15 +41,15 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerAdapter<HomeBean> {
     public static class ViewHolderGeneral extends RecyclerView.ViewHolder {
         //这个CardView采用两层操作
         public final View mView;
-        public final TextView title;
-        public final ImageView icon;
+        public final TextView countDown;
+        public final TextView price;
 
 
         public ViewHolderGeneral(View view) {
             super(view);
             mView = view;
-            title = view.findViewById(R.id.tv_home_window_title);
-            icon = view.findViewById(R.id.iv_home_window_icon);
+            countDown = view.findViewById(R.id.tv_home_category_count_down);
+            price = view.findViewById(R.id.tv_home_category_price);
         }
 
     }
