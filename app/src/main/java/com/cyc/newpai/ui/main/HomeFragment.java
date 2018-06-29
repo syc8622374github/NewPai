@@ -2,34 +2,41 @@ package com.cyc.newpai.ui.main;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import com.cyc.newpai.R;
+import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
 import com.cyc.newpai.framework.base.BaseFragment;
+import com.cyc.newpai.ui.common.RechargeActivity;
+import com.cyc.newpai.ui.main.adapter.GridDivider;
+import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.adapter.HomeWindowRecyclerViewAdapter;
+import com.cyc.newpai.ui.main.entity.HomeBean;
 import com.cyc.newpai.ui.main.entity.HomeWindowBean;
+import com.cyc.newpai.util.RecyclerViewUtil;
+import com.cyc.newpai.widget.LoadingFooter;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.loader.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class HomeFragment extends BaseFragment {
@@ -40,6 +47,9 @@ public class HomeFragment extends BaseFragment {
     private Banner banner;
     private RecyclerView window;
     private BaseFragment fragment;
+    private View headView;
+    private List<HomeBean> beanList;
+    private HomeRecyclerViewAdapter adapter;
 
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -58,6 +68,7 @@ public class HomeFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 1:
+                    adapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
                     break;
             }
@@ -75,18 +86,92 @@ public class HomeFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.home_fragment, container, false);
-        getChildFragmentManager().beginTransaction()
-                .replace(R.id.fl_home_shop_content, HomeCategoryShoppingFragment.newInstance())
-                .commitNow();
         initView(view);
         return view;
     }
 
     private void initView(View view) {
-        initBanner(view);
+        initHeader();
         initRefresh(view);
-        initWindow(view);
-        initTab(view);
+        initRecyclerView(view);
+    }
+
+    private void initHeader() {
+        headView = LayoutInflater.from(getContext()).inflate(R.layout.home_fragment_head_item,null);
+        initBanner(headView);
+        initWindow(headView);
+        initTab(headView);
+    }
+
+    private void initRecyclerView(View view) {
+        RecyclerView rvMain = view.findViewById(R.id.rv_main);
+        adapter = new HomeRecyclerViewAdapter(rvMain);
+        HeaderAndFooterRecyclerViewAdapter headerAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
+        rvMain.addItemDecoration(new GridDivider(getContext(),2,getResources().getColor(R.color.divider)));
+        adapter.setOnClickItemListener((view1, itemBean, position) -> startActivity(new Intent(getContext(),RechargeActivity.class)));
+        rvMain.setHasFixedSize(true);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
+        rvMain.setLayoutManager(gridLayoutManager);
+        rvMain.setAdapter(headerAndFooterRecyclerViewAdapter);
+        if (getFootView() != null) {
+            RecyclerViewUtil.addFootView(rvMain, getFootView());
+        }
+        RecyclerViewUtil.addHearView(rvMain,headView);
+        beanList = new ArrayList<>();
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        adapter.setListNotify(beanList);
+        rvMain.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (RecyclerView.SCROLL_STATE_IDLE == newState) {
+                    //滑动停止
+                    boolean isBottom = gridLayoutManager.findLastCompletelyVisibleItemPosition()>= adapter.getItemCount();
+                    if (isBottom) {
+                        getView().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                adapter.addListNotify(beanList);
+                            }
+                        },2000);
+                    }
+                } else if (RecyclerView.SCROLL_STATE_DRAGGING == newState) {
+                    //用户正在滑动
+//                    Logger.d("用户正在滑动 position=" + mAdapter.getAdapterPosition());
+                } else {
+                    //惯性滑动
+//                    Logger.d("惯性滑动 position=" + mAdapter.getAdapterPosition());
+                }
+            }
+        });
+        Timer timer = new Timer();
+        Random random = new Random();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                for(HomeBean bean : beanList){
+                    bean.setCountdown(bean.getCountdown()-1);
+                    bean.setPrice(bean.getPrice()+random.nextInt(10));
+                }
+                handler.sendEmptyMessage(1);
+            }
+        },1000,1000);
+    }
+
+    protected View getFootView() {
+        LoadingFooter mFooterView = null;
+        if (mFooterView == null) {
+            mFooterView = new LoadingFooter(getActivity());
+            mFooterView.setState(LoadingFooter.State.Loading);
+        }
+        return mFooterView;
     }
 
     private void initTab(View view) {
@@ -94,7 +179,7 @@ public class HomeFragment extends BaseFragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                onTabItemSelected(tab.getPosition());
+                //onTabItemSelected(tab.getPosition());
             }
 
             @Override
@@ -115,26 +200,11 @@ public class HomeFragment extends BaseFragment {
 
     private void initRefresh(View view) {
         swipeRefreshLayout = view.findViewById(R.id.srl_refresh_layout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            updateData();
-            handler.sendEmptyMessageDelayed(1,1000);
-        });
-        NestedScrollView nestedScrollView = view.findViewById(R.id.nsv_scroll_view);
-        nestedScrollView.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-            if (scrollY > oldScrollY) {
-                Log.i(TAG, "Scroll DOWN");
-            }
-            if (scrollY < oldScrollY) {
-                Log.i(TAG, "Scroll UP");
-            }
-
-            if (scrollY == 0) {
-                Log.i(TAG, "TOP SCROLL");
-            }
-            if (scrollY == (v.getChildAt(0).getMeasuredHeight() - v.getMeasuredHeight())) {
-                Log.i(TAG, "BOTTOM SCROLL");
-                handler.postDelayed(() -> fragment.updateFragmentData(),1000);
-            }
+            //updateData();
+            //swipeRefreshLayout.setRefreshing(false);
+            //handler.sendEmptyMessageDelayed(1,1000);
         });
     }
 
@@ -156,7 +226,7 @@ public class HomeFragment extends BaseFragment {
                 break;
         }
         if(fragment !=null) {
-            getChildFragmentManager().beginTransaction().replace(R.id.fl_home_shop_content, fragment).commit();
+            //getChildFragmentManager().beginTransaction().replace(R.id.fl_home_shop_content, fragment).commit();
         }
     }
 

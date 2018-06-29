@@ -246,13 +246,6 @@ public class HeaderAndFooterRecyclerViewAdapter extends RecyclerView.Adapter<Rec
                 @Override
                 public int getSpanSize(int position) {
                     int viewType = getItemViewType(position);
-                    /*if (mHeaderViews.size() != nu) {
-                        return ((GridLayoutManager) layoutManager).getSpanCount();
-                    } else if (mFooterViews.get(viewType) != null) {
-                        return ((GridLayoutManager) layoutManager).getSpanCount();
-                    }
-                    return 1;*/
-
                     int headerViewsCountCount = getHeaderViewsCount();
                     if (viewType < TYPE_HEADER_VIEW + headerViewsCountCount) {
                         return ((GridLayoutManager) layoutManager).getSpanCount();
