@@ -10,6 +10,7 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,17 +18,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.ui.common.RechargeActivity;
 import com.cyc.newpai.ui.main.adapter.GridDivider;
 import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
-import com.cyc.newpai.ui.main.adapter.HomeWindowRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.entity.HomeBean;
 import com.cyc.newpai.ui.main.entity.HomeWindowBean;
 import com.cyc.newpai.util.RecyclerViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
+import com.cyc.newpai.widget.MyGridView;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.loader.ImageLoader;
@@ -45,7 +49,6 @@ public class HomeFragment extends BaseFragment {
     private SwipeRefreshLayout swipeRefreshLayout;
     private TabLayout tabLayout;
     private Banner banner;
-    private RecyclerView window;
     private BaseFragment fragment;
     private View headView;
     private List<HomeBean> beanList;
@@ -80,6 +83,8 @@ public class HomeFragment extends BaseFragment {
     private String[] shopCategorys = new String[]{"正在热拍","我在拍","我的收藏"};
 
     private HomeViewModel mViewModel;
+
+    boolean isLoadMore = false;
 
     @Nullable
     @Override
@@ -135,12 +140,16 @@ public class HomeFragment extends BaseFragment {
                     //滑动停止
                     boolean isBottom = gridLayoutManager.findLastCompletelyVisibleItemPosition()>= adapter.getItemCount();
                     if (isBottom) {
-                        getView().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                adapter.addListNotify(beanList);
-                            }
-                        },2000);
+                        if(!isLoadMore){
+                            getView().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.addListNotify(beanList);
+                                    isLoadMore = false;
+                                }
+                            },2000);
+                            isLoadMore = true;
+                        }
                     }
                 } else if (RecyclerView.SCROLL_STATE_DRAGGING == newState) {
                     //用户正在滑动
@@ -231,23 +240,66 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initWindow(View view) {
-        window = view.findViewById(R.id.rv_window);
-        window.setLayoutManager(new GridLayoutManager(getContext(),5));
-        HomeWindowRecyclerViewAdapter adapter  = new HomeWindowRecyclerViewAdapter(window);
         List<HomeWindowBean> beanList = new ArrayList<>();
         beanList.add(new HomeWindowBean("师徒分享", R.drawable.ic_home_window_share));
         beanList.add(new HomeWindowBean("大转盘",R.drawable.ic_home_window_turntable));
         beanList.add(new HomeWindowBean("每日签到",R.drawable.ic_home_window_sign));
         beanList.add(new HomeWindowBean("充值",R.drawable.ic_home_window_recharge));
         beanList.add(new HomeWindowBean("幸运晒单",R.drawable.ic_home_window_luckytime));
-        adapter.setListNotify(beanList);
-        window.setAdapter(adapter);
+
+        int columns = 5;
+        int rows = (int) Math.ceil(beanList.size()/columns);
+        LinearLayout windowRoot = view.findViewById(R.id.ll_window_root);
+        for(int i=0;i<rows;i++){
+            LinearLayout child = (LinearLayout) windowRoot.getChildAt(i);
+            if(child==null){
+                LinearLayout llChild = new LinearLayout(getContext());
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                llChild.setLayoutParams(layoutParams);
+                llChild.setOrientation(LinearLayout.HORIZONTAL);
+                child = llChild;
+                windowRoot.addView(child);
+            }
+            for(int j=0;j<columns;j++){
+                View childItem = child.getChildAt(j);
+                if(childItem==null){
+                    childItem = View.inflate(getContext(),R.layout.home_window_item,null);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,1.0f);
+                    childItem.setLayoutParams(layoutParams);
+                    child.addView(childItem);
+                }
+                ((ImageView)childItem.findViewById(R.id.iv_home_window_icon)).setImageResource(beanList.get(j+i*j).getImageRes());
+                ((TextView)childItem.findViewById(R.id.tv_home_window_title)).setText(beanList.get(j+i*j).getTitle());
+            }
+        }
     }
 
     private void initBanner(View view) {
         banner = view.findViewById(R.id.banner);
         banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR);
         banner.setIndicatorGravity(BannerConfig.CENTER);
+        banner.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                switch(state){
+                    case 1:
+                        swipeRefreshLayout.setEnabled(false);
+                    break;
+                    default:
+                        swipeRefreshLayout.setEnabled(true);
+                        break;
+                }
+            }
+        });
         banner.isAutoPlay(true);
         banner.setImageLoader(new ImageLoader() {
             @Override
