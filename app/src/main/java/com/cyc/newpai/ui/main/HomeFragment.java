@@ -14,6 +14,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,8 @@ import android.widget.TextView;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
 import com.cyc.newpai.framework.base.BaseFragment;
+import com.cyc.newpai.http.HttpUrl;
+import com.cyc.newpai.http.OkHttpManager;
 import com.cyc.newpai.ui.common.RechargeActivity;
 import com.cyc.newpai.ui.main.adapter.GridDivider;
 import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
@@ -36,11 +39,18 @@ import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.loader.ImageLoader;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 
 public class HomeFragment extends BaseFragment {
@@ -122,16 +132,6 @@ public class HomeFragment extends BaseFragment {
             RecyclerViewUtil.addFootView(rvMain, getFootView());
         }
         RecyclerViewUtil.addHearView(rvMain,headView);
-        beanList = new ArrayList<>();
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        adapter.setListNotify(beanList);
         rvMain.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -160,6 +160,16 @@ public class HomeFragment extends BaseFragment {
                 }
             }
         });
+        beanList = new ArrayList<>();
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        adapter.setListNotify(beanList);
         Timer timer = new Timer();
         Random random = new Random();
         timer.schedule(new TimerTask() {
@@ -215,10 +225,6 @@ public class HomeFragment extends BaseFragment {
             //swipeRefreshLayout.setRefreshing(false);
             //handler.sendEmptyMessageDelayed(1,1000);
         });
-    }
-
-    private void updateData() {
-        fragment.refreshFragmentData();
     }
 
     private void onTabItemSelected(int position){

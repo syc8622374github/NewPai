@@ -19,6 +19,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:descendantFocusability="blocksDescendants"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -43,22 +44,24 @@
                     android:src="@drawable/ic_shop_detail_final_price"/>
 
                 <TextView
+                    android:id="@+id/tv_shop_detail_now_price"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textColor="@android:color/white"
-                    android:gravity="center|left"
-                    android:textSize="30sp"
                     android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:text="￥509.80"/>
+                    android:gravity="center|left"
+                    android:text="￥509.80"
+                    android:textColor="@android:color/white"
+                    android:textSize="30sp"
+                    android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_shop_detail_market_price"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:gravity="right|center"
-                    android:textColor="@android:color/white"
                     android:layout_weight="1"
-                    android:text="市场价:￥509.80"/>
+                    android:gravity="right|center"
+                    android:text="市场价:￥509.80"
+                    android:textColor="@android:color/white" />
 
             </LinearLayout>
 
@@ -112,9 +115,10 @@
                         android:layout_height="50dp">
 
                         <ImageView
+                            android:id="@+id/iv_shop_detail_avator"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:src="@drawable/ic_avator"/>
+                            android:src="@drawable/ic_avator" />
 
                         <ImageView
                             android:layout_width="30dp"
@@ -130,22 +134,25 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tv_shop_detail_nickname"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="我不中奖谁中奖"
                             android:textColor="@android:color/black"
-                            android:textSize="18sp"
-                            android:text="我不中奖谁中奖"/>
+                            android:textSize="18sp" />
 
                         <TextView
+                            android:id="@+id/tv_shop_detail_win_prompt"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="若无人出价，将以￥452.70拍的本商品"/>
+                            android:text="若无人出价，将以￥452.70拍的本商品" />
 
                     </LinearLayout>
 
                 </LinearLayout>
 
                 <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_shop_detail_record"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 

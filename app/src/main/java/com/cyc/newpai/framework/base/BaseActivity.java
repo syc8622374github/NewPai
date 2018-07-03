@@ -8,11 +8,14 @@ import android.view.Menu;
 import android.view.View;
 
 import com.cyc.newpai.R;
+import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.widget.CustomToolbar;
+import com.google.gson.Gson;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
     protected CustomToolbar ctb_toolbar;
+    private GsonManager gsonManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -20,6 +23,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getLayoutId());
         ctb_toolbar = findViewById(R.id.ctb_toolbar);
         initToolbar();
+        gsonManager = GsonManager.getInstance();
+    }
+
+    protected Gson getGson(){
+        return  GsonManager.getGson();
     }
 
     protected void initToolbar() {
