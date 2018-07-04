@@ -14,6 +14,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -81,7 +82,8 @@ public class HomeFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 1:
-                    adapter.notifyDataSetChanged();
+                    //adapter.notifyDataSetChanged();
+                    adapter.notifyItemRangeChanged(0,adapter.getList().size()-1);
                     swipeRefreshLayout.setRefreshing(false);
                     break;
             }
@@ -121,9 +123,11 @@ public class HomeFragment extends BaseFragment {
     private void initRecyclerView(View view) {
         RecyclerView rvMain = view.findViewById(R.id.rv_main);
         adapter = new HomeRecyclerViewAdapter(rvMain);
+        ((SimpleItemAnimator)rvMain.getItemAnimator()).setSupportsChangeAnimations(false);
+        rvMain.getItemAnimator().setChangeDuration(0);// 通过设置动画执行时间为0来解决闪烁问题
         HeaderAndFooterRecyclerViewAdapter headerAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
         rvMain.addItemDecoration(new GridDivider(getContext(),2,getResources().getColor(R.color.divider)));
-        adapter.setOnClickItemListener((view1, itemBean, position) -> startActivity(new Intent(getContext(),RechargeActivity.class)));
+        adapter.setOnClickItemListener((view1, itemBean, position) -> startActivity(new Intent(getContext(),HomeShopDetailActivity.class)));
         rvMain.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
         rvMain.setLayoutManager(gridLayoutManager);
@@ -222,8 +226,8 @@ public class HomeFragment extends BaseFragment {
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             //updateData();
-            //swipeRefreshLayout.setRefreshing(false);
-            //handler.sendEmptyMessageDelayed(1,1000);
+            //            //swipeRefreshLayout.setRefreshing(false);
+            //            //handler.sendEmptyMessageDelayed(1,1000);
         });
     }
 

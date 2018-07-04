@@ -86,6 +86,7 @@
             android:gravity="center">
 
             <Button
+                android:id="@+id/btn_me_recharge"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:background="@drawable/shape_corner_up"
@@ -219,6 +220,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_me_my_property"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

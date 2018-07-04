@@ -74,7 +74,7 @@ public class HomeCategoryShoppingFragment extends BaseFragment {
         adapter = new HomeRecyclerViewAdapter(rvMain);
         HeaderAndFooterRecyclerViewAdapter headerAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
         rvMain.addItemDecoration(new GridDivider(getContext(),2,getResources().getColor(R.color.divider)));
-        adapter.setOnClickItemListener((view, itemBean, position) -> startActivity(new Intent(getContext(),RechargeActivity.class)));
+        adapter.setOnClickItemListener((view, itemBean, position) -> startActivity(new Intent(getContext(),HomeShopDetailActivity.class)));
         rvMain.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
         rvMain.setLayoutManager(gridLayoutManager);
