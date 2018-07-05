@@ -3,11 +3,14 @@ package com.cyc.newpai.ui.main;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,6 +18,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.cyc.newpai.GlideApp;
 import com.cyc.newpai.R;
+import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
 import com.cyc.newpai.framework.base.BaseActivity;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
@@ -22,11 +26,13 @@ import com.cyc.newpai.http.entity.ResponseBean;
 import com.cyc.newpai.ui.main.adapter.BidRecordRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.adapter.HistoryCompleteTransactionAdapter;
 import com.cyc.newpai.ui.main.entity.BidRecordBean;
+import com.cyc.newpai.ui.main.entity.HisTransactionBean;
 import com.cyc.newpai.ui.main.entity.ShopDetailBean;
 import com.cyc.newpai.ui.main.entity.ShopDetailResultBean;
 import com.cyc.newpai.util.DataGenerator;
 import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.widget.CustomToolbar;
+import com.cyc.newpai.widget.LoadingFooter;
 import com.google.gson.reflect.TypeToken;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -51,18 +57,68 @@ public class HomeShopDetailActivity extends BaseActivity {
     private Banner banner;
     private RecyclerView bidRecord;
     private BidRecordRecyclerViewAdapter bidRecordRecyclerViewAdapter;
+    private View head;
+
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what){
+                case 1:
+                    bidRecordRecyclerViewAdapter.setListNotify(bidRecordBean.getItemBeans());
+                    break;
+            }
+        }
+    };
+    private BidRecordBean bidRecordBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        banner = findViewById(R.id.ber_shop_detail_banner);
-        initBanner(banner);
-        tabLayout = findViewById(R.id.tl_shop_detail_tab);
-        initTab(tabLayout);
-        bidRecord = findViewById(R.id.rv_shop_detail_record);
-        initBidRecord();
+        initView();
         initData();
-        getSupportFragmentManager().beginTransaction().replace(R.id.fl_shop_detail_container,HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE)).commit();
+        //getSupportFragmentManager().beginTransaction().replace(R.id.fl_shop_detail_container,HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE)).commit();
+    }
+
+    private void initView() {
+        initHeader();
+        initList();
+    }
+
+    private void initList() {
+        RecyclerView rvList = findViewById(R.id.rv_shop_detail_list);
+        rvList.setLayoutManager(new LinearLayoutManager(this));
+        HistoryCompleteTransactionAdapter adapter = new HistoryCompleteTransactionAdapter(rvList,HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE);
+        HeaderAndFooterRecyclerViewAdapter headerAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
+        headerAndFooterRecyclerViewAdapter.addHeaderView(head);
+        headerAndFooterRecyclerViewAdapter.addFooterView(getFootView());
+        List<HisTransactionBean> data = new ArrayList<>();
+        data.add(new HisTransactionBean(R.drawable.ic_avator));
+        data.add(new HisTransactionBean(R.drawable.ic_avator));
+        data.add(new HisTransactionBean(R.drawable.ic_avator));
+        data.add(new HisTransactionBean(R.drawable.ic_avator));
+        data.add(new HisTransactionBean(R.drawable.ic_avator));
+        adapter.setListNotify(data);
+        rvList.setAdapter(headerAndFooterRecyclerViewAdapter);
+    }
+
+    protected View getFootView() {
+        LoadingFooter mFooterView = null;
+        if (mFooterView == null) {
+            mFooterView = new LoadingFooter(this);
+            mFooterView.setState(LoadingFooter.State.Loading);
+        }
+        return mFooterView;
+    }
+
+    private void initHeader() {
+        head = LayoutInflater.from(this).inflate(R.layout.activity_shop_detail_head_item,null);
+        banner = head.findViewById(R.id.ber_shop_detail_banner);
+        initBanner(banner);
+        tabLayout = head.findViewById(R.id.tl_shop_detail_tab);
+        initTab(tabLayout);
+        bidRecord = head.findViewById(R.id.rv_shop_detail_record);
+        initBidRecord();
     }
 
     private void initTab(TabLayout mTabLayout) {
@@ -102,7 +158,7 @@ public class HomeShopDetailActivity extends BaseActivity {
                 break;
         }
         if(fragment!=null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fl_shop_detail_container,fragment).commit();
+            //getSupportFragmentManager().beginTransaction().replace(R.id.fl_shop_detail_container,fragment).commit();
         }
     }
 
@@ -157,13 +213,13 @@ public class HomeShopDetailActivity extends BaseActivity {
     }
 
     private void updateBidRecordView(ResponseBean<BidRecordBean> data) {
-        BidRecordBean bidRecordBean = data.getResult();
-        bidRecordRecyclerViewAdapter.setListNotify(bidRecordBean.getItemBeans());
+        bidRecordBean = data.getResult();
+        //bidRecordRecyclerViewAdapter.setListNotify(bidRecordBean.getItemBeans());
+        handler.sendEmptyMessage(1);
     }
 
     private void updateDetailView(ShopDetailBean data) {
         banner.setImages(data.getImages());
-
     }
 
     private void initBanner(Banner banner) {

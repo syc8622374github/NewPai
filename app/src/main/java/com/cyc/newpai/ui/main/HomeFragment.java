@@ -23,19 +23,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.cyc.newpai.GlideApp;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
+import com.cyc.newpai.http.entity.ResponseBean;
 import com.cyc.newpai.ui.common.RechargeActivity;
 import com.cyc.newpai.ui.main.adapter.GridDivider;
 import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
+import com.cyc.newpai.ui.main.entity.BannerDataBean;
+import com.cyc.newpai.ui.main.entity.BannerResultBean;
 import com.cyc.newpai.ui.main.entity.HomeBean;
+import com.cyc.newpai.ui.main.entity.HomePageBean;
 import com.cyc.newpai.ui.main.entity.HomeWindowBean;
 import com.cyc.newpai.util.RecyclerViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
 import com.cyc.newpai.widget.MyGridView;
+import com.google.gson.reflect.TypeToken;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.loader.ImageLoader;
@@ -62,7 +69,7 @@ public class HomeFragment extends BaseFragment {
     private Banner banner;
     private BaseFragment fragment;
     private View headView;
-    private List<HomeBean> beanList;
+    private List<HomeBean> beanList = new ArrayList<>();
     private HomeRecyclerViewAdapter adapter;
 
     public static HomeFragment newInstance() {
@@ -72,7 +79,7 @@ public class HomeFragment extends BaseFragment {
         return fragment;
     }
 
-    public class MyHandler extends Handler{
+    public class MyHandler extends Handler {
 
         public MyHandler(Looper looper) {
             super(looper);
@@ -80,10 +87,10 @@ public class HomeFragment extends BaseFragment {
 
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
                     //adapter.notifyDataSetChanged();
-                    adapter.notifyItemRangeChanged(0,adapter.getList().size()-1);
+                    adapter.notifyItemRangeChanged(0, adapter.getList().size());
                     swipeRefreshLayout.setRefreshing(false);
                     break;
             }
@@ -92,7 +99,7 @@ public class HomeFragment extends BaseFragment {
 
     public MyHandler handler = new MyHandler(Looper.getMainLooper());
 
-    private String[] shopCategorys = new String[]{"正在热拍","我在拍","我的收藏"};
+    private String[] shopCategorys = new String[]{"正在热拍", "我在拍", "我的收藏"};
 
     private HomeViewModel mViewModel;
 
@@ -114,44 +121,108 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initHeader() {
-        headView = LayoutInflater.from(getContext()).inflate(R.layout.home_fragment_head_item,null);
+        headView = LayoutInflater.from(getContext()).inflate(R.layout.home_fragment_head_item, null);
         initBanner(headView);
         initWindow(headView);
         initTab(headView);
+        //initData();
+    }
+
+    private void initData() {
+        Map<String, String> param = new HashMap<>();
+        param.put("type", "1");
+        param.put("p", "1");
+        OkHttpManager.getInstance(getActivity()).postAynsHttp(HttpUrl.HTTP_INDEX_URL, param, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String str = response.body().string();
+                    ResponseBean<HomePageBean> responseBean = getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
+                    }.getType());
+                    if(responseBean.getCode()==200&&responseBean.getResult()!=null){
+                        updateShopData(responseBean.getResult());
+                    }
+                }
+            }
+        });
+
+        OkHttpManager.getInstance(getActivity()).postAynsHttp(HttpUrl.HTTP_BANNER_URL, null, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String str = response.body().string();
+                    try {
+                        ResponseBean<BannerResultBean<BannerDataBean>> responseBean = getGson().fromJson(str, new TypeToken<ResponseBean<BannerResultBean<BannerDataBean>>>() {
+                        }.getType());
+                        if(responseBean.getCode()==200&&responseBean.getResult()!=null&&responseBean.getResult().getList()!=null){
+                            updateBannerData(responseBean.getResult().getList());
+                        }
+                    }catch (Exception e){
+                        Log.e(TAG,e.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
+    private void updateBannerData(List<BannerDataBean> result) {
+        banner.setImages(result);
+    }
+
+    private void updateShopData(HomePageBean bean) {
+        if(bean.getList()!=null){
+            beanList.clear();
+            beanList.addAll(bean.getList());
+            //handler.sendEmptyMessage(1);
+        }
     }
 
     private void initRecyclerView(View view) {
         RecyclerView rvMain = view.findViewById(R.id.rv_main);
         adapter = new HomeRecyclerViewAdapter(rvMain);
-        ((SimpleItemAnimator)rvMain.getItemAnimator()).setSupportsChangeAnimations(false);
+        ((SimpleItemAnimator) rvMain.getItemAnimator()).setSupportsChangeAnimations(false);
         rvMain.getItemAnimator().setChangeDuration(0);// 通过设置动画执行时间为0来解决闪烁问题
         HeaderAndFooterRecyclerViewAdapter headerAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
-        rvMain.addItemDecoration(new GridDivider(getContext(),2,getResources().getColor(R.color.divider)));
-        adapter.setOnClickItemListener((view1, itemBean, position) -> startActivity(new Intent(getContext(),HomeShopDetailActivity.class)));
+        rvMain.addItemDecoration(new GridDivider(getContext(), 2, getResources().getColor(R.color.divider)));
+        adapter.setOnClickItemListener((view1, itemBean, position) -> startActivity(new Intent(getContext(), HomeShopDetailActivity.class)));
         rvMain.setHasFixedSize(true);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(),2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         rvMain.setLayoutManager(gridLayoutManager);
         rvMain.setAdapter(headerAndFooterRecyclerViewAdapter);
         if (getFootView() != null) {
             RecyclerViewUtil.addFootView(rvMain, getFootView());
         }
-        RecyclerViewUtil.addHearView(rvMain,headView);
+        RecyclerViewUtil.addHearView(rvMain, headView);
         rvMain.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (RecyclerView.SCROLL_STATE_IDLE == newState) {
                     //滑动停止
-                    boolean isBottom = gridLayoutManager.findLastCompletelyVisibleItemPosition()>= adapter.getItemCount();
+                    boolean isBottom = gridLayoutManager.findLastCompletelyVisibleItemPosition() >= adapter.getItemCount();
                     if (isBottom) {
-                        if(!isLoadMore){
+                        if (!isLoadMore) {
                             getView().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
+                                    List<HomeBean> beanList = new ArrayList<>();
+                                    beanList.add(new HomeBean(10,"500"));
+                                    beanList.add(new HomeBean(9,"500"));
+                                    beanList.add(new HomeBean(8,"500"));
                                     adapter.addListNotify(beanList);
                                     isLoadMore = false;
                                 }
-                            },2000);
+                            }, 2000);
                             isLoadMore = true;
                         }
                     }
@@ -164,28 +235,30 @@ public class HomeFragment extends BaseFragment {
                 }
             }
         });
-        beanList = new ArrayList<>();
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(10,"500"));
+        beanList.add(new HomeBean(9,"500"));
+        beanList.add(new HomeBean(8,"500"));
+        beanList.add(new HomeBean(7,"500"));
+        beanList.add(new HomeBean(6,"500"));
+        beanList.add(new HomeBean(5,"500"));
+        beanList.add(new HomeBean(4,"500"));
+        beanList.add(new HomeBean(3,"500"));
+        beanList.add(new HomeBean(2,"500"));
         adapter.setListNotify(beanList);
+        startRefreshData();
+    }
+
+    private void startRefreshData() {
         Timer timer = new Timer();
-        Random random = new Random();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                for(HomeBean bean : beanList){
-                    bean.setCountdown(bean.getCountdown()-1);
-                    bean.setPrice(bean.getPrice()+random.nextInt(10));
+                for (HomeBean bean : beanList) {
+                    bean.setLeft_second(bean.getLeft_second()-1);
                 }
                 handler.sendEmptyMessage(1);
             }
-        },1000,1000);
+        }, 1000, 1000);
     }
 
     protected View getFootView() {
@@ -216,7 +289,7 @@ public class HomeFragment extends BaseFragment {
             }
         });
         // 提供自定义的布局添加Tab
-        for(String title : shopCategorys){
+        for (String title : shopCategorys) {
             tabLayout.addTab(tabLayout.newTab().setText(title));
         }
     }
@@ -231,38 +304,20 @@ public class HomeFragment extends BaseFragment {
         });
     }
 
-    private void onTabItemSelected(int position){
-        fragment = null;
-        switch (position){
-            case 0:
-                fragment = HomeCategoryShoppingFragment.newInstance();
-                break;
-            case 1:
-                fragment = HomeCategoryShoppingFragment.newInstance();
-                break;
-            case 2:
-                fragment = HomeCategoryShoppingFragment.newInstance();
-                break;
-        }
-        if(fragment !=null) {
-            //getChildFragmentManager().beginTransaction().replace(R.id.fl_home_shop_content, fragment).commit();
-        }
-    }
-
     private void initWindow(View view) {
         List<HomeWindowBean> beanList = new ArrayList<>();
         beanList.add(new HomeWindowBean("师徒分享", R.drawable.ic_home_window_share));
-        beanList.add(new HomeWindowBean("大转盘",R.drawable.ic_home_window_turntable));
-        beanList.add(new HomeWindowBean("每日签到",R.drawable.ic_home_window_sign));
-        beanList.add(new HomeWindowBean("充值",R.drawable.ic_home_window_recharge));
-        beanList.add(new HomeWindowBean("幸运晒单",R.drawable.ic_home_window_luckytime));
+        beanList.add(new HomeWindowBean("大转盘", R.drawable.ic_home_window_turntable));
+        beanList.add(new HomeWindowBean("每日签到", R.drawable.ic_home_window_sign));
+        beanList.add(new HomeWindowBean("充值", R.drawable.ic_home_window_recharge));
+        beanList.add(new HomeWindowBean("幸运晒单", R.drawable.ic_home_window_luckytime));
 
         int columns = 5;
-        int rows = (int) Math.ceil(beanList.size()/columns);
+        int rows = (int) Math.ceil(beanList.size() / columns);
         LinearLayout windowRoot = view.findViewById(R.id.ll_window_root);
-        for(int i=0;i<rows;i++){
+        for (int i = 0; i < rows; i++) {
             LinearLayout child = (LinearLayout) windowRoot.getChildAt(i);
-            if(child==null){
+            if (child == null) {
                 LinearLayout llChild = new LinearLayout(getContext());
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 llChild.setLayoutParams(layoutParams);
@@ -270,16 +325,16 @@ public class HomeFragment extends BaseFragment {
                 child = llChild;
                 windowRoot.addView(child);
             }
-            for(int j=0;j<columns;j++){
+            for (int j = 0; j < columns; j++) {
                 View childItem = child.getChildAt(j);
-                if(childItem==null){
-                    childItem = View.inflate(getContext(),R.layout.home_window_item,null);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT,1.0f);
+                if (childItem == null) {
+                    childItem = View.inflate(getContext(), R.layout.home_window_item, null);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
                     childItem.setLayoutParams(layoutParams);
                     child.addView(childItem);
                 }
-                ((ImageView)childItem.findViewById(R.id.iv_home_window_icon)).setImageResource(beanList.get(j+i*j).getImageRes());
-                ((TextView)childItem.findViewById(R.id.tv_home_window_title)).setText(beanList.get(j+i*j).getTitle());
+                ((ImageView) childItem.findViewById(R.id.iv_home_window_icon)).setImageResource(beanList.get(j + i * j).getImageRes());
+                ((TextView) childItem.findViewById(R.id.tv_home_window_title)).setText(beanList.get(j + i * j).getTitle());
             }
         }
     }
@@ -300,10 +355,10 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                switch(state){
+                switch (state) {
                     case 1:
                         swipeRefreshLayout.setEnabled(false);
-                    break;
+                        break;
                     default:
                         swipeRefreshLayout.setEnabled(true);
                         break;
@@ -312,10 +367,14 @@ public class HomeFragment extends BaseFragment {
         });
         banner.isAutoPlay(true);
         banner.setImageLoader(new ImageLoader() {
+
             @Override
             public void displayImage(Context context, Object path, ImageView imageView) {
-                //Glide.with(context).load(path).into(imageView);
-                imageView.setBackgroundResource(R.drawable.test111);
+                String pathStr = "";
+                if(path instanceof BannerDataBean){
+                    pathStr = ((BannerDataBean) path).getImg_url();
+                }
+                GlideApp.with(context).load(pathStr).placeholder(R.drawable.test111).into(imageView);
             }
         });
         List<String> images = new ArrayList<>();
@@ -327,10 +386,6 @@ public class HomeFragment extends BaseFragment {
         banner.setImages(images);
         banner.start();
         banner.startAutoPlay();
-    }
-
-    private void updateBanner(List<String> images) {
-        banner.update(images);
     }
 
     @Override

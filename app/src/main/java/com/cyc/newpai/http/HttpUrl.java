@@ -13,8 +13,19 @@ public class HttpUrl {
     /*-------------------------------------------------------------------*/
 
     /**
+     * 其他
+     */
+    public static final String HTTP_BANNER_URL = HTTP_SERVICE_URL + "/Api/System/banner"; //banner
+
+    public static final String HTTP_HEADLINE_URL = HTTP_SERVICE_URL + "/Api/System/toutiao";//头条
+
+    /*-------------------------------------------------------------------*/
+
+    /**
      * 竞拍模块接口
      */
+    public static final String HTTP_INDEX_URL = HTTP_SERVICE_URL + "/Api/Jingpai/index";// 竞拍首页
+
     public static final String HTTP_SHOP_DETAIL_URL = HTTP_SERVICE_URL + "/Api/Jingpai/detail";//商品详情
 
     public static final String HTTP_BID_URL = HTTP_SERVICE_URL + "/Api/jingpai/bid";//竞拍出价
@@ -29,6 +40,8 @@ public class HttpUrl {
      * 个人中心
      */
     public static final String HTTP_REGISTER＿URL = HTTP_SERVICE_URL + "/Api/Member/register";//注册
+
+    public static final String HTTP_LOGIN_URL = HTTP_SERVICE_URL + "/Api/Member/login";//登录
 
     /*-------------------------------------------------------------------*/
 

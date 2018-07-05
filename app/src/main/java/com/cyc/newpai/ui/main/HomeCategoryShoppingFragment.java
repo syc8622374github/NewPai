@@ -83,14 +83,14 @@ public class HomeCategoryShoppingFragment extends BaseFragment {
             RecyclerViewUtil.addFootView(rvMain, getFootView());
         }
         beanList = new ArrayList<>();
+        /*beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
         beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
         beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
         beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
         beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
         beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
         beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
-        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));
+        beanList.add(new HomeBean(R.drawable.shop_iphonex,10,"暂未拍得",100));*/
         adapter.setListNotify(beanList);
         Timer timer = new Timer();
         Random random = new Random();

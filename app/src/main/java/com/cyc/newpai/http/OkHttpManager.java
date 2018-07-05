@@ -53,11 +53,13 @@ public class OkHttpManager {
     }
 
     public void postAynsHttp(String url,Map<String,String> params,Callback callback){
-        Iterator<Map.Entry<String,String>> iterator = params.entrySet().iterator();
         String paramsStr = "";
-        while (iterator.hasNext()){
-            Map.Entry<String,String>  entry = iterator.next();
-            paramsStr += entry.getKey()+"="+entry.getValue()+"&";
+        if(params!=null){
+            Iterator<Map.Entry<String,String>> iterator = params.entrySet().iterator();
+            while (iterator.hasNext()){
+                Map.Entry<String,String>  entry = iterator.next();
+                paramsStr += entry.getKey()+"="+entry.getValue()+"&";
+            }
         }
         RequestBody requestBody = RequestBody.create(MEDIA_TYPE_FORM,paramsStr);
         Request.Builder builder = new Request.Builder().url(url);
