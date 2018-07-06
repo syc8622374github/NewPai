@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.cyc.newpai.GlideApp;
@@ -42,6 +43,7 @@ import com.cyc.newpai.ui.main.entity.HomeWindowBean;
 import com.cyc.newpai.util.RecyclerViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
 import com.cyc.newpai.widget.MyGridView;
+import com.cyc.newpai.widget.ToastManager;
 import com.google.gson.reflect.TypeToken;
 import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
@@ -71,6 +73,7 @@ public class HomeFragment extends BaseFragment {
     private View headView;
     private List<HomeBean> beanList = new ArrayList<>();
     private HomeRecyclerViewAdapter adapter;
+    private int pageSize = 10;
 
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -79,12 +82,7 @@ public class HomeFragment extends BaseFragment {
         return fragment;
     }
 
-    public class MyHandler extends Handler {
-
-        public MyHandler(Looper looper) {
-            super(looper);
-        }
-
+    public Handler handler = new Handler(Looper.getMainLooper()){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -95,9 +93,7 @@ public class HomeFragment extends BaseFragment {
                     break;
             }
         }
-    }
-
-    public MyHandler handler = new MyHandler(Looper.getMainLooper());
+    };
 
     private String[] shopCategorys = new String[]{"正在热拍", "我在拍", "我的收藏"};
 
@@ -125,52 +121,35 @@ public class HomeFragment extends BaseFragment {
         initBanner(headView);
         initWindow(headView);
         initTab(headView);
-        //initData();
+        initData();
     }
 
     private void initData() {
         Map<String, String> param = new HashMap<>();
         param.put("type", "1");
+        param.put("pagesize", String.valueOf(pageSize));
         param.put("p", "1");
-        OkHttpManager.getInstance(getActivity()).postAynsHttp(HttpUrl.HTTP_INDEX_URL, param, new Callback() {
+        OkHttpManager.getInstance(getActivity()).postNewPaiInterfaceAynsHttp(HttpUrl.HTTP_INDEX_URL, param, new OkHttpManager.HttpCallBack<HomePageBean>() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailed(Call call, IOException e) {
 
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String str = response.body().string();
-                    ResponseBean<HomePageBean> responseBean = getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
-                    }.getType());
-                    if(responseBean.getCode()==200&&responseBean.getResult()!=null){
-                        updateShopData(responseBean.getResult());
-                    }
-                }
+            public void onSucessed(HomePageBean homePageBean) {
+                updateShopData(homePageBean);
             }
         });
 
-        OkHttpManager.getInstance(getActivity()).postAynsHttp(HttpUrl.HTTP_BANNER_URL, null, new Callback() {
+        OkHttpManager.getInstance(getActivity()).postNewPaiInterfaceAynsHttp(HttpUrl.HTTP_BANNER_URL, null, new OkHttpManager.HttpCallBack<BannerResultBean<BannerDataBean>>() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailed(Call call, IOException e) {
 
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String str = response.body().string();
-                    try {
-                        ResponseBean<BannerResultBean<BannerDataBean>> responseBean = getGson().fromJson(str, new TypeToken<ResponseBean<BannerResultBean<BannerDataBean>>>() {
-                        }.getType());
-                        if(responseBean.getCode()==200&&responseBean.getResult()!=null&&responseBean.getResult().getList()!=null){
-                            updateBannerData(responseBean.getResult().getList());
-                        }
-                    }catch (Exception e){
-                        Log.e(TAG,e.getMessage());
-                    }
-                }
+            public void onSucessed(BannerResultBean<BannerDataBean> bannerDataBeanBannerResultBean) {
+                updateBannerData(bannerDataBeanBannerResultBean.getList());
             }
         });
     }
@@ -183,7 +162,7 @@ public class HomeFragment extends BaseFragment {
         if(bean.getList()!=null){
             beanList.clear();
             beanList.addAll(bean.getList());
-            //handler.sendEmptyMessage(1);
+            handler.sendEmptyMessage(1);
         }
     }
 
@@ -235,7 +214,7 @@ public class HomeFragment extends BaseFragment {
                 }
             }
         });
-        beanList.add(new HomeBean(10,"500"));
+        /*beanList.add(new HomeBean(10,"500"));
         beanList.add(new HomeBean(9,"500"));
         beanList.add(new HomeBean(8,"500"));
         beanList.add(new HomeBean(7,"500"));
@@ -243,7 +222,7 @@ public class HomeFragment extends BaseFragment {
         beanList.add(new HomeBean(5,"500"));
         beanList.add(new HomeBean(4,"500"));
         beanList.add(new HomeBean(3,"500"));
-        beanList.add(new HomeBean(2,"500"));
+        beanList.add(new HomeBean(2,"500"));*/
         adapter.setListNotify(beanList);
         startRefreshData();
     }
@@ -301,6 +280,7 @@ public class HomeFragment extends BaseFragment {
             //updateData();
             //            //swipeRefreshLayout.setRefreshing(false);
             //            //handler.sendEmptyMessageDelayed(1,1000);
+            initData();
         });
     }
 
@@ -378,11 +358,11 @@ public class HomeFragment extends BaseFragment {
             }
         });
         List<String> images = new ArrayList<>();
+        /*images.add("111");
         images.add("111");
         images.add("111");
         images.add("111");
-        images.add("111");
-        images.add("111");
+        images.add("111");*/
         banner.setImages(images);
         banner.start();
         banner.startAutoPlay();

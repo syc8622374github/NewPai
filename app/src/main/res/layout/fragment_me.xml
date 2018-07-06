@@ -15,6 +15,7 @@
 
 
         <ImageView
+            android:id="@+id/tv_me_avator"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:src="@drawable/ic_me_avator_default" />
@@ -23,7 +24,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="11111111"
             android:textColor="@android:color/white" />
 
     </LinearLayout>

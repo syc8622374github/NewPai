@@ -165,43 +165,27 @@ public class HomeShopDetailActivity extends BaseActivity {
     private void initData() {
         Map<String,String> params = new HashMap<>();
         params.put("id","1");
-        OkHttpManager.getInstance(this).postAynsHttp(HttpUrl.HTTP_SHOP_DETAIL_URL, params, new Callback() {
+        OkHttpManager.getInstance(this).postNewPaiInterfaceAynsHttp(HttpUrl.HTTP_SHOP_DETAIL_URL, params, new OkHttpManager.HttpCallBack<ShopDetailResultBean>() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailed(Call call, IOException e) {
 
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(response.isSuccessful()){
-                    String str = response.body().string();
-                    ResponseBean<ShopDetailResultBean> responseBean = getGson().fromJson(str,new TypeToken<ResponseBean<ShopDetailResultBean>>() {
-                    }.getType());
-                    if(responseBean.getCode()==200&&responseBean.getResult()!=null){
-                        ShopDetailBean data = responseBean.getResult().getItem();
-                        updateDetailView(data);
-                    }
-                    //Log.i(TAG,data.toString());
-                }
+            public void onSucessed(ShopDetailResultBean shopDetailResultBean) {
+                updateDetailView(shopDetailResultBean.getItem());
             }
         });
         params.put("shopid","1");
-        OkHttpManager.getInstance(this).postAynsHttp(HttpUrl.HTTP_BID_RECORD_URL, params, new Callback() {
+        OkHttpManager.getInstance(this).postNewPaiInterfaceAynsHttp(HttpUrl.HTTP_BID_RECORD_URL, params, new OkHttpManager.HttpCallBack<BidRecordBean>() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailed(Call call, IOException e) {
 
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(response.isSuccessful()){
-                    String str = response.body().string();
-                    ResponseBean<BidRecordBean> data = getGson().fromJson(str,new TypeToken<ResponseBean<BidRecordBean>>() {
-                    }.getType());
-                    if(data.getCode()==200&&data.getResult()!=null){
-                        updateBidRecordView(data);
-                    }
-                }
+            public void onSucessed(BidRecordBean bidRecordBean) {
+                updateBidRecordView(bidRecordBean);
             }
         });
     }
@@ -212,8 +196,8 @@ public class HomeShopDetailActivity extends BaseActivity {
         bidRecord.setAdapter(bidRecordRecyclerViewAdapter);
     }
 
-    private void updateBidRecordView(ResponseBean<BidRecordBean> data) {
-        bidRecordBean = data.getResult();
+    private void updateBidRecordView(BidRecordBean data) {
+        bidRecordBean = data;
         //bidRecordRecyclerViewAdapter.setListNotify(bidRecordBean.getItemBeans());
         handler.sendEmptyMessage(1);
     }

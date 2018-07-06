@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <com.cyc.newpai.widget.CustomToolbar
+        android:id="@+id/ctb_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <EditText
+            android:layout_width="match_parent"
+            android:hint="请输入手机号码"
+            android:layout_height="50dp"
+            android:textSize="16sp"
+            android:background="@drawable/shape_border_bottom_line"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_height="50dp"
+            android:background="@drawable/shape_border_bottom_line"
+            android:layout_width="match_parent">
+
+            <EditText
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:hint="请输入验证码"
+                android:layout_height="match_parent"
+                android:textSize="16sp"
+                android:textColorHint="@color/color_default_gray_font"
+                android:background="@null"/>
+
+            <TextView
+                android:gravity="center"
+                android:text="获取验证码"
+                android:textSize="16sp"
+                android:textColorHint="@color/color_default_gray_font"
+                android:textColor="@color/color_default_gray_font"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_height="50dp"
+            android:background="@drawable/shape_border_bottom_line"
+            android:layout_width="match_parent">
+
+            <EditText
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:hint="请输入验证码"
+                android:layout_height="match_parent"
+                android:textSize="16sp"
+                android:textColorHint="@color/color_default_gray_font"
+                android:background="@null"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@mipmap/ic_launcher_round"/>
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="重置密码"
+            android:background="@drawable/shape_corner_up"
+            android:textColor="@android:color/white"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:textSize="12sp"
+                android:text="注册表示同意"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@color/colorPrimary"
+                android:text="@string/register_user_protocol"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

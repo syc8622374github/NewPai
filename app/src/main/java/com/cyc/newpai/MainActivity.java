@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity {
         });
         // 提供自定义的布局添加Tab
         for(int i=0;i<4;i++){
-            mTabLayout.addTab(mTabLayout.newTab().setCustomView(DataGenerator.getTabView(this,i)));
+            mTabLayout.addTab(mTabLayout.newTab().setCustomView(DataGenerator.getMainBottomTabView(this,i)));
         }
     }
 
@@ -122,6 +122,7 @@ public class MainActivity extends BaseActivity {
             ctb_toolbar.setRightAction1(0,null);
         }else if(fragment instanceof MeFragment){
             ctb_toolbar.divider.setVisibility(View.GONE);
+            ctb_toolbar.setTitle("");
             ctb_toolbar.setLeftAction1(R.drawable.ic_me_setting,null);
             ctb_toolbar.setRightAction1(R.drawable.ic_notification,null);
         }else{
@@ -129,6 +130,7 @@ public class MainActivity extends BaseActivity {
             ctb_toolbar.setLeftAction1(R.drawable.ic_search,null);
             ctb_toolbar.setRightAction1(R.drawable.ic_notification,null);
         }
+        ctb_toolbar.setTitle(getTitle().toString());
     }
 
 }

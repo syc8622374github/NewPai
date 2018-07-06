@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.ui.common.RechargeActivity;
+import com.cyc.newpai.ui.user.LoginActivity;
 
 public class MeFragment extends BaseFragment implements View.OnClickListener {
 
@@ -39,6 +40,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         llMyProperty.setOnClickListener(this);
         Button btnRecharge = view.findViewById(R.id.btn_me_recharge);
         btnRecharge.setOnClickListener(this);
+        view.findViewById(R.id.tv_me_avator).setOnClickListener(this);
     }
 
     public static String getFlag() {
@@ -53,6 +55,9 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.btn_me_recharge:
                 startActivity(new Intent(getContext(), RechargeActivity.class));
+                break;
+            case R.id.tv_me_avator:
+                startActivity(new Intent(getContext(), LoginActivity.class));
                 break;
         }
     }

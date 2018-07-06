@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/test111"/>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tl_login_tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabIndicatorHeight="0dp"/>
+
+        <LinearLayout
+            android:id="@+id/ll_quick_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/et_login_phone"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:hint="请输入手机号码"
+                android:textColorHint="@color/color_default_gray_font"
+                android:textSize="16sp"
+                android:text="13188637101"
+                android:background="@drawable/shape_border_bottom_line"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:background="@drawable/shape_border_bottom_line"
+                android:layout_height="60dp">
+
+                <EditText
+                    android:id="@+id/et_login_verification_code"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:hint="请输入验证码"
+                    android:background="@null"
+                    android:textColorHint="@color/color_default_gray_font"
+                    android:textSize="16sp"/>
+
+                <EditText
+                    android:id="@+id/et_login_pwd"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:hint="请输入密码"
+                    android:text="13188637101"
+                    android:background="@null"
+                    android:textColorHint="@color/color_default_gray_font"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tv_login_send_check_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:textColor="@color/color_default_gray_font"
+                    android:text="请输入验证码"/>
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:text="登录"
+                android:onClick="clickEvent"
+                android:background="@drawable/shape_corner_up"
+                android:textColor="@android:color/white"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_login_reset_pwd"
+                    android:gravity="center_vertical"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/colorPrimary"
+                    android:text="忘记密码"
+                    android:onClick="clickEvent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/tv_login_register"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:text="账号注册"
+                    android:onClick="clickEvent"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

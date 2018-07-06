@@ -7,6 +7,11 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -27,12 +32,17 @@
         <activity
             android:name=".ui.main.HomeShopDetailActivity"
             android:label="@string/title_shop_detail" />
-        <activity android:name=".ui.common.RechargeActivity"
+        <activity
+            android:name=".ui.common.RechargeActivity"
             android:label="充值"
-            android:windowSoftInputMode="adjustResize|stateHidden"></activity>
-
-        <activity android:name=".ui.me.MyPropertyActivity"
-            android:label="我的财产"></activity>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ui.me.MyPropertyActivity"
+            android:label="我的财产" />
+        <activity
+            android:name=".ui.user.RegisterAndResetPasswdActivity"/>
+        <activity android:name=".ui.user.LoginActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"/>
     </application>
 
 </manifest>
