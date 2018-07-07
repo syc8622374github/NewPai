@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">NewPai</string>
+    <string name="app_name">十秒拍</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
@@ -29,5 +29,5 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="register_user_protocol">十秒拍用户协议</string>
+    <string name="register_user_protocol">《十秒拍用户协议》</string>
 </resources>

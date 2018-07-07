@@ -18,10 +18,14 @@
 
 
         <EditText
+            android:id="@+id/et_register_phone"
             android:layout_width="match_parent"
             android:hint="请输入手机号码"
-            android:layout_height="50dp"
+            android:singleLine="true"
+            android:maxLength="11"
             android:textSize="16sp"
+            android:inputType="number"
+            android:layout_height="50dp"
             android:background="@drawable/shape_border_bottom_line"/>
 
         <LinearLayout
@@ -31,15 +35,20 @@
             android:layout_width="match_parent">
 
             <EditText
+                android:id="@+id/et_register_code"
                 android:layout_weight="1"
                 android:layout_width="0dp"
                 android:hint="请输入验证码"
-                android:layout_height="match_parent"
+                android:inputType="number"
+                android:singleLine="true"
+                android:maxLength="11"
                 android:textSize="16sp"
+                android:layout_height="match_parent"
                 android:textColorHint="@color/color_default_gray_font"
                 android:background="@null"/>
 
             <TextView
+                android:id="@+id/tv_send_sms"
                 android:gravity="center"
                 android:text="获取验证码"
                 android:textSize="16sp"
@@ -57,22 +66,31 @@
             android:layout_width="match_parent">
 
             <EditText
+                android:id="@+id/et_register_pwd"
                 android:layout_weight="1"
                 android:layout_width="0dp"
-                android:hint="请输入验证码"
+                android:hint="请输入密码"
+                android:singleLine="true"
+                android:maxLength="11"
+                android:inputType="textPassword"
                 android:layout_height="match_parent"
                 android:textSize="16sp"
                 android:textColorHint="@color/color_default_gray_font"
                 android:background="@null"/>
 
             <ImageView
+                android:id="@+id/iv_visible_pwd_logo"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@mipmap/ic_launcher_round"/>
+                android:paddingLeft="20dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="20dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_pwd_invisible"/>
 
         </LinearLayout>
 
         <Button
+            android:id="@+id/btn_register_send"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
@@ -82,10 +100,10 @@
             />
 
         <LinearLayout
+            android:id="@+id/ll_user_protocol"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:gravity="center"
-            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <TextView
@@ -95,8 +113,10 @@
                 android:layout_height="wrap_content" />
 
             <TextView
+                android:id="@+id/tv_user_protocol"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:textSize="12sp"
                 android:textColor="@color/colorPrimary"
                 android:text="@string/register_user_protocol"/>

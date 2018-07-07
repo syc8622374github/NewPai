@@ -28,7 +28,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class OkHttpManager<T> {
+public class OkHttpManager {
 
     private static final MediaType  MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
     private static final MediaType  MEDIA_TYPE_FORM = MediaType.parse("application/x-www-form-urlencoded");
@@ -40,11 +40,6 @@ public class OkHttpManager<T> {
     private Gson gson;
 
     private Handler handler = new Handler();
-
-    public interface HttpCallBack<T>{
-        void onFailed(Call call, IOException e);
-        void onSucessed(T t);
-    }
 
     private OkHttpManager(Context context) {
         //初始化OkHttpClient
@@ -73,7 +68,7 @@ public class OkHttpManager<T> {
         return inst;
     }
 
-    public void postNewPaiInterfaceAynsHttp(String url,Map<String,String> params,HttpCallBack<T> callback){
+    public void postAsyncHttp(String url,Map<String,String> params,Callback callback){
         String paramsStr = "";
         if(params!=null){
             Iterator<Map.Entry<String,String>> iterator = params.entrySet().iterator();
@@ -83,40 +78,9 @@ public class OkHttpManager<T> {
             }
         }
         RequestBody requestBody = RequestBody.create(MEDIA_TYPE_FORM,paramsStr);
-        Request.Builder builder = new Request.Builder().url(HttpUrl.HTTP_SERVICE_URL+url);
+        Request.Builder builder = new Request.Builder().url(url);
         Request request = addHeaders(builder,getHeaders()).post(requestBody).build();
-        mOkHttpClient.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                ToastManager.showToast(context,"网络请求失败",Toast.LENGTH_LONG);
-                callback.onFailed(call,e);
-                Log.e(TAG,e.getMessage());
-            }
-
-            @Override
-            public void onResponse(Call call, Response response){
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if(response.isSuccessful()){
-                                String str = response.body().string();
-                                ResponseBean<T> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<T>>() {
-                                }.getType());
-                                Looper.loop();
-                                if(responseBean.getCode()==200&&responseBean.getResult()!=null){
-                                    callback.onSucessed(responseBean.getResult());
-                                    return;
-                                }
-                            }
-                            ToastManager.showToast(context,"数据加载失败", Toast.LENGTH_LONG);
-                        }catch (Exception e){
-                            Log.e(TAG,e.getMessage());
-                        }
-                    }
-                });
-            }
-        });
+        mOkHttpClient.newCall(request).enqueue(callback);
     }
 
     public Map<String,String> getHeaders(){
@@ -126,10 +90,10 @@ public class OkHttpManager<T> {
 
     private Map<String, String> defaultHeader() {
         Map<String,String> headers = new HashMap<>();
-        /*headers.put("uid",HttpUrl.UID);
-        headers.put("token",HttpUrl.TOKEN);*/
-        headers.put("uid", SharePreUtil.getPref(context, Constant.UID,""));
-        headers.put("token",SharePreUtil.getPref(context, Constant.TOKEN,""));
+        headers.put("uid",HttpUrl.UID);
+        headers.put("token",HttpUrl.TOKEN);
+//        headers.put("uid", SharePreUtil.getPref(context, Constant.UID,""));
+//        headers.put("token",SharePreUtil.getPref(context, Constant.TOKEN,""));
         return headers;
     }
 

@@ -33,13 +33,16 @@ import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
 import com.cyc.newpai.http.entity.ResponseBean;
 import com.cyc.newpai.ui.common.RechargeActivity;
+import com.cyc.newpai.ui.common.entity.TopLineBean;
 import com.cyc.newpai.ui.main.adapter.GridDivider;
 import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.entity.BannerDataBean;
 import com.cyc.newpai.ui.main.entity.BannerResultBean;
+import com.cyc.newpai.ui.main.entity.BidRecordBean;
 import com.cyc.newpai.ui.main.entity.HomeBean;
 import com.cyc.newpai.ui.main.entity.HomePageBean;
 import com.cyc.newpai.ui.main.entity.HomeWindowBean;
+import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.util.RecyclerViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
 import com.cyc.newpai.widget.MyGridView;
@@ -129,27 +132,74 @@ public class HomeFragment extends BaseFragment {
         param.put("type", "1");
         param.put("pagesize", String.valueOf(pageSize));
         param.put("p", "1");
-        OkHttpManager.getInstance(getActivity()).postNewPaiInterfaceAynsHttp(HttpUrl.HTTP_INDEX_URL, param, new OkHttpManager.HttpCallBack<HomePageBean>() {
+        OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_INDEX_URL, param, new Callback() {
             @Override
-            public void onFailed(Call call, IOException e) {
+            public void onFailure(Call call, IOException e) {
 
             }
 
             @Override
-            public void onSucessed(HomePageBean homePageBean) {
-                updateShopData(homePageBean);
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        String str = response.body().string();
+                        ResponseBean<HomePageBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
+                        }.getType());
+                        if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                            updateShopData(responseBean.getResult());
+                            return;
+                        }
+                    }
+                    ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
+                }
             }
         });
 
-        OkHttpManager.getInstance(getActivity()).postNewPaiInterfaceAynsHttp(HttpUrl.HTTP_BANNER_URL, null, new OkHttpManager.HttpCallBack<BannerResultBean<BannerDataBean>>() {
+        OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_BANNER_URL, null, new Callback() {
             @Override
-            public void onFailed(Call call, IOException e) {
+            public void onFailure(Call call, IOException e) {
 
             }
 
             @Override
-            public void onSucessed(BannerResultBean<BannerDataBean> bannerDataBeanBannerResultBean) {
-                updateBannerData(bannerDataBeanBannerResultBean.getList());
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        String str = response.body().string();
+                        ResponseBean<BannerResultBean<BannerDataBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<BannerResultBean<BannerDataBean>>>() {
+                        }.getType());
+                        if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                            updateBannerData(responseBean.getResult().getList());
+                            return;
+                        }
+                    }
+                    ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
+
+        OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_HEADLINE_URL, null, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if(response.isSuccessful()){
+                        String str = response.body().string();
+                        ResponseBean<TopLineBean> data = getGson().fromJson(str,new TypeToken<TopLineBean>(){}.getType());
+
+
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -189,7 +239,7 @@ public class HomeFragment extends BaseFragment {
                 if (RecyclerView.SCROLL_STATE_IDLE == newState) {
                     //滑动停止
                     boolean isBottom = gridLayoutManager.findLastCompletelyVisibleItemPosition() >= adapter.getItemCount();
-                    if (isBottom) {
+                    if (isBottom && adapter.getItemCount()>0) {
                         if (!isLoadMore) {
                             getView().postDelayed(new Runnable() {
                                 @Override

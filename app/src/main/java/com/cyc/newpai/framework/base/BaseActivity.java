@@ -1,6 +1,8 @@
 package com.cyc.newpai.framework.base;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +18,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected CustomToolbar ctb_toolbar;
     private GsonManager gsonManager;
+
+    protected Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

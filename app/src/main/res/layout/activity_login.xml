@@ -2,6 +2,7 @@
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
@@ -12,8 +13,8 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:scaleType="centerCrop"
-            android:background="@drawable/test111"/>
+            android:background="@drawable/ic_login_top"
+            android:scaleType="centerCrop" />
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tl_login_tab"
@@ -35,9 +36,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:hint="请输入手机号码"
-                android:textColorHint="@color/color_default_gray_font"
-                android:textSize="16sp"
                 android:text="13188637101"
+                android:inputType="number"
+                android:singleLine="true"
+                android:textSize="16sp"
+                android:maxLength="11"
+                android:textColorHint="@color/color_default_gray_font"
                 android:background="@drawable/shape_border_bottom_line"/>
 
             <LinearLayout
@@ -52,6 +56,9 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:hint="请输入验证码"
+                    android:singleLine="true"
+                    android:maxLength="11"
+                    android:inputType="number"
                     android:background="@null"
                     android:textColorHint="@color/color_default_gray_font"
                     android:textSize="16sp"/>
@@ -63,6 +70,9 @@
                     android:layout_height="match_parent"
                     android:hint="请输入密码"
                     android:text="13188637101"
+                    android:maxLength="11"
+                    android:singleLine="true"
+                    android:inputType="textPassword"
                     android:background="@null"
                     android:textColorHint="@color/color_default_gray_font"
                     android:textSize="16sp"/>
@@ -72,6 +82,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
+                    android:onClick="clickEvent"
                     android:textColor="@color/color_default_gray_font"
                     android:text="请输入验证码"/>
 
@@ -96,23 +107,23 @@
 
                 <TextView
                     android:id="@+id/tv_login_reset_pwd"
-                    android:gravity="center_vertical"
+                    android:gravity="left|center_vertical"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:textColor="@color/colorPrimary"
                     android:text="忘记密码"
                     android:onClick="clickEvent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent" />
 
                 <TextView
                     android:id="@+id/tv_login_register"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:gravity="right"
+                    android:gravity="right|center_vertical"
                     android:text="账号注册"
                     android:onClick="clickEvent"
                     android:textColor="@color/colorPrimary"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent" />
 
             </LinearLayout>
 
