@@ -37,6 +37,18 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter   {
         notifyDataSetChanged();
     }
 
+    public void setListNotifyItemRangeChanged(List<T> mList){
+        this.mList.clear();
+        this.mList=mList;
+        notifyItemRangeChanged(0,mList.size());
+    }
+
+    public void updateListNotifyItemRangeChanged(List<T> mList){
+        int startSize = mList.size();
+        this.mList.addAll(mList);
+        notifyItemRangeChanged(startSize,mList.size());
+    }
+
     public void addListNotify(List<T> mList){
         this.mList.addAll(mList);
         notifyDataSetChanged();

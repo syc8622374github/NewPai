@@ -134,6 +134,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_shop_detail_record"
             android:layout_width="match_parent"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
             android:layout_height="wrap_content">
 
         </android.support.v7.widget.RecyclerView>

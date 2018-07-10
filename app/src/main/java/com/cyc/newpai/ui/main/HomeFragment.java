@@ -15,16 +15,22 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
-import com.bumptech.glide.Glide;
 import com.cyc.newpai.GlideApp;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
@@ -32,20 +38,18 @@ import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
 import com.cyc.newpai.http.entity.ResponseBean;
-import com.cyc.newpai.ui.common.RechargeActivity;
+import com.cyc.newpai.http.entity.ResponseResultBean;
 import com.cyc.newpai.ui.common.entity.TopLineBean;
 import com.cyc.newpai.ui.main.adapter.GridDivider;
 import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.entity.BannerDataBean;
 import com.cyc.newpai.ui.main.entity.BannerResultBean;
-import com.cyc.newpai.ui.main.entity.BidRecordBean;
 import com.cyc.newpai.ui.main.entity.HomeBean;
 import com.cyc.newpai.ui.main.entity.HomePageBean;
 import com.cyc.newpai.ui.main.entity.HomeWindowBean;
 import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.util.RecyclerViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
-import com.cyc.newpai.widget.MyGridView;
 import com.cyc.newpai.widget.ToastManager;
 import com.google.gson.reflect.TypeToken;
 import com.youth.banner.Banner;
@@ -53,11 +57,11 @@ import com.youth.banner.BannerConfig;
 import com.youth.banner.loader.ImageLoader;
 
 import java.io.IOException;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -77,6 +81,7 @@ public class HomeFragment extends BaseFragment {
     private List<HomeBean> beanList = new ArrayList<>();
     private HomeRecyclerViewAdapter adapter;
     private int pageSize = 10;
+    private TextSwitcher topLine;
 
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -85,7 +90,7 @@ public class HomeFragment extends BaseFragment {
         return fragment;
     }
 
-    public Handler handler = new Handler(Looper.getMainLooper()){
+    public Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -93,6 +98,15 @@ public class HomeFragment extends BaseFragment {
                     //adapter.notifyDataSetChanged();
                     adapter.notifyItemRangeChanged(0, adapter.getList().size());
                     swipeRefreshLayout.setRefreshing(false);
+                    break;
+                case 2:
+                    // 设置切入动画
+                    topLine.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_bottom));
+                    // 设置切出动画
+                    topLine.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_up));
+                    //items是一个字符串列表，index就是动态的要显示的items中的索引
+                    topLine.setText("11111大声叫宽带连接阿斯兰对接啦手机里21");
+                    handler.sendEmptyMessageDelayed(2,2000);
                     break;
             }
         }
@@ -121,10 +135,28 @@ public class HomeFragment extends BaseFragment {
 
     private void initHeader() {
         headView = LayoutInflater.from(getContext()).inflate(R.layout.home_fragment_head_item, null);
+        initTopLine(headView);
         initBanner(headView);
         initWindow(headView);
         initTab(headView);
-        initData();
+        //initData();
+    }
+
+    private void initTopLine(View headView) {
+        topLine = headView.findViewById(R.id.ts_home_fragment_top_line);
+        topLine.setFactory(() -> {
+            TextView tv =new TextView(getContext());
+            //设置文字大小
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP,16);
+            //设置文字 颜色
+            FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            tv.setGravity(Gravity.CENTER);
+            tv.setSingleLine(true);
+            tv.setEllipsize(TextUtils.TruncateAt.END);
+            tv.setLayoutParams(layoutParams);
+            return tv;
+        });
+        handler.sendEmptyMessageDelayed(2,1000);
     }
 
     private void initData() {
@@ -191,17 +223,27 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
-                    if(response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         String str = response.body().string();
-                        ResponseBean<TopLineBean> data = getGson().fromJson(str,new TypeToken<TopLineBean>(){}.getType());
-
-
+                        ResponseBean<ResponseResultBean<TopLineBean>> data = getGson().fromJson(str, new TypeToken<ResponseBean<TopLineBean>>() {
+                        }.getType());
+                        if (data.getCode() == 200 && data.getResult() != null) {
+                            TopLineBean topLineBean = data.getResult().getItem();
+                            updateTopLine(topLineBean);
+                        }
+                        handler.post(() -> ToastManager.showToast(getContext(), data.getMsg(), Toast.LENGTH_LONG));
+                        return;
                     }
-                }catch (Exception e){
+                    handler.post(() -> ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG));
+                } catch (Exception e) {
                     e.printStackTrace();
+                    handler.post(() -> ToastManager.showToast(getContext(), "数据加载异常", Toast.LENGTH_LONG));
                 }
             }
         });
+    }
+
+    private void updateTopLine(TopLineBean topLineBean) {
     }
 
     private void updateBannerData(List<BannerDataBean> result) {
@@ -209,7 +251,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void updateShopData(HomePageBean bean) {
-        if(bean.getList()!=null){
+        if (bean.getList() != null) {
             beanList.clear();
             beanList.addAll(bean.getList());
             handler.sendEmptyMessage(1);
@@ -239,15 +281,15 @@ public class HomeFragment extends BaseFragment {
                 if (RecyclerView.SCROLL_STATE_IDLE == newState) {
                     //滑动停止
                     boolean isBottom = gridLayoutManager.findLastCompletelyVisibleItemPosition() >= adapter.getItemCount();
-                    if (isBottom && adapter.getItemCount()>0) {
+                    if (isBottom && adapter.getItemCount() > 0) {
                         if (!isLoadMore) {
                             getView().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
                                     List<HomeBean> beanList = new ArrayList<>();
-                                    beanList.add(new HomeBean(10,"500"));
-                                    beanList.add(new HomeBean(9,"500"));
-                                    beanList.add(new HomeBean(8,"500"));
+                                    beanList.add(new HomeBean(10, "500"));
+                                    beanList.add(new HomeBean(9, "500"));
+                                    beanList.add(new HomeBean(8, "500"));
                                     adapter.addListNotify(beanList);
                                     isLoadMore = false;
                                 }
@@ -264,7 +306,7 @@ public class HomeFragment extends BaseFragment {
                 }
             }
         });
-        /*beanList.add(new HomeBean(10,"500"));
+        beanList.add(new HomeBean(10,"500"));
         beanList.add(new HomeBean(9,"500"));
         beanList.add(new HomeBean(8,"500"));
         beanList.add(new HomeBean(7,"500"));
@@ -272,7 +314,7 @@ public class HomeFragment extends BaseFragment {
         beanList.add(new HomeBean(5,"500"));
         beanList.add(new HomeBean(4,"500"));
         beanList.add(new HomeBean(3,"500"));
-        beanList.add(new HomeBean(2,"500"));*/
+        beanList.add(new HomeBean(2,"500"));
         adapter.setListNotify(beanList);
         startRefreshData();
     }
@@ -283,7 +325,8 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void run() {
                 for (HomeBean bean : beanList) {
-                    bean.setLeft_second(bean.getLeft_second()-1);
+                    bean.setLeft_second(bean.getLeft_second() - 1);
+                    bean.setNow_price((Integer.valueOf(bean.getNow_price()) + Math.round(10))+"");
                 }
                 handler.sendEmptyMessage(1);
             }
@@ -401,7 +444,7 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void displayImage(Context context, Object path, ImageView imageView) {
                 String pathStr = "";
-                if(path instanceof BannerDataBean){
+                if (path instanceof BannerDataBean) {
                     pathStr = ((BannerDataBean) path).getImg_url();
                 }
                 GlideApp.with(context).load(pathStr).placeholder(R.drawable.test111).into(imageView);

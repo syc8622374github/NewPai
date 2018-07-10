@@ -55,7 +55,7 @@ public class CompleteTransactionFragment extends BaseFragment {
         data.add(new HisTransactionBean(R.drawable.ic_avator,true));
         data.add(new HisTransactionBean(R.drawable.ic_avator,true));
         data.add(new HisTransactionBean(R.drawable.ic_avator,true));
-        adapter.setListNotify(data);
+        //adapter.setListNotify(data);
         recyclerView.setAdapter(headerAndFooterRecyclerViewAdapter);
         RecyclerViewUtil.addFootView(recyclerView,new LoadingFooter(getContext()));
         adapter.setOnClickItemListener((view, itemBean, position) -> {
@@ -88,7 +88,7 @@ public class CompleteTransactionFragment extends BaseFragment {
             public void run() {
                 data.add(new HisTransactionBean(R.drawable.ic_avator,true));
                 data.add(new HisTransactionBean(R.drawable.ic_avator,true));
-                adapter.addListNotify(data);
+                //adapter.addListNotify(data);
             }
         },2000);
     }

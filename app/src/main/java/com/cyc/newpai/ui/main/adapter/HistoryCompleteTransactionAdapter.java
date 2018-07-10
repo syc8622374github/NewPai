@@ -6,20 +6,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
+import com.cyc.newpai.ui.main.entity.BidAgeRecordBean;
 import com.cyc.newpai.ui.main.entity.HisTransactionBean;
 
-public class HistoryCompleteTransactionAdapter extends BaseRecyclerAdapter<HisTransactionBean> {
+public class HistoryCompleteTransactionAdapter extends BaseRecyclerAdapter<BidAgeRecordBean> {
 
     public static final int COMPLETE_TRANSACTION_TYPE = 0x10001;
     public static final int LUCKY_TIME_TYPE = 0x10002;
     public static final int RULE_TYPE = 0x10003;
     private int resId;
+    private int type;
 
     public HistoryCompleteTransactionAdapter(RecyclerView mRecyclerView, int type) {
         super(mRecyclerView);
+        this.type = type;
         switch (type) {
             case COMPLETE_TRANSACTION_TYPE:
                 resId = R.layout.fragment_history_transaction_item;
@@ -47,11 +51,28 @@ public class HistoryCompleteTransactionAdapter extends BaseRecyclerAdapter<HisTr
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolderGeneral viewHolderGeneral = (ViewHolderGeneral) holder;
-        if(mList.get(position).isFinish()){
+        /*if(mList.get(position).isFinish()){
             viewHolderGeneral.completeLabel.setVisibility(View.VISIBLE);
         }else{
             viewHolderGeneral.completeLabel.setVisibility(View.GONE);
+        }*/
+        switch (type) {
+            case COMPLETE_TRANSACTION_TYPE:
+                viewHolderGeneral.completeLabel.setVisibility(View.GONE);
+                viewHolderGeneral.dealPerson.setText(getList().get(position).getNickname());
+                viewHolderGeneral.dealPrice.setText(getList().get(position).getDeal_price());
+                viewHolderGeneral.dealTime.setText(getList().get(position).getDeal_time());
+                viewHolderGeneral.dealPerson.setText(getList().get(position).getNickname());
+                viewHolderGeneral.rate.setText(getList().get(position).getRate());
+                break;
+            case LUCKY_TIME_TYPE:
+                break;
+            case RULE_TYPE:
+                break;
+            default:
+                break;
         }
+
         onBindListener(viewHolderGeneral,position);
     }
 
@@ -63,11 +84,21 @@ public class HistoryCompleteTransactionAdapter extends BaseRecyclerAdapter<HisTr
 
         public final View mView;
         public final ImageView completeLabel;
+        public final TextView dealPerson;
+        public final TextView marketPrice;
+        public final TextView dealPrice;
+        public final TextView dealTime;
+        public final TextView rate;
 
         public ViewHolderGeneral(View itemView) {
             super(itemView);
             mView = itemView;
             completeLabel = itemView.findViewById(R.id.iv_complete_label);
+            dealPerson = itemView.findViewById(R.id.tv_his_bid_deal_person);
+            marketPrice = itemView.findViewById(R.id.tv_his_bid_market_price);
+            dealPrice = itemView.findViewById(R.id.tv_hist_deal_price);
+            dealTime = itemView.findViewById(R.id.tv_his_bid_deal_time);
+            rate = itemView.findViewById(R.id.tv_his_bid_rate);
         }
     }
 }

@@ -7,6 +7,14 @@ public class BidRecordItemBean {
     private String img;
     private String ip_address;
 
+    public BidRecordItemBean(String money, String add_time, String nickname, String img, String ip_address) {
+        this.money = money;
+        this.add_time = add_time;
+        this.nickname = nickname;
+        this.img = img;
+        this.ip_address = ip_address;
+    }
+
     public String getMoney() {
         return money;
     }

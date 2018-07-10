@@ -12,6 +12,7 @@ import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
 import com.cyc.newpai.framework.adapter.ViewHolder;
 import com.cyc.newpai.ui.main.entity.BidRecordItemBean;
+import com.cyc.newpai.util.GlideCircleTransform;
 
 public class BidRecordRecyclerViewAdapter extends BaseRecyclerAdapter<BidRecordItemBean> {
 
@@ -35,6 +36,7 @@ public class BidRecordRecyclerViewAdapter extends BaseRecyclerAdapter<BidRecordI
         GlideApp.with(mContext)
                 .load(mList.get(position).getImg())
                 .placeholder(R.drawable.ic_avator_default)
+                .transform(new GlideCircleTransform(mContext))
                 .into((ImageView) viewHolder.getView(R.id.iv_bid_record_avator));
     }
 }

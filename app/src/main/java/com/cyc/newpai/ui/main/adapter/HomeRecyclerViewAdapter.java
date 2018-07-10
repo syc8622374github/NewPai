@@ -48,7 +48,8 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerAdapter<HomeBean> {
             timeStr = "00:00:" + time;
         }else{
             time = 10;
-            timeStr = "00:00:0" + time;
+            mList.get(position).setLeft_second(time);
+            timeStr = "00:00:" + time;
         }
         holderGeneral.countDown.setText(timeStr);
         //countDownTimer.start();

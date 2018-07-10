@@ -28,9 +28,10 @@
         android:background="@color/divider"/>
 
     <LinearLayout
+        android:id="@+id/ll_home_fragment_top_line"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:paddingLeft="10dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
@@ -41,14 +42,20 @@
             android:layout_width="70dp"
             android:layout_height="40dp"
             android:src="@drawable/icon_home_auction_new"/>
-        
-        <TextView
+
+        <TextSwitcher
+            android:id="@+id/ts_home_fragment_top_line"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
             android:layout_marginLeft="10dp"
             android:singleLine="true"
             android:ellipsize="end"
             android:text="恭喜一直在微笑以105.6拍到Apple iphonex..."/>
+
+        <!--<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>-->
 
     </LinearLayout>
 
