@@ -10,11 +10,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.cyc.newpai.R;
+import com.cyc.newpai.framework.util.varyview.VaryViewHelper;
 import com.cyc.newpai.util.GsonManager;
 import com.google.gson.Gson;
 
 
 public abstract class BaseFragment extends Fragment {
+
+    protected VaryViewHelper varyViewHelper;
+
+    public Handler handler = new Handler(Looper.getMainLooper());
 
     private GsonManager gsonManager;
     @Override
@@ -34,4 +40,27 @@ public abstract class BaseFragment extends Fragment {
     public void refreshFragmentData(){
 
     }
+
+    public void initVaryView(){
+        if (getLoadingTargetView() != null) {
+            varyViewHelper = new VaryViewHelper.Builder()
+                    .setDataView(getLoadingTargetView())
+                    .setLoadingView(View.inflate(getContext(), R.layout.layout_loadingview, null))
+                    .setEmptyView(View.inflate(getContext(), R.layout.layout_emptyview, null))
+                    .setErrorView(View.inflate(getContext(), R.layout.layout_errorview, null))
+                    .setRefreshListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            onRetryLoad();
+                        }
+                    })
+                    .build();
+        }
+    }
+
+    protected View getLoadingTargetView(){
+        return null;
+    }
+
+    protected void onRetryLoad(){}
 }

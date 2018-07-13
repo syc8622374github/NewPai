@@ -20,7 +20,8 @@
             android:layout_height="40dp"
             android:src="@drawable/icon_home_auction_new"/>
 
-        <TextView
+        <TextSwitcher
+            android:id="@+id/ts_home_fragment_top_line"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"

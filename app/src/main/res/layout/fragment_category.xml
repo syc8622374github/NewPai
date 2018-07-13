@@ -2,20 +2,27 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_category_left_category_title"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="match_parent"/>
+    <LinearLayout
+        android:id="@+id/ll_category_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_category_right_category_detail"
-        android:background="@android:color/white"
-        android:layout_width="0dp"
-        android:layout_weight="3"
-        android:layout_height="wrap_content"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_category_left_category_title"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_category_right_category_detail"
+            android:background="@android:color/white"
+            android:layout_width="0dp"
+            android:layout_weight="3"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
 
 </LinearLayout>

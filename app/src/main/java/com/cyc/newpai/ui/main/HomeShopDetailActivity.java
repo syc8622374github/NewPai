@@ -1,6 +1,8 @@
 package com.cyc.newpai.ui.main;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
 import com.cyc.newpai.GlideApp;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
@@ -28,17 +29,12 @@ import com.cyc.newpai.http.entity.ResponseResultBean;
 import com.cyc.newpai.ui.main.adapter.BidRecordRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.adapter.HistoryCompleteTransactionAdapter;
 import com.cyc.newpai.ui.main.entity.BidAgeRecordBean;
+import com.cyc.newpai.ui.main.entity.BidLuckyBean;
 import com.cyc.newpai.ui.main.entity.BidRecordBean;
 import com.cyc.newpai.ui.main.entity.BidRecordItemBean;
-import com.cyc.newpai.ui.main.entity.HisTransactionBean;
-import com.cyc.newpai.ui.main.entity.HomeBean;
+import com.cyc.newpai.ui.main.entity.BidResultBean;
 import com.cyc.newpai.ui.main.entity.ShopDetailBean;
-import com.cyc.newpai.ui.main.entity.ShopDetailResultBean;
-import com.cyc.newpai.ui.user.LoginActivity;
-import com.cyc.newpai.ui.user.LoginBean;
-import com.cyc.newpai.util.DataGenerator;
 import com.cyc.newpai.util.GsonManager;
-import com.cyc.newpai.widget.CustomToolbar;
 import com.cyc.newpai.widget.LoadingFooter;
 import com.cyc.newpai.widget.ToastManager;
 import com.google.gson.reflect.TypeToken;
@@ -47,7 +43,6 @@ import com.youth.banner.BannerConfig;
 import com.youth.banner.loader.ImageLoader;
 
 import java.io.IOException;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,12 +54,13 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class HomeShopDetailActivity extends BaseActivity {
+public class HomeShopDetailActivity extends BaseActivity implements View.OnClickListener{
 
     private static final String TAG = HomeShopDetailActivity.class.getSimpleName();
     private String[] shopCategory = new String[]{"往期成交","幸运晒单","竞拍规则"};
     private BidRecordRecyclerViewAdapter bidRecordRecyclerViewAdapter;
-    private BidRecordBean bidRecordBean;
+    private List<BidAgeRecordBean> ageLists = new ArrayList<>();
+    private List<BidLuckyBean> luckLists = new ArrayList<>();
     private RecyclerView bidRecord;
     private TabLayout tabLayout;
     private Banner banner;
@@ -76,13 +72,14 @@ public class HomeShopDetailActivity extends BaseActivity {
             super.handleMessage(msg);
             switch (msg.what){
                 case 1:
-                    bidRecordRecyclerViewAdapter.setListNotify(bidRecordBean.getItemBeans());
                     break;
             }
         }
     };
     private HistoryCompleteTransactionAdapter historyCompleteTransactionAdapter;
     boolean isLoadMore = false;
+    private TextView bidNume;
+    private int type;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +92,14 @@ public class HomeShopDetailActivity extends BaseActivity {
     private void initView() {
         initHeader();
         initList();
+        initBidMenu();
+    }
+
+    private void initBidMenu() {
+        findViewById(R.id.tv_bid_less).setOnClickListener(this);
+        bidNume = findViewById(R.id.tv_bid_num);
+        findViewById(R.id.tv_bid_add).setOnClickListener(this);
+        findViewById(R.id.btn_bid).setOnClickListener(this);
     }
 
     private void initList() {
@@ -116,57 +121,93 @@ public class HomeShopDetailActivity extends BaseActivity {
         rvList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                super.onScrollStateChanged(recyclerView, newState);
-                if (RecyclerView.SCROLL_STATE_IDLE == newState) {
-                    //滑动停止
-                    boolean isBottom = layoutManager.findLastCompletelyVisibleItemPosition() >= historyCompleteTransactionAdapter.getItemCount();
-                    if (isBottom && historyCompleteTransactionAdapter.getItemCount() > 0) {
-                        if (!isLoadMore) {
-                            isLoadMore = true;
-                            updateBidAgeData();
+                try{
+                    super.onScrollStateChanged(recyclerView, newState);
+                    if (RecyclerView.SCROLL_STATE_IDLE == newState) {
+                        //滑动停止
+                        boolean isBottom = layoutManager.findLastCompletelyVisibleItemPosition() >= historyCompleteTransactionAdapter.getItemCount();
+                        if (isBottom && historyCompleteTransactionAdapter.getItemCount() > 0) {
+                            if (!isLoadMore) {
+                                isLoadMore = true;
+                                updateBidAgeData();
+                            }
                         }
-                    }
-                } else if (RecyclerView.SCROLL_STATE_DRAGGING == newState) {
-                    //用户正在滑动
+                    } else if (RecyclerView.SCROLL_STATE_DRAGGING == newState) {
+                        //用户正在滑动
 //                    Logger.d("用户正在滑动 position=" + mAdapter.getAdapterPosition());
-                } else {
-                    //惯性滑动
+                    } else {
+                        //惯性滑动
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         });
     }
 
     private void updateBidAgeData() {
-        Map<String,String> params = new HashMap<>();
-        params.put("gid","1");
-        params.put("p","1");
-        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_RECORD_AGO_URL, params, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                isLoadMore = false;
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    if (response.isSuccessful()) {
-                        String str = response.body().string();
-                        ResponseBean<ResponseResultBean<BidAgeRecordBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<BidAgeRecordBean>>>() {
-                        }.getType());
-                        if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
-                            updateBidAgeRecordView(responseBean.getResult().getList());
-                            return;
-                        }
-                    }
-                    ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG);
-                } catch (Exception e) {
-                    Log.e(TAG, e.getMessage());
-                }finally {
+        int type = historyCompleteTransactionAdapter.getViewType();
+        if(type == historyCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE){
+            Map<String,String> params = new HashMap<>();
+            params.put("gid","1");
+            params.put("p","1");
+            OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_RECORD_AGO_URL, params, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
                     isLoadMore = false;
                 }
-            }
-        });
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    try {
+                        if (response.isSuccessful()) {
+                            String str = response.body().string();
+                            ResponseBean<ResponseResultBean<BidAgeRecordBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<BidAgeRecordBean>>>() {
+                            }.getType());
+                            if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                                updateBidAgeRecordView(responseBean.getResult().getList());
+                                return;
+                            }
+                        }
+                        ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG);
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                    isLoadMore = false;
+                }
+            });
+        }else{
+            Map<String,String> params = new HashMap<>();
+            params.clear();
+            params.put("gid","1");
+            params.put("p","1");
+            OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_LUCKY_SHOW_URL, params, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    isLoadMore = false;
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    try {
+                        if (response.isSuccessful()) {
+                            String str = response.body().string();
+                            ResponseBean<ResponseResultBean<BidLuckyBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<BidLuckyBean>>>() {
+                            }.getType());
+                            if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                                updateBidLuckyData(responseBean.getResult().getList());
+                                return;
+                            }
+                        }
+                        handler.post(()->ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    }finally {
+                        isLoadMore = false;
+                    }
+                }
+            });
+        }
     }
 
     protected View getFootView() {
@@ -196,7 +237,7 @@ public class HomeShopDetailActivity extends BaseActivity {
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                //onTabItemSelected(tab.getPosition());
+                onTabItemSelected(tab.getPosition());
             }
 
             @Override
@@ -212,20 +253,17 @@ public class HomeShopDetailActivity extends BaseActivity {
     }
 
     private void onTabItemSelected(int position) {
-        Fragment fragment = null;
         switch (position){
             case 0:
-                fragment = HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE);
+                historyCompleteTransactionAdapter.updateType(HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE);
+                historyCompleteTransactionAdapter.setListNotifyCustom(ageLists);
                 break;
             case 1:
-                fragment = HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionAdapter.LUCKY_TIME_TYPE);
+                historyCompleteTransactionAdapter.updateType(HistoryCompleteTransactionAdapter.LUCKY_TIME_TYPE);
+                historyCompleteTransactionAdapter.setListNotifyCustom(luckLists);
                 break;
             case 2:
-                fragment = HistoryCompleteTransactionFragment.newInstance(HistoryCompleteTransactionAdapter.RULE_TYPE);
                 break;
-        }
-        if(fragment!=null) {
-            //getSupportFragmentManager().beginTransaction().replace(R.id.fl_shop_detail_container,fragment).commit();
         }
     }
 
@@ -249,7 +287,7 @@ public class HomeShopDetailActivity extends BaseActivity {
                             return;
                         }
                     }
-                    ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG);
+                    handler.post(()->ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -274,7 +312,7 @@ public class HomeShopDetailActivity extends BaseActivity {
                             return;
                         }
                     }
-                    ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG);
+                    handler.post(()->ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -300,7 +338,34 @@ public class HomeShopDetailActivity extends BaseActivity {
                             return;
                         }
                     }
-                    ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG);
+                    handler.post(()->ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
+        params.clear();
+        params.put("gid","1");
+        params.put("p","1");
+        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_LUCKY_SHOW_URL, params, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        String str = response.body().string();
+                        ResponseBean<ResponseResultBean<BidLuckyBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<BidLuckyBean>>>() {
+                        }.getType());
+                        if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                            updateBidLuckyData(responseBean.getResult().getList());
+                            return;
+                        }
+                    }
+                    handler.post(()->ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -308,12 +373,20 @@ public class HomeShopDetailActivity extends BaseActivity {
         });
     }
 
+    private void updateBidLuckyData(List<BidLuckyBean> list) {
+        luckLists.addAll(list);
+        handler.post(() -> {
+            historyCompleteTransactionAdapter.addLuckBean(list);
+            historyCompleteTransactionAdapter.notifyDataSetChanged();
+        });
+    }
+
     private void updateBidAgeRecordView(List<BidAgeRecordBean> list) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                historyCompleteTransactionAdapter.updateListNotifyItemRangeChanged(list);
-            }
+        ageLists.addAll(list);
+        handler.post(() -> {
+            historyCompleteTransactionAdapter.addListNotify(list);
+            //historyCompleteTransactionAdapter.updateListNotifyItemRangeChanged(list);
+            isLoadMore = false;
         });
     }
 
@@ -327,25 +400,28 @@ public class HomeShopDetailActivity extends BaseActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        List<BidRecordItemBean> list = bidRecordRecyclerViewAdapter.getList();
-                        list.add(0,new BidRecordItemBean("100w","","我是新增的","","南昌"));
-                        bidRecordRecyclerViewAdapter.notifyItemInserted(0);
+                handler.post(() -> {
+                    List<BidRecordItemBean> list = bidRecordRecyclerViewAdapter.getList();
+                    updateBidView(null);
+                    /*list.add(0,new BidRecordItemBean("100w","","我是新增的","","南昌"));
+                    bidRecordRecyclerViewAdapter.notifyItemInserted(0);
 
+                    if(list.size()>4){
                         list.remove(list.size()-1);
                         bidRecordRecyclerViewAdapter.notifyItemRemoved(list.size());
-                    }
+                    }*/
                 });
             }
-        },1000,2000);
+        },1000,3000);
     }
 
     private void updateBidRecordView(BidRecordBean data) {
-        bidRecordBean = data;
-        //bidRecordRecyclerViewAdapter.setListNotify(bidRecordBean.getItemBeans());
-        handler.sendEmptyMessage(1);
+        handler.post(() -> {
+            List<BidRecordItemBean> list = bidRecordRecyclerViewAdapter.getList();
+            if(list.size()==0||!list.get(0).getMoney().equals(data.getItemBeans().get(0).getMoney())){
+                bidRecordRecyclerViewAdapter.setListNotify(data.getItemBeans());
+            }
+        });
     }
 
     private void updateDetailView(ShopDetailBean data) {
@@ -387,5 +463,86 @@ public class HomeShopDetailActivity extends BaseActivity {
     @Override
     public int getLayoutId() {
         return R.layout.activity_home_shop_detail;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.tv_bid_add:
+                bidNume.setText(Integer.valueOf(bidNume.getText().toString())+1+"");
+                break;
+            case R.id.tv_bid_less:
+                int n = Integer.valueOf(bidNume.getText().toString());
+                if(n>1)
+                bidNume.setText(n-1+"");
+                break;
+            case R.id.btn_bid:
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                alertDialog.setTitle("交易提示")
+                        .setCancelable(false)
+                        .setMessage("确认支付"+bidNume.getText()+"个拍币竞拍？")
+                        .setNegativeButton("确定", (dialog, which) -> {
+                            bid();
+                        }).setPositiveButton("取消", (dialog, which) -> dialog.dismiss()).show();
+                break;
+        }
+    }
+
+    private void bid() {
+        Map<String,String> params = new HashMap<>();
+        params.put("shopid","1");
+        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_URL, params, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        String str = response.body().string();
+                        ResponseBean<ResponseResultBean<BidResultBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<BidResultBean>>>() {
+                        }.getType());
+                        if (responseBean.getCode() == 1 && responseBean.getResult() != null) {
+                            updateBidView(responseBean.getResult().getItem());
+                            return;
+                        }
+                    }
+                    handler.post(()->ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
+    }
+
+    private void updateBidView(BidResultBean item) {
+        Map<String,String> params = new HashMap<>();
+        params.put("shopid","1");
+        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_RECORD_URL, params, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        String str = response.body().string();
+                        ResponseBean<BidRecordBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<BidRecordBean>>() {
+                        }.getType());
+                        if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                            updateBidRecordView(responseBean.getResult());
+                            return;
+                        }
+                    }
+                    handler.post(()->ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        });
     }
 }

@@ -34,9 +34,9 @@ public class HttpUrl {
 
     public static final String HTTP_BID_RECORD_AGO_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/Jingpai/dealRecordAgo";//竞拍以往成成交记录
 
-    public static final String HTTP_LUCKY_SHOW_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/JIngpai/lucyShow"; //竞拍商品的幸运晒台记录
+    public static final String HTTP_LUCKY_SHOW_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/Jingpai/lucyShow"; //竞拍商品的幸运晒台记录
 
-    public static final String HTTP_LUCKY_POST_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/JIngpai/lucyPost"; //商品晒单评论提交
+    public static final String HTTP_LUCKY_POST_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/Jingpai/lucyPost"; //商品晒单评论提交
 
     public static final String HTTP_CATE_LIST_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/Jingpai/cateList"; //竞拍分类列表
 

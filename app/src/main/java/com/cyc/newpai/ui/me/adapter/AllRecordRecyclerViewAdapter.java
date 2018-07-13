@@ -29,8 +29,8 @@ public class AllRecordRecyclerViewAdapter extends BaseRecyclerAdapter<AllRecordB
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.setText(R.id.tv_all_record_shop_name,mList.get(position).getShopName());
-        viewHolder.setText(R.id.tv_all_record__pay,mList.get(position).getPay());
+        viewHolder.setText(R.id.tv_all_record_shop_name,mList.get(position).getTitle());
+        viewHolder.setText(R.id.tv_all_record__pay,mList.get(position).getMoney());
         String type = mList.get(position).getType();
         TextView pay = viewHolder.getView(R.id.tv_all_record__pay);
         switch (type){
@@ -42,6 +42,6 @@ public class AllRecordRecyclerViewAdapter extends BaseRecyclerAdapter<AllRecordB
                 break;
         }
         viewHolder.setText(R.id.tv_all_record_type,"["+mList.get(position).getType()+"]");
-        viewHolder.setText(R.id.tv_all_record_time,mList.get(position).getTime());
+        viewHolder.setText(R.id.tv_all_record_time,mList.get(position).getAdd_time());
     }
 }

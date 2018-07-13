@@ -11,13 +11,22 @@ import com.cyc.newpai.GlideApp;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
 import com.cyc.newpai.framework.adapter.ViewHolder;
+import com.cyc.newpai.ui.main.entity.BidLuckyBean;
 import com.cyc.newpai.ui.main.entity.BidRecordItemBean;
 import com.cyc.newpai.util.GlideCircleTransform;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BidRecordRecyclerViewAdapter extends BaseRecyclerAdapter<BidRecordItemBean> {
 
     public BidRecordRecyclerViewAdapter(RecyclerView mRecyclerView) {
         super(mRecyclerView);
+    }
+
+    @Override
+    public int getItemCount() {
+        return super.getItemCount();
     }
 
     @NonNull

@@ -10,10 +10,9 @@ import android.widget.TextView;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
-import com.cyc.newpai.ui.category.entity.CategoryTitleBean;
-import com.cyc.newpai.ui.common.adapter.PayMethodRecyclerViewAdapter;
+import com.cyc.newpai.ui.category.entity.CategoryMenuBean;
 
-public class CategoryTitleRecyclerAdapter extends BaseRecyclerAdapter<CategoryTitleBean> {
+public class CategoryTitleRecyclerAdapter extends BaseRecyclerAdapter<CategoryMenuBean> {
 
 
     public CategoryTitleRecyclerAdapter(RecyclerView mRecyclerView) {
@@ -38,7 +37,7 @@ public class CategoryTitleRecyclerAdapter extends BaseRecyclerAdapter<CategoryTi
             textView.setBackgroundColor(Color.parseColor("#00000000"));
             textView.setTextColor(mContext.getResources().getColor(R.color.color_category_title_default));
         }
-        textView.setText(mList.get(position).getTitle());
+        textView.setText(mList.get(position).getCate());
         onBindListener(viewHolderGeneral,position);
     }
 

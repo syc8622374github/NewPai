@@ -347,7 +347,7 @@ public class HomeFragment extends BaseFragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                //onTabItemSelected(tab.getPosition());
+                onTabItemSelected(tab.getPosition());
             }
 
             @Override
@@ -364,6 +364,10 @@ public class HomeFragment extends BaseFragment {
         for (String title : shopCategorys) {
             tabLayout.addTab(tabLayout.newTab().setText(title));
         }
+    }
+
+    private void onTabItemSelected(int position) {
+
     }
 
     private void initRefresh(View view) {

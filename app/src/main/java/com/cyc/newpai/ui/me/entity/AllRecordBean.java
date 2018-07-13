@@ -6,32 +6,19 @@ public class AllRecordBean {
     public static final String RECORD_BACK = "竞拍返回"; //充值返回
     public static final String RECORD_RECHARGE = "充值"; //充值
 
-    private String shopName;
-    private String pay;
+    private String money;
     private String type;
-    private String time;
+    private String add_time;
+    private String shopid;
+    private String title;
+    private String description;
 
-    public AllRecordBean(String shopName, String pay, String type, String time) {
-        this.shopName = shopName;
-        this.pay = pay;
-        this.type = type;
-        this.time = time;
+    public String getMoney() {
+        return money;
     }
 
-    public String getShopName() {
-        return shopName;
-    }
-
-    public void setShopName(String shopName) {
-        this.shopName = shopName;
-    }
-
-    public String getPay() {
-        return pay;
-    }
-
-    public void setPay(String pay) {
-        this.pay = pay;
+    public void setMoney(String money) {
+        this.money = money;
     }
 
     public String getType() {
@@ -42,11 +29,36 @@ public class AllRecordBean {
         this.type = type;
     }
 
-    public String getTime() {
-        return time;
+    public String getAdd_time() {
+        return add_time;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setAdd_time(String add_time) {
+        this.add_time = add_time;
     }
+
+    public String getShopid() {
+        return shopid;
+    }
+
+    public void setShopid(String shopid) {
+        this.shopid = shopid;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
 }

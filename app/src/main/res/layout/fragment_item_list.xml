@@ -9,8 +9,7 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/fragment_history_transaction_item" />
+        android:layout_height="match_parent"/>
 
     <TextView
         android:id="@+id/tv_rule"
