@@ -53,6 +53,7 @@
         android:padding="10dp">
 
         <TextView
+            android:id="@+id/tv_shop_detail_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_shop_detail_hot"
@@ -70,6 +71,7 @@
         android:padding="10dp">
 
         <TextView
+            android:id="@+id/tv_shop_detail_count_down"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableBottom="@drawable/ic_shop_detail_new_pricer"
@@ -97,8 +99,7 @@
                 <ImageView
                     android:id="@+id/iv_shop_detail_avator"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/ic_avator" />
+                    android:layout_height="match_parent" />
 
                 <ImageView
                     android:layout_width="30dp"
