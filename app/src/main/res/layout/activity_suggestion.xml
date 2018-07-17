@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.me.SuggestionActivity"
+    android:orientation="vertical">
+
+    <com.cyc.newpai.widget.CustomToolbar
+        android:id="@+id/ctb_toolbar"
+        android:layout_width="match_parent"
+        android:background="@android:color/white"
+        android:layout_height="50dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="15dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:text="问题类型:"
+                android:layout_weight="1"
+                android:textColor="@android:color/black"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content" />
+
+            <RadioGroup
+                android:layout_weight="2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:text="软件系统"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+                <RadioButton
+                    android:text="商品问题"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content" />
+
+            </RadioGroup>
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/v_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"/>
+        
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:textSize="14sp"
+            android:lineSpacingMultiplier="1.4"
+            android:hint="请输入您的反馈意见，细致的描述可使我们更好地发现问题，感谢您的宝贵的建议~"
+            android:background="#00000000"/>
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/ic_capture"/>
+
+            <TextView
+                android:paddingLeft="10dp"
+                android:textColor="@color/color_default_gray_font"
+                android:text="上传照片"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:text="提交"
+        android:textColor="@android:color/white"
+        android:background="@drawable/btn_selector"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

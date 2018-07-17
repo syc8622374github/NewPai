@@ -92,15 +92,17 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     private HeaderAndFooterRecyclerViewAdapter headerAndFooterRecyclerViewAdapter;
 
     private void updateMainBidInfo(ShopDetailBean item) {
-        nowPrice.setText("￥"+item.getNow_price());
-        marketPrice.setText("￥"+item.getMarket_price());
-        name.setText(item.getNickname());
-        shopName.setText(item.getGoods_name());
-        countDownNum = 10;
-        countDown.setText("00:00:"+countDownNum);
-        //GlideApp.with(this).load(item.getImage()).placeholder(R.drawable.ic_avator_default).into(avator);
-        prompt.setText("若无人出价，将以￥"+item.getNow_price()+"拍的本商品");
-        banner.setImages(item.getImages());
+        handler.post(()->{
+            nowPrice.setText("￥"+item.getNow_price());
+            marketPrice.setText("￥"+item.getMarket_price());
+            name.setText(item.getNickname());
+            shopName.setText(item.getGoods_name());
+            countDownNum = 10;
+            countDown.setText("00:00:"+countDownNum);
+            //GlideApp.with(this).load(item.getImage()).placeholder(R.drawable.ic_avator_default).into(avator);
+            prompt.setText("若无人出价，将以￥"+item.getNow_price()+"拍的本商品");
+            banner.setImages(item.getImages());
+        });
     }
 
     @Override

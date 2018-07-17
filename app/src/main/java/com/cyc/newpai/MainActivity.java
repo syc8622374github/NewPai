@@ -1,5 +1,6 @@
 package com.cyc.newpai;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.design.widget.TabLayout;
@@ -13,8 +14,11 @@ import android.widget.TextView;
 import com.cyc.newpai.framework.base.BaseActivity;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.ui.category.CategoryFragment;
+import com.cyc.newpai.ui.common.NotificationMessageActivity;
+import com.cyc.newpai.ui.common.SearchActivity;
 import com.cyc.newpai.ui.main.HomeFragment;
 import com.cyc.newpai.ui.me.MeFragment;
+import com.cyc.newpai.ui.me.SettingActivity;
 import com.cyc.newpai.ui.transaction.CompleteTransactionFragment;
 import com.cyc.newpai.util.DataGenerator;
 
@@ -123,12 +127,12 @@ public class MainActivity extends BaseActivity {
         }else if(fragment instanceof MeFragment){
             ctb_toolbar.divider.setVisibility(View.GONE);
             ctb_toolbar.setTitle("");
-            ctb_toolbar.setLeftAction1(R.drawable.ic_me_setting,null);
-            ctb_toolbar.setRightAction1(R.drawable.ic_notification,null);
+            ctb_toolbar.setLeftAction1(R.drawable.ic_me_setting, v -> startActivity(new Intent(MainActivity.this, SettingActivity.class)));
+            ctb_toolbar.setRightAction1(R.drawable.ic_notification, v -> startActivity(new Intent(MainActivity.this, NotificationMessageActivity.class)));
         }else{
             //ctb_toolbar.divider.setVisibility(View.VISIBLE);
-            ctb_toolbar.setLeftAction1(R.drawable.ic_search,null);
-            ctb_toolbar.setRightAction1(R.drawable.ic_notification,null);
+            ctb_toolbar.setLeftAction1(R.drawable.ic_search, v -> startActivity(new Intent(MainActivity.this, SearchActivity.class)));
+            ctb_toolbar.setRightAction1(R.drawable.ic_notification, v -> startActivity(new Intent(MainActivity.this, NotificationMessageActivity.class)));
         }
         ctb_toolbar.setTitle(getTitle().toString());
     }

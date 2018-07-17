@@ -3,6 +3,7 @@ package com.cyc.newpai.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,8 @@ public class CustomToolbar extends RelativeLayout {
     public View divider;
     private Drawable leftIcon;
     private Drawable rightIcon;
+    private RelativeLayout rlRightAction1;
+    private TextView rightTitle1;
 
     public CustomToolbar(Context context) {
         super(context,null);
@@ -37,6 +40,8 @@ public class CustomToolbar extends RelativeLayout {
         iv_right_action1.setImageDrawable(rightIcon);
         tv_title = view.findViewById(R.id.tv_title);
         divider = view.findViewById(R.id.v_divider);
+        rlRightAction1 = view.findViewById(R.id.rl_right_action1);
+        rightTitle1 = view.findViewById(R.id.tv_toolbar_right_title);
     }
 
     private void parseAttributes(TypedArray typedArray) {
@@ -52,10 +57,34 @@ public class CustomToolbar extends RelativeLayout {
     }
 
     public void setRightAction1(int imgResId,OnClickListener listener){
-        if(imgResId>=0)
+        rightTitle1.setVisibility(View.GONE);
+        iv_right_action1.setVisibility(View.VISIBLE);
+        if(imgResId>=0) {
             iv_right_action1.setImageResource(imgResId);
-        if(listener!=null)
-            iv_right_action1.setOnClickListener(listener);
+        }
+        if(listener!=null) {
+            rlRightAction1.setOnClickListener(listener);
+            //iv_right_action1.setOnClickListener(listener);
+        }
+    }
+
+    public void setRightAction1(String text,OnClickListener listener){
+        setRightAction1(text,-1,listener);
+    }
+
+    public void setRightAction1(String text,int color,OnClickListener listener){
+        rightTitle1.setVisibility(View.VISIBLE);
+        iv_right_action1.setVisibility(View.GONE);
+        if(color>0){
+            rightTitle1.setTextColor(getResources().getColor(color));
+        }
+        if(!TextUtils.isEmpty(text)) {
+            rightTitle1.setText(text);
+        }
+        if(listener!=null) {
+            rlRightAction1.setOnClickListener(listener);
+            //iv_right_action1.setOnClickListener(listener);
+        }
     }
 
     public void setTitle(String title){

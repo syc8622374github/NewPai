@@ -23,8 +23,8 @@ public abstract class BaseRecyclerAdapter<T> extends RecyclerView.Adapter   {
     protected final String mUrlGeneralFormat;//普通地址
     protected final String mUrlBigFormat;//大图地址*/
 
-    public interface OnAdapterListener {
-        void onItemClickListener(View view, Object itemBean, int position);
+    public interface OnAdapterListener <T>{
+        void onItemClickListener(View view, T itemBean, int position);
     }
 
     public List<T> getList() {

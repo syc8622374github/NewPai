@@ -29,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewSwitcher;
 
 import com.cyc.newpai.GlideApp;
 import com.cyc.newpai.R;

@@ -22,8 +22,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:launchMode="singleTask"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,11 +40,26 @@
         <activity
             android:name=".ui.me.MyPropertyActivity"
             android:label="我的财产" />
+        <activity android:name=".ui.user.RegisterAndResetPasswdActivity" />
         <activity
-            android:name=".ui.user.RegisterAndResetPasswdActivity"/>
-        <activity android:name=".ui.user.LoginActivity"
+            android:name=".ui.user.LoginActivity"
             android:launchMode="singleTask"
-            android:windowSoftInputMode="adjustResize|stateHidden"/>
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".ui.me.SettingActivity"
+            android:label="设置" />
+        <activity
+            android:name=".ui.me.UserHelpActivity"
+            android:label="新手帮助" />
+        <activity android:name=".ui.me.SuggestionActivity" />
+        <activity
+            android:name=".ui.common.NotificationMessageActivity"
+            android:label="信息" />
+        <activity
+            android:name=".ui.me.SelectAddressActivity"
+            android:label="选择收货地址" />
+        <activity android:name=".ui.me.AddOrEditAddressActivity" />
+        <activity android:name=".ui.common.SearchActivity"></activity>
     </application>
 
 </manifest>

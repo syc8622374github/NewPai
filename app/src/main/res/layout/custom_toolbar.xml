@@ -36,14 +36,29 @@
             android:textSize="18sp"
             android:text="@string/app_name"/>
 
-        <ImageButton
-            android:id="@+id/iv_right_action1"
+        <RelativeLayout
+            android:id="@+id/rl_right_action1"
             android:layout_width="50dp"
-            android:background="#00000000"
-            android:scaleType="fitCenter"
-            android:padding="15dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_notification"/>
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/iv_right_action1"
+                android:layout_width="50dp"
+                android:background="#00000000"
+                android:scaleType="fitCenter"
+                android:padding="15dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_notification"/>
+
+            <TextView
+                android:id="@+id/tv_toolbar_right_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone"
+                android:text="编辑"/>
+
+        </RelativeLayout>
 
     </LinearLayout>
 
