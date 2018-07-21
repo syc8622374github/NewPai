@@ -13,8 +13,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.cyc.newpai.GlideApp;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
+import com.cyc.newpai.framework.adapter.ViewHolder;
+import com.cyc.newpai.ui.main.HomeShopDetailActivity;
 import com.cyc.newpai.ui.main.entity.HomeBean;
 
 import java.util.Timer;
@@ -30,16 +33,14 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerAdapter<HomeBean> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_main_item,parent,false);
-        ViewHolderGeneral holderGeneral = new ViewHolderGeneral(view);
-        return holderGeneral;
+        return ViewHolder.create(mContext,R.layout.home_main_item,parent);
     }
 
     int mSecond = 99;
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        ViewHolderGeneral holderGeneral = (ViewHolderGeneral) holder;
-        holderGeneral.price.setText("￥"+mList.get(position).getNow_price()+"");
+        ViewHolder viewHolder = (ViewHolder) holder;
+        viewHolder.setText(R.id.tv_home_category_price,"￥"+mList.get(position).getNow_price()+"");
         int time = mList.get(position).getLeft_second();
         String timeStr = "";
         if(time<10&&time>0){
@@ -51,23 +52,15 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerAdapter<HomeBean> {
             mList.get(position).setLeft_second(time);
             timeStr = "00:00:" + time;
         }
-        holderGeneral.countDown.setText(timeStr);
-        //countDownTimer.start();
-        //handler.sendEmptyMessageDelayed(1,1000/count);
-        /*while (mSecond>0){
-            if(time>10){
-                timeStr = "00:"+ time +":" + mSecond;
-            }else{
-                timeStr = "00:0"+ time + ":" + mSecond;
-            }
-            mSecond -= mSecond / count;
-            holderGeneral.countDown.setText(timeStr);
-        }*/
-        onBindListener(holderGeneral,position);
+        viewHolder.setText(R.id.tv_home_category_count_down,timeStr);
+        ImageView shopIcon = viewHolder.getView(R.id.iv_shop_icon);
+        GlideApp.with(mContext).load(getList().get(position).getImage()).placeholder(R.drawable.shop_iphonex).into(shopIcon);
+        viewHolder.setText(R.id.tv_shop_title,getList().get(position).getGoods_name());
+        onBindListener(viewHolder,position);
     }
 
-    private void onBindListener(ViewHolderGeneral holderGeneral, int position) {
-        holderGeneral.mView.setOnClickListener(view -> mListener.onItemClickListener(view,mList.get(position),position));
+    private void onBindListener(ViewHolder viewHolder, int position) {
+        viewHolder.itemView.setOnClickListener(view -> mListener.onItemClickListener(view,mList.get(position),position));
     }
 
     public static class ViewHolderGeneral extends RecyclerView.ViewHolder {

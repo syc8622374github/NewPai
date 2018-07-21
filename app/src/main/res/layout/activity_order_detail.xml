@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.me.OrderDetailActivity"
+    android:background="@color/color_list_bg"
+    android:orientation="vertical">
+
+    <com.cyc.newpai.widget.CustomToolbar
+        android:id="@+id/ctb_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:background="@drawable/ic_order_detail_top">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="我拍中"
+                android:textSize="22sp"
+                android:textColor="@android:color/white"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_order_detail_count_down_time"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical|right"
+                    android:textColor="@android:color/white"
+                    android:text="剩余:02天23小时24分"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical|right"
+                    android:textColor="@android:color/white"
+                    android:text="如未下单视为放弃，不返拍币"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/shape_border_grey_line">
+
+                <ImageView
+                    android:id="@+id/iv_order_detail_icon"
+                    android:padding="5dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/shop_iphonex"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginLeft="5dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_order_detail_title"
+                    android:layout_width="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="title"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:gravity="center_vertical"
+                        android:layout_height="wrap_content"
+                        android:text="成交价:"/>
+
+                    <TextView
+                        android:id="@+id/tv_order_detail_now_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="￥532"
+                        android:textColor="@color/colorPrimary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            android:background="@color/divider"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:background="@android:color/white"
+            android:padding="10dp"
+            android:layout_height="60dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_order_detail_order_count"
+                android:text="已出价：2次"
+                android:layout_width="match_parent"
+                android:gravity="center_vertical"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tv_order_detail_time"
+                android:text="拍中时间：20180718 08:31:23"
+                android:gravity="center_vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:padding="10dp"
+        android:background="@android:color/white"
+        android:gravity="center|right"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_order_detail_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="去下单"
+            android:onClick="clickEvent"
+            android:textColor="@color/colorPrimary"
+            style="?android:attr/borderlessButtonStyle"
+            android:background="@drawable/shape_border_red_line_oval"/>
+
+    </LinearLayout>
+
+</LinearLayout>

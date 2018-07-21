@@ -43,6 +43,8 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         view.findViewById(R.id.tv_me_avator).setOnClickListener(this);
         view.findViewById(R.id.ll_me_suggestion).setOnClickListener(this);
         view.findViewById(R.id.ll_me_address).setOnClickListener(this);
+        view.findViewById(R.id.ll_me_order_detail).setOnClickListener(this);
+        view.findViewById(R.id.ll_me_auction).setOnClickListener(this);
     }
 
     public static String getFlag() {
@@ -68,6 +70,12 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                 Intent intent = new Intent(getContext(), SelectAddressActivity.class);
                 intent.putExtra(SelectAddressActivity.TYPE_ADDRESS,SelectAddressActivity.TYPE_EDIT_ADDRESS);
                 startActivity(intent);
+                break;
+            case R.id.ll_me_order_detail:
+                startActivity(new Intent(getContext(),OrderDetailActivity.class));
+                break;
+            case R.id.ll_me_auction:
+                startActivity(new Intent(getContext(),MyAuctionActivity.class));
                 break;
         }
     }

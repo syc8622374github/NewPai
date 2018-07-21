@@ -7,6 +7,7 @@
     android:orientation="vertical">
     
     <ImageView
+        android:id="@+id/iv_shop_icon"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -37,10 +38,13 @@
             />
 
         <TextView
+            android:id="@+id/tv_shop_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="拍了那么多"
             android:textSize="16sp"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:textColor="@color/color_home_shop_prompt"/>
 
         <LinearLayout

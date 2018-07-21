@@ -22,6 +22,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 
 /**
@@ -31,12 +32,13 @@ public class OverlapViewHelper implements ICaseViewHelper {
 
     public ICaseViewHelper mHelper;
     public View mDataView;
+    public FrameLayout showLayout;
 
     public OverlapViewHelper(View view) {
         this.mDataView = view;
 
-        /*找到父View*/
         ViewGroup parent;
+        /*找到父View*/
         if (view.getParent() != null) {
             parent = (ViewGroup) view.getParent();
         } else {
@@ -56,15 +58,17 @@ public class OverlapViewHelper implements ICaseViewHelper {
 
         /*重新将一个frameLayout添加进原来的View的位子中*/
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
-        FrameLayout frameLayout = new FrameLayout(view.getContext());
+        layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        showLayout = new FrameLayout(view.getContext());
         parent.removeViewAt(childIndex);
-        parent.addView(frameLayout, childIndex, layoutParams);
+        parent.addView(showLayout, childIndex, layoutParams);
 
         /*在这个frameLayout中实现将新的View覆盖在原来的view上*/
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         View floatView = new View(view.getContext());
-        frameLayout.addView(view, params);
-        frameLayout.addView(floatView, params);
+        showLayout.addView(view, params);
+        showLayout.addView(floatView, params);
         mHelper = new ReplaceViewHelper(floatView);
     }
 

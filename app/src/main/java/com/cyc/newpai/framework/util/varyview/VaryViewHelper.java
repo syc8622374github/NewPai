@@ -74,6 +74,10 @@ public class VaryViewHelper {
         }
     }
 
+    public void hideView(boolean isHide){
+        mViewHelper.showLayout.setVisibility(isHide?View.GONE:View.VISIBLE);
+    }
+
     public void setUpLoadingView(View view) {
         mLoadingView = view;
         mLoadingView.setClickable(true);

@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.View;
 
 import com.cyc.newpai.R;
+import com.cyc.newpai.framework.util.varyview.VaryViewHelper;
 import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.widget.CustomToolbar;
 import com.google.gson.Gson;
@@ -20,6 +21,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     private GsonManager gsonManager;
 
     protected Handler handler = new Handler(Looper.getMainLooper());
+    protected VaryViewHelper varyViewHelper;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -40,6 +42,29 @@ public abstract class BaseActivity extends AppCompatActivity {
             ctb_toolbar.setTitle(getTitle().toString());
         }
     }
+
+    public void initVaryView(){
+        if (getLoadingTargetView() != null) {
+            varyViewHelper = new VaryViewHelper.Builder()
+                    .setDataView(getLoadingTargetView())
+                    .setLoadingView(View.inflate(this, R.layout.layout_loadingview, null))
+                    .setEmptyView(View.inflate(this, R.layout.layout_emptyview, null))
+                    .setErrorView(View.inflate(this, R.layout.layout_errorview, null))
+                    .setRefreshListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            onRetryLoad();
+                        }
+                    })
+                    .build();
+        }
+    }
+
+    protected View getLoadingTargetView(){
+        return null;
+    }
+
+    protected void onRetryLoad(){}
 
     public abstract int getLayoutId();
 

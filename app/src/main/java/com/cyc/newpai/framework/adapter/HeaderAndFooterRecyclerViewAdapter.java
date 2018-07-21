@@ -121,6 +121,10 @@ public class HeaderAndFooterRecyclerViewAdapter extends RecyclerView.Adapter<Rec
         return getFooterViewsCount() > 0 ? mFooterViews.get(0) : null;
     }
 
+    public void clearFooterView(){
+        mFooterViews.clear();
+    }
+
     /**
      * 返回第一个HeaderView
      *

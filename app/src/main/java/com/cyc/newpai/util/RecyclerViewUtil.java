@@ -45,9 +45,8 @@ public class RecyclerViewUtil {
         }
 
         HeaderAndFooterRecyclerViewAdapter headerAndFooterAdapter = (HeaderAndFooterRecyclerViewAdapter) outerAdapter;
-        if (headerAndFooterAdapter.getFooterViewsCount() == 0) {
-            headerAndFooterAdapter.addFooterView(view);
-        }
+        headerAndFooterAdapter.clearFooterView();
+        headerAndFooterAdapter.addFooterView(view);
     }
 
     /**

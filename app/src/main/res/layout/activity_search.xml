@@ -1,40 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/color_list_bg"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_list_bg"
-    android:orientation="vertical"
-    tools:context=".ui.common.SearchActivity">
+    android:orientation="vertical">
 
     <com.cyc.newpai.widget.SearchToolbar
         android:layout_width="match_parent"
+        android:id="@+id/st_search_bar"
         android:layout_height="50dp" />
 
     <LinearLayout
+        android:id="@+id/ll_search_hot_search_key"
+        android:background="@android:color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:paddingLeft="13dp"
         android:paddingRight="13dp"
+        android:paddingLeft="13dp"
         android:paddingTop="20dp"
         android:orientation="vertical">
 
         <TextView
             android:text="热搜"
-            android:layout_marginBottom="10dp"
             android:textSize="20sp"
+            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_search_list"
-            android:layout_width="match_parent"
+            android:id="@+id/rv_search_keyword_list"
             android:layout_height="wrap_content"
-            android:scrollbars="none"
+            android:layout_width="match_parent"
             android:overScrollMode="never"
-            />
+            android:scrollbars="none"/>
 
     </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_search_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"/>
 
 </LinearLayout>

@@ -59,7 +59,14 @@
             android:name=".ui.me.SelectAddressActivity"
             android:label="选择收货地址" />
         <activity android:name=".ui.me.AddOrEditAddressActivity" />
-        <activity android:name=".ui.common.SearchActivity"></activity>
+        <activity android:name=".ui.common.SearchActivity" />
+        <activity
+            android:name=".ui.me.OrderDetailActivity"
+            android:label="订单详细" />
+        <activity android:name=".ui.me.SubmitOrderActivity" />
+        <activity android:name=".ui.me.PaySuccessActivity" />
+        <activity android:name=".ui.me.MyAuctionActivity"
+            android:label="我的竞拍"/>
     </application>
 
 </manifest>

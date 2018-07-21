@@ -15,6 +15,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SimpleItemAnimator;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -78,9 +79,13 @@ public class HomeFragment extends BaseFragment {
     private BaseFragment fragment;
     private View headView;
     private List<HomeBean> beanList = new ArrayList<>();
-    private HomeRecyclerViewAdapter adapter;
+    private HomeRecyclerViewAdapter homeRecyclerViewAdapter;
     private int pageSize = 10;
     private TextSwitcher topLine;
+    private List<String> images;
+    private int recyclerCount = 0;
+    private List<TopLineBean> topLineBeanList = new ArrayList<>();
+    private HeaderAndFooterRecyclerViewAdapter homeHeaderAndFooterRecyclerViewAdapter;
 
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -95,17 +100,25 @@ public class HomeFragment extends BaseFragment {
             switch (msg.what) {
                 case 1:
                     //adapter.notifyDataSetChanged();
-                    adapter.notifyItemRangeChanged(0, adapter.getList().size());
+                    homeRecyclerViewAdapter.notifyItemRangeChanged(0, homeRecyclerViewAdapter.getList().size());
                     swipeRefreshLayout.setRefreshing(false);
                     break;
                 case 2:
-                    // 设置切入动画
-                    topLine.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_bottom));
-                    // 设置切出动画
-                    topLine.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_up));
-                    //items是一个字符串列表，index就是动态的要显示的items中的索引
-                    topLine.setText("11111大声叫宽带连接阿斯兰对接啦手机里21");
-                    handler.sendEmptyMessageDelayed(2,2000);
+                    if(recyclerCount<topLineBeanList.size()){
+                        // 设置切入动画
+                        topLine.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_bottom));
+                        // 设置切出动画
+                        topLine.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_up));
+                        //items是一个字符串列表，index就是动态的要显示的items中的索引
+                        topLine.setText("恭喜"
+                                +topLineBeanList.get(recyclerCount).getNickname()
+                                +"以"+ Html.fromHtml("<font color=#FF6A6A>￥"+topLineBeanList.get(recyclerCount).getDeal_price()+"</font>")+"拍到"+topLineBeanList.get(recyclerCount).getGoods_name());
+                        handler.sendEmptyMessageDelayed(2,2000);
+                        recyclerCount++;
+                        if(recyclerCount==topLineBeanList.size()){
+                            recyclerCount=0;
+                        }
+                    }
                     break;
             }
         }
@@ -130,6 +143,7 @@ public class HomeFragment extends BaseFragment {
         initHeader();
         initRefresh(view);
         initRecyclerView(view);
+        initData();
     }
 
     private void initHeader() {
@@ -138,7 +152,6 @@ public class HomeFragment extends BaseFragment {
         initBanner(headView);
         initWindow(headView);
         initTab(headView);
-        //initData();
     }
 
     private void initTopLine(View headView) {
@@ -158,12 +171,21 @@ public class HomeFragment extends BaseFragment {
         handler.sendEmptyMessageDelayed(2,1000);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        banner.startAutoPlay();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        banner.stopAutoPlay();
+    }
+
     private void initData() {
         Map<String, String> param = new HashMap<>();
-        param.put("type", "1");
-        param.put("pagesize", String.valueOf(pageSize));
-        param.put("p", "1");
-        OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_INDEX_URL, param, new Callback() {
+        updateIndexData(param, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -224,13 +246,13 @@ public class HomeFragment extends BaseFragment {
                 try {
                     if (response.isSuccessful()) {
                         String str = response.body().string();
-                        ResponseBean<ResponseResultBean<TopLineBean>> data = getGson().fromJson(str, new TypeToken<ResponseBean<TopLineBean>>() {
+                        ResponseBean<ResponseResultBean<TopLineBean>> data = getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<TopLineBean>>>() {
                         }.getType());
                         if (data.getCode() == 200 && data.getResult() != null) {
                             TopLineBean topLineBean = data.getResult().getItem();
                             updateTopLine(topLineBean);
                         }
-                        handler.post(() -> ToastManager.showToast(getContext(), data.getMsg(), Toast.LENGTH_LONG));
+                        //handler.post(() -> ToastManager.showToast(getContext(), data.getMsg(), Toast.LENGTH_LONG));
                         return;
                     }
                     handler.post(() -> ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG));
@@ -242,35 +264,55 @@ public class HomeFragment extends BaseFragment {
         });
     }
 
+    private void updateIndexData(Map<String, String> param,Callback callback) {
+        param.put("type", "1");
+        param.put("pagesize", String.valueOf(pageSize));
+        param.put("p", "1");
+        OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_INDEX_URL, param,callback);
+    }
+
     private void updateTopLine(TopLineBean topLineBean) {
+        if(topLineBean!=null){
+            topLineBeanList.clear();
+            topLineBeanList.add(topLineBean);
+        }
     }
 
     private void updateBannerData(List<BannerDataBean> result) {
-        banner.setImages(result);
+        handler.post(()-> banner.update(result));
     }
 
     private void updateShopData(HomePageBean bean) {
+        if(bean.getList().size()==homeRecyclerViewAdapter.getList().size()){
+
+        }
         if (bean.getList() != null) {
             beanList.clear();
             beanList.addAll(bean.getList());
-            handler.sendEmptyMessage(1);
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    homeRecyclerViewAdapter.setListNotify(bean.getList());
+                }
+            });
+            //handler.sendEmptyMessage(1);
         }
     }
 
     private void initRecyclerView(View view) {
         RecyclerView rvMain = view.findViewById(R.id.rv_main);
-        adapter = new HomeRecyclerViewAdapter(rvMain);
+        homeRecyclerViewAdapter = new HomeRecyclerViewAdapter(rvMain);
         ((SimpleItemAnimator) rvMain.getItemAnimator()).setSupportsChangeAnimations(false);
         rvMain.getItemAnimator().setChangeDuration(0);// 通过设置动画执行时间为0来解决闪烁问题
-        HeaderAndFooterRecyclerViewAdapter headerAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
+        homeHeaderAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(homeRecyclerViewAdapter);
         rvMain.addItemDecoration(new GridDivider(getContext(), 2, getResources().getColor(R.color.divider)));
-        adapter.setOnClickItemListener((view1, itemBean, position) -> startActivity(new Intent(getContext(), HomeShopDetailActivity.class)));
+        homeRecyclerViewAdapter.setOnClickItemListener((view1, itemBean, position) -> startActivity(new Intent(getContext(), HomeShopDetailActivity.class)));
         rvMain.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         rvMain.setLayoutManager(gridLayoutManager);
-        rvMain.setAdapter(headerAndFooterRecyclerViewAdapter);
-        if (getFootView() != null) {
-            RecyclerViewUtil.addFootView(rvMain, getFootView());
+        rvMain.setAdapter(homeHeaderAndFooterRecyclerViewAdapter);
+        if (getFootView(LoadingFooter.State.Loading) != null) {
+            RecyclerViewUtil.addFootView(rvMain, getFootView(LoadingFooter.State.Loading));
         }
         RecyclerViewUtil.addHearView(rvMain, headView);
         rvMain.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -279,18 +321,48 @@ public class HomeFragment extends BaseFragment {
                 super.onScrollStateChanged(recyclerView, newState);
                 if (RecyclerView.SCROLL_STATE_IDLE == newState) {
                     //滑动停止
-                    boolean isBottom = gridLayoutManager.findLastCompletelyVisibleItemPosition() >= adapter.getItemCount();
-                    if (isBottom && adapter.getItemCount() > 0) {
+                    boolean isBottom = gridLayoutManager.findLastCompletelyVisibleItemPosition() >= homeRecyclerViewAdapter.getItemCount();
+                    if (((LoadingFooter)homeHeaderAndFooterRecyclerViewAdapter.getFooterView()).getState()==LoadingFooter.State.Loading&&isBottom && homeRecyclerViewAdapter.getItemCount() > 0) {
                         if (!isLoadMore) {
                             getView().postDelayed(new Runnable() {
                                 @Override
                                 public void run() {
-                                    List<HomeBean> beanList = new ArrayList<>();
+                                    pageSize++;
+                                    updateIndexData(new HashMap<>(), new Callback() {
+                                        @Override
+                                        public void onFailure(Call call, IOException e) {
+                                            isLoadMore = false;
+                                            pageSize--;
+                                        }
+
+                                        @Override
+                                        public void onResponse(Call call, Response response) throws IOException {
+                                            try {
+                                                if (response.isSuccessful()) {
+                                                    String str = response.body().string();
+                                                    ResponseBean<HomePageBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
+                                                    }.getType());
+                                                    if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                                                        updateShopData(responseBean.getResult());
+                                                        //RecyclerViewUtil.removeFooterView(rvMain);
+                                                        RecyclerViewUtil.addFootView(rvMain,getFootView(LoadingFooter.State.TheEnd));
+                                                        return;
+                                                    }
+                                                }
+                                                ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
+                                            } catch (Exception e) {
+                                                Log.e(TAG, e.getMessage());
+                                            } finally {
+                                                isLoadMore = false;
+                                            }
+                                            pageSize--;
+                                        }
+                                    });
+                                    /*List<HomeBean> beanList = new ArrayList<>();
                                     beanList.add(new HomeBean(10, "500"));
                                     beanList.add(new HomeBean(9, "500"));
                                     beanList.add(new HomeBean(8, "500"));
-                                    adapter.addListNotify(beanList);
-                                    isLoadMore = false;
+                                    homeRecyclerViewAdapter.addListNotify(beanList);*/
                                 }
                             }, 2000);
                             isLoadMore = true;
@@ -305,16 +377,6 @@ public class HomeFragment extends BaseFragment {
                 }
             }
         });
-        beanList.add(new HomeBean(10,"500"));
-        beanList.add(new HomeBean(9,"500"));
-        beanList.add(new HomeBean(8,"500"));
-        beanList.add(new HomeBean(7,"500"));
-        beanList.add(new HomeBean(6,"500"));
-        beanList.add(new HomeBean(5,"500"));
-        beanList.add(new HomeBean(4,"500"));
-        beanList.add(new HomeBean(3,"500"));
-        beanList.add(new HomeBean(2,"500"));
-        adapter.setListNotify(beanList);
         startRefreshData();
     }
 
@@ -325,18 +387,18 @@ public class HomeFragment extends BaseFragment {
             public void run() {
                 for (HomeBean bean : beanList) {
                     bean.setLeft_second(bean.getLeft_second() - 1);
-                    bean.setNow_price((Integer.valueOf(bean.getNow_price()) + Math.round(10))+"");
+                    //bean.setNow_price((Double.valueOf(bean.getNow_price()) + Math.round(10))+"");
                 }
                 handler.sendEmptyMessage(1);
             }
         }, 1000, 1000);
     }
 
-    protected View getFootView() {
+    protected View getFootView(LoadingFooter.State state) {
         LoadingFooter mFooterView = null;
         if (mFooterView == null) {
             mFooterView = new LoadingFooter(getActivity());
-            mFooterView.setState(LoadingFooter.State.Loading);
+            mFooterView.setState(state);
         }
         return mFooterView;
     }
@@ -450,15 +512,14 @@ public class HomeFragment extends BaseFragment {
                 if (path instanceof BannerDataBean) {
                     pathStr = ((BannerDataBean) path).getImg_url();
                 }
-                GlideApp.with(context).load(pathStr).placeholder(R.drawable.test111).into(imageView);
+                try {
+                    GlideApp.with(context).load(pathStr).placeholder(R.drawable.test111).into(imageView);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
-        List<String> images = new ArrayList<>();
-        /*images.add("111");
-        images.add("111");
-        images.add("111");
-        images.add("111");
-        images.add("111");*/
+        images = new ArrayList<>();
         banner.setImages(images);
         banner.start();
         banner.startAutoPlay();

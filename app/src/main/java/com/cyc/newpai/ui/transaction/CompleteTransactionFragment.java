@@ -91,7 +91,7 @@ public class CompleteTransactionFragment extends BaseFragment {
         initList(recyclerView);
         initTopLine(view);
         initVaryView();
-        varyViewHelper.showEmptyView();
+        //varyViewHelper.showEmptyView();
         return view;
     }
 
