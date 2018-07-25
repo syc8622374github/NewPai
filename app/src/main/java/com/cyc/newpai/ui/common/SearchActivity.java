@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.cyc.newpai.R;
+import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
 import com.cyc.newpai.framework.base.BaseActivity;
 import com.cyc.newpai.framework.decoration.SpaceItemDecoration;
 import com.cyc.newpai.framework.flowlayout.FlowLayoutManager;
@@ -24,7 +25,6 @@ import com.cyc.newpai.widget.SearchToolbar;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -82,7 +82,7 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void updateHisKeyword(ResponseResultBean<SearchKeywdBean> result) {
-        searchKeyWordRecyclerViewAdapter.setListNotify(result.getList());
+        handler.post(()->searchKeyWordRecyclerViewAdapter.setListNotify(result.getList()));
     }
 
     private void initView() {
@@ -90,9 +90,46 @@ public class SearchActivity extends BaseActivity {
         rvKeywordList.setLayoutManager(new FlowLayoutManager());
         rvKeywordList.addItemDecoration(new SpaceItemDecoration(ScreenUtil.dp2px(this, ScreenUtil.dp2px(this,4))));
         searchKeyWordRecyclerViewAdapter = new SearchKeywordRecyclerViewAdapter(rvKeywordList);
+        searchKeyWordRecyclerViewAdapter.setOnClickItemListener(new BaseRecyclerAdapter.OnAdapterListener<SearchKeywdBean>() {
+            @Override
+            public void onItemClickListener(View view, SearchKeywdBean itemBean, int position) {
+                varyViewHelper.hideView(false);
+                llHotSearchKey.setVisibility(View.GONE);
+                varyViewHelper.showLoadingView();
+                //varyViewHelper.showEmptyView();
+                Map<String, String> params = new HashMap<>();
+                params.put("keyword",itemBean.getTag());
+                OkHttpManager.getInstance(SearchActivity.this).postAsyncHttp(HttpUrl.HTTP_BID_SEARCH_URL, params, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        try {
+                            if (response.isSuccessful()) {
+                                String str = response.body().string();
+                                ResponseBean<ResponseResultBean<SearchBean>> data = getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<SearchBean>>>() {
+                                }.getType());
+                                if (data.getCode() == 200) {
+                                    if (data.getResult().getList() != null && data.getResult().getList().size() > 0) {
+                                        updateSearchData(data.getResult().getList());
+                                    }else{
+                                        handler.post(()->varyViewHelper.showEmptyView());
+                                    }
+                                    return;
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
         rvKeywordList.setAdapter(searchKeyWordRecyclerViewAdapter);
         llHotSearchKey = findViewById(R.id.ll_search_hot_search_key);
-        List<SearchKeywdBean> data = new ArrayList<>();
+        /*List<SearchKeywdBean> data = new ArrayList<>();
         data.add(new SearchKeywdBean("iphonex"));
         data.add(new SearchKeywdBean("xiaomi"));
         data.add(new SearchKeywdBean("huawei"));
@@ -103,7 +140,7 @@ public class SearchActivity extends BaseActivity {
         data.add(new SearchKeywdBean("xiaomi"));
         data.add(new SearchKeywdBean("vivo-dd"));
         data.add(new SearchKeywdBean("iphonex-eqh"));
-        searchKeyWordRecyclerViewAdapter.setListNotify(data);
+        searchKeyWordRecyclerViewAdapter.setListNotify(data);*/
         SearchToolbar searchToolbar = findViewById(R.id.st_search_bar);
         searchToolbar.setSearchListener(key -> {
             varyViewHelper.hideView(false);
@@ -112,7 +149,7 @@ public class SearchActivity extends BaseActivity {
             //varyViewHelper.showEmptyView();
             Map<String, String> params = new HashMap<>();
             params.put("keyword", key);
-            List<SearchBean> datas = new ArrayList<>();
+            /*List<SearchBean> datas = new ArrayList<>();
             datas.add(new SearchBean("11","111","111","111",10));
             datas.add(new SearchBean("11","111","111","111",10));
             datas.add(new SearchBean("11","111","111","111",10));
@@ -124,7 +161,7 @@ public class SearchActivity extends BaseActivity {
                     searchRecyclerViewAdapter.setListNotify(datas);
                     varyViewHelper.showDataView();
                 }
-            },2000);
+            },2000);*/
             OkHttpManager.getInstance(SearchActivity.this).postAsyncHttp(HttpUrl.HTTP_BID_SEARCH_URL, params, new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -135,11 +172,13 @@ public class SearchActivity extends BaseActivity {
                     try {
                         if (response.isSuccessful()) {
                             String str = response.body().string();
-                            ResponseBean<ResponseResultBean<SearchBean>> data = getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean>>() {
+                            ResponseBean<ResponseResultBean<SearchBean>> data = getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<SearchBean>>>() {
                             }.getType());
                             if (data.getCode() == 200) {
                                 if (data.getResult().getList() != null && data.getResult().getList().size() > 0) {
                                     updateSearchData(data.getResult().getList());
+                                }else{
+                                    handler.post(()->varyViewHelper.showEmptyView());
                                 }
                                 return;
                             }
@@ -158,8 +197,11 @@ public class SearchActivity extends BaseActivity {
     }
 
     private void updateSearchData(List<SearchBean> list) {
-        searchRecyclerViewAdapter.setListNotify(list);
-        varyViewHelper.showDataView();
+        handler.post(()->{
+            searchRecyclerViewAdapter.setListNotify(list);
+            varyViewHelper.showDataView();
+        });
+
     }
 
     @Override

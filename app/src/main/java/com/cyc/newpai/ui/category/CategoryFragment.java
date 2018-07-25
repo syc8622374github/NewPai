@@ -175,6 +175,7 @@ public class CategoryFragment extends BaseFragment {
                 }
             }
             categoryTitleRecyclerAdapter.notifyDataSetChanged();
+            categoryDetailRecyclerAdapter.setListNotify(cacheDetailData.get(categoryMenuBeanList.get(position).getCate_id()));
         });
         rvCategoryTitle.setAdapter(categoryTitleRecyclerAdapter);
     }

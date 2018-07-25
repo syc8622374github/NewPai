@@ -4,7 +4,7 @@ public class SearchBean {
     private String id;
     private String market_price;
     private String goods_name;
-    private String iamge;
+    private String image;
     private String now_price;
     private String last_bid_time;
     private String begin_time;
@@ -48,12 +48,12 @@ public class SearchBean {
         this.goods_name = goods_name;
     }
 
-    public String getIamge() {
-        return iamge;
+    public String getImage() {
+        return image;
     }
 
-    public void setIamge(String iamge) {
-        this.iamge = iamge;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getNow_price() {

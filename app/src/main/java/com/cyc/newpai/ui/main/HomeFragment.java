@@ -110,9 +110,9 @@ public class HomeFragment extends BaseFragment {
                         // 设置切出动画
                         topLine.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_up));
                         //items是一个字符串列表，index就是动态的要显示的items中的索引
-                        topLine.setText("恭喜"
+                        topLine.setText(Html.fromHtml("恭喜"
                                 +topLineBeanList.get(recyclerCount).getNickname()
-                                +"以"+ Html.fromHtml("<font color=#FF6A6A>￥"+topLineBeanList.get(recyclerCount).getDeal_price()+"</font>")+"拍到"+topLineBeanList.get(recyclerCount).getGoods_name());
+                                +"以"+ "<font color=#FF6A6A>￥"+topLineBeanList.get(recyclerCount).getDeal_price()+"</font>"+"拍到"+topLineBeanList.get(recyclerCount).getGoods_name()));
                         handler.sendEmptyMessageDelayed(2,2000);
                         recyclerCount++;
                         if(recyclerCount==topLineBeanList.size()){
@@ -249,8 +249,8 @@ public class HomeFragment extends BaseFragment {
                         ResponseBean<ResponseResultBean<TopLineBean>> data = getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<TopLineBean>>>() {
                         }.getType());
                         if (data.getCode() == 200 && data.getResult() != null) {
-                            TopLineBean topLineBean = data.getResult().getItem();
-                            updateTopLine(topLineBean);
+                            List<TopLineBean> topLineBeans = data.getResult().getList();
+                            updateTopLine(topLineBeans);
                         }
                         //handler.post(() -> ToastManager.showToast(getContext(), data.getMsg(), Toast.LENGTH_LONG));
                         return;
@@ -271,10 +271,10 @@ public class HomeFragment extends BaseFragment {
         OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_INDEX_URL, param,callback);
     }
 
-    private void updateTopLine(TopLineBean topLineBean) {
+    private void updateTopLine(List<TopLineBean> topLineBean) {
         if(topLineBean!=null){
             topLineBeanList.clear();
-            topLineBeanList.add(topLineBean);
+            topLineBeanList.addAll(topLineBean);
         }
     }
 
@@ -345,7 +345,7 @@ public class HomeFragment extends BaseFragment {
                                                     if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
                                                         updateShopData(responseBean.getResult());
                                                         //RecyclerViewUtil.removeFooterView(rvMain);
-                                                        RecyclerViewUtil.addFootView(rvMain,getFootView(LoadingFooter.State.TheEnd));
+                                                        //RecyclerViewUtil.addFootView(rvMain,getFootView(LoadingFooter.State.TheEnd));
                                                         return;
                                                     }
                                                 }
@@ -385,11 +385,38 @@ public class HomeFragment extends BaseFragment {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                for (HomeBean bean : beanList) {
-                    bean.setLeft_second(bean.getLeft_second() - 1);
+                /*for (HomeBean bean : beanList) {
+                    //bean.setLeft_second(bean.getLeft_second() - 1);
                     //bean.setNow_price((Double.valueOf(bean.getNow_price()) + Math.round(10))+"");
-                }
-                handler.sendEmptyMessage(1);
+                }*/
+                updateIndexData(new HashMap<>(), new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        try {
+                            if (response.isSuccessful()) {
+                                String str = response.body().string();
+                                ResponseBean<HomePageBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
+                                }.getType());
+                                if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                                    updateShopData(responseBean.getResult());
+
+                                    Log.i("updateIndex",str);
+                                    return;
+                                }
+                            }
+                            //ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
+                        } catch (Exception e) {
+                            Log.e(TAG, e.getMessage());
+                        }
+                    }
+                });
+
+                //handler.sendEmptyMessage(1);
             }
         }, 1000, 1000);
     }

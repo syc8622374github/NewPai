@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -20,20 +21,33 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
+import com.cyc.newpai.http.entity.ResponseBean;
+import com.cyc.newpai.http.entity.ResponseResultBean;
+import com.cyc.newpai.ui.common.entity.TopLineBean;
 import com.cyc.newpai.ui.main.HomeShopDetailActivity;
 import com.cyc.newpai.ui.main.adapter.HistoryCompleteTransactionAdapter;
 import com.cyc.newpai.ui.main.entity.HisTransactionBean;
 import com.cyc.newpai.util.RecyclerViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
+import com.cyc.newpai.widget.ToastManager;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class CompleteTransactionFragment extends BaseFragment {
 
@@ -41,6 +55,8 @@ public class CompleteTransactionFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private View view;
     private TextSwitcher topLine;
+    private List<TopLineBean> topLineBeanList = new ArrayList<>();
+    private int recyclerCount = 0;
 
     public static CompleteTransactionFragment newInstance() {
         Bundle args = new Bundle();
@@ -54,13 +70,21 @@ public class CompleteTransactionFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 2:
-                    // 设置切入动画
-                    topLine.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_bottom));
-                    // 设置切出动画
-                    topLine.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_up));
-                    //items是一个字符串列表，index就是动态的要显示的items中的索引
-                    topLine.setText("11111大声叫宽带连接阿斯兰对接啦手机里21");
-                    handler.sendEmptyMessageDelayed(2,2000);
+                    if(recyclerCount<topLineBeanList.size()){
+                        // 设置切入动画
+                        topLine.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_bottom));
+                        // 设置切出动画
+                        topLine.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_up));
+                        //items是一个字符串列表，index就是动态的要显示的items中的索引
+                        topLine.setText(Html.fromHtml("恭喜"
+                                +topLineBeanList.get(recyclerCount).getNickname()
+                                +"以"+ "<font color=#FF6A6A>￥"+topLineBeanList.get(recyclerCount).getDeal_price()+"</font>"+"拍到"+topLineBeanList.get(recyclerCount).getGoods_name()));
+                        handler.sendEmptyMessageDelayed(2,2000);
+                        recyclerCount++;
+                        if(recyclerCount==topLineBeanList.size()){
+                            recyclerCount=0;
+                        }
+                    }
                     break;
             }
         }
@@ -91,7 +115,7 @@ public class CompleteTransactionFragment extends BaseFragment {
         initList(recyclerView);
         initTopLine(view);
         initVaryView();
-        //varyViewHelper.showEmptyView();
+        varyViewHelper.showEmptyView();
         return view;
     }
 
@@ -102,7 +126,53 @@ public class CompleteTransactionFragment extends BaseFragment {
     }
 
     private void initData() {
-        //OkHttpManager.getInstance(getContext()).postAsyncHttp(HttpUrl.);
+        Map<String,String> params = new HashMap<>();
+        params.put("gid","1");
+        params.put("p","1");
+        OkHttpManager.getInstance(getContext()).postAsyncHttp(HttpUrl.HTTP_BID_RECORD_AGO_URL, params, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                varyViewHelper.showErrorView();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+            }
+        });
+        OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_HEADLINE_URL, null, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        String str = response.body().string();
+                        ResponseBean<ResponseResultBean<TopLineBean>> data = getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<TopLineBean>>>() {
+                        }.getType());
+                        if (data.getCode() == 200 && data.getResult() != null) {
+                            List<TopLineBean> topLineBeans = data.getResult().getList();
+                            updateTopLine(topLineBeans);
+                        }
+                        //handler.post(() -> ToastManager.showToast(getContext(), data.getMsg(), Toast.LENGTH_LONG));
+                        return;
+                    }
+                    handler.post(() -> ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    handler.post(() -> ToastManager.showToast(getContext(), "数据加载异常", Toast.LENGTH_LONG));
+                }
+            }
+        });
+    }
+
+    private void updateTopLine(List<TopLineBean> topLineBeans) {
+        if(topLineBeans!=null){
+            topLineBeanList.clear();
+            topLineBeanList.addAll(topLineBeans);
+        }
     }
 
     @Override

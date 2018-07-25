@@ -2,6 +2,7 @@ package com.cyc.newpai.ui.common.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -33,5 +34,6 @@ public class SearchKeywordRecyclerViewAdapter extends BaseRecyclerAdapter<Search
                 ,ScreenUtil.dp2px(mContext,7)
                 ,ScreenUtil.dp2px(mContext,7)
                 ,ScreenUtil.dp2px(mContext,7));
+        viewHolder.itemView.setOnClickListener(v -> mListener.onItemClickListener(v,getList().get(position),position));
     }
 }

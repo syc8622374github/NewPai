@@ -41,16 +41,16 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerAdapter<HomeBean> {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.setText(R.id.tv_home_category_price,"￥"+mList.get(position).getNow_price()+"");
-        int time = mList.get(position).getLeft_second();
+        int time = 10 - mList.get(position).getLeft_second();
         String timeStr = "";
         if(time<10&&time>0){
             timeStr = "00:00:0" + time;
         }else if(time>=10){
             timeStr = "00:00:" + time;
         }else{
-            time = 10;
+            /*time = 10;
             mList.get(position).setLeft_second(time);
-            timeStr = "00:00:" + time;
+            timeStr = "00:00:" + time;*/
         }
         viewHolder.setText(R.id.tv_home_category_count_down,timeStr);
         ImageView shopIcon = viewHolder.getView(R.id.iv_shop_icon);
