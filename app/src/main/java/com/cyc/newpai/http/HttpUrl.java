@@ -19,6 +19,8 @@ public class HttpUrl {
 
     public static final String HTTP_HEADLINE_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/System/toutiao";//头条
 
+    public static final String HTTP_NEW_DEAL = HttpUrl.HTTP_SERVICE_URL + "/Api/System/newDeal";//最新成交
+
     /*-------------------------------------------------------------------*/
 
     /**

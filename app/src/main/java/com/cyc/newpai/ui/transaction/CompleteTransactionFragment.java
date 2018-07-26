@@ -34,6 +34,7 @@ import com.cyc.newpai.ui.common.entity.TopLineBean;
 import com.cyc.newpai.ui.main.HomeShopDetailActivity;
 import com.cyc.newpai.ui.main.adapter.HistoryCompleteTransactionAdapter;
 import com.cyc.newpai.ui.main.entity.HisTransactionBean;
+import com.cyc.newpai.ui.transaction.entity.CompleteTransactionBean;
 import com.cyc.newpai.util.RecyclerViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
 import com.cyc.newpai.widget.ToastManager;
@@ -115,7 +116,7 @@ public class CompleteTransactionFragment extends BaseFragment {
         initList(recyclerView);
         initTopLine(view);
         initVaryView();
-        varyViewHelper.showEmptyView();
+        //varyViewHelper.showEmptyView();
         return view;
     }
 
@@ -127,9 +128,8 @@ public class CompleteTransactionFragment extends BaseFragment {
 
     private void initData() {
         Map<String,String> params = new HashMap<>();
-        params.put("gid","1");
         params.put("p","1");
-        OkHttpManager.getInstance(getContext()).postAsyncHttp(HttpUrl.HTTP_BID_RECORD_AGO_URL, params, new Callback() {
+        OkHttpManager.getInstance(getContext()).postAsyncHttp(HttpUrl.HTTP_NEW_DEAL, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 varyViewHelper.showErrorView();
@@ -137,6 +137,20 @@ public class CompleteTransactionFragment extends BaseFragment {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if(response.isSuccessful()){
+                        String str = response.body().string();
+                        ResponseBean<ResponseResultBean<CompleteTransactionBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<CompleteTransactionBean>>>(){}.getType());
+                        if(data.getCode()==200&&data.getResult().getList()!=null){
+                            updateNewDealData(data.getResult().getList());
+                        }
+                        return;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    handler.post(() -> ToastManager.showToast(getContext(), "数据加载异常", Toast.LENGTH_LONG));
+                }
+                handler.post(() -> ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG));
             }
         });
         OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_HEADLINE_URL, null, new Callback() {
@@ -166,6 +180,10 @@ public class CompleteTransactionFragment extends BaseFragment {
                 }
             }
         });
+    }
+
+    private void updateNewDealData(List<CompleteTransactionBean> list) {
+        handler.post(()->adapter.setListNotifyCustom(list));
     }
 
     private void updateTopLine(List<TopLineBean> topLineBeans) {
