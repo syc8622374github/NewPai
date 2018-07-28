@@ -1,20 +1,22 @@
 package com.cyc.newpai.ui.main.entity;
 
 public class BidAgeRecordBean {
-    private String market_price;
-    private String deal_price;
+    private String id;
     private String nickname;
-    private String img;
+    private String deal_price;
+    private String goods_name;
     private String deal_time;
+    private String image;
+    private String market_price;
+    private String save_rate;
     private String rate;
 
-    public BidAgeRecordBean(String market_price, String deal_price, String nickname, String img, String deal_time, String rate) {
-        this.market_price = market_price;
-        this.deal_price = deal_price;
-        this.nickname = nickname;
-        this.img = img;
-        this.deal_time = deal_time;
-        this.rate = rate;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getMarket_price() {
@@ -41,12 +43,28 @@ public class BidAgeRecordBean {
         this.nickname = nickname;
     }
 
-    public String getImg() {
-        return img;
+    public String getGoods_name() {
+        return goods_name;
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public void setGoods_name(String goods_name) {
+        this.goods_name = goods_name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String getSave_rate() {
+        return save_rate;
+    }
+
+    public void setSave_rate(String save_rate) {
+        this.save_rate = save_rate;
     }
 
     public String getDeal_time() {

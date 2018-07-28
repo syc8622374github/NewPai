@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ResponseResultBean<T> {
     private String total;
-    private String page_total;
+    private int page_total;
     private List<T> list;
     private T item;
 
@@ -16,11 +16,11 @@ public class ResponseResultBean<T> {
         this.total = total;
     }
 
-    public String getPage_total() {
+    public int getPage_total() {
         return page_total;
     }
 
-    public void setPage_total(String page_total) {
+    public void setPage_total(int page_total) {
         this.page_total = page_total;
     }
 

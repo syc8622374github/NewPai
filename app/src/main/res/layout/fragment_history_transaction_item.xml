@@ -27,12 +27,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_height="100dp"
         android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -59,6 +59,7 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:layout_marginLeft="10dp"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
@@ -67,6 +68,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:singleLine="true"
+                android:ellipsize="end"
                 android:text="成交价:"/>
 
             <TextView
@@ -81,6 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:textColor="@color/colorPrimary"
                 android:text="成交价:"/>
 
         </LinearLayout>
@@ -88,33 +92,31 @@
         <LinearLayout
             android:layout_width="0dp"
             android:layout_weight="2"
-            android:gravity="center"
+            android:gravity="center_horizontal"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_his_bid_deal_time"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:textSize="16sp"
+                android:layout_height="wrap_content"
                 android:textColor="@color/color_default_gray_font"
                 android:text="2018-06-16 05:38"/>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:textSize="18sp"
                 android:text="节省"/>
 
             <TextView
                 android:id="@+id/tv_his_bid_rate"
                 android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:textStyle="bold"
-                android:textSize="26sp"
+                android:textSize="22sp"
                 android:text="98.20%"/>
 
         </LinearLayout>

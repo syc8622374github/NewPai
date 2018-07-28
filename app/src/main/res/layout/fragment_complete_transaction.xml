@@ -1,41 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.v4.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/srl_transaction_refresh_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:paddingRight="3dp"
-        android:layout_height="40dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <ImageView
-            android:layout_width="70dp"
-            android:layout_height="40dp"
-            android:src="@drawable/icon_home_auction_new"/>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingRight="3dp"
+            android:layout_height="40dp">
 
-        <TextSwitcher
-            android:id="@+id/ts_home_fragment_top_line"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:singleLine="true"
-            android:ellipsize="end"
-            android:text="恭喜一直在微笑以105.6拍到Apple iphonex..."/>
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="40dp"
+                android:src="@drawable/icon_home_auction_new"/>
+
+            <TextSwitcher
+                android:id="@+id/ts_home_fragment_top_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="恭喜一直在微笑以105.6拍到Apple iphonex..."/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:background="@color/color_list_bg"/>
+
+        <include layout="@layout/fragment_item_list"/>
 
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="@color/color_list_bg"/>
-
-    <include layout="@layout/fragment_item_list"/>
-
-</LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

@@ -188,7 +188,7 @@ public class HomeFragment extends BaseFragment {
         updateIndexData(param, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                handler.post(()->swipeRefreshLayout.setRefreshing(false));
             }
 
             @Override
@@ -206,6 +206,8 @@ public class HomeFragment extends BaseFragment {
                     ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
+                } finally {
+                    handler.post(()->swipeRefreshLayout.setRefreshing(false));
                 }
             }
         });
@@ -289,6 +291,7 @@ public class HomeFragment extends BaseFragment {
         if (bean.getList() != null) {
             beanList.clear();
             beanList.addAll(bean.getList());
+            pageSize = beanList.size();
             handler.post(new Runnable() {
                 @Override
                 public void run() {

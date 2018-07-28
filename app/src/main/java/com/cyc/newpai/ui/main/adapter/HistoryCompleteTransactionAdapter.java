@@ -119,28 +119,26 @@ public class HistoryCompleteTransactionAdapter extends BaseRecyclerAdapter<BidAg
         }else{
             viewHolderGeneral.completeLabel.setVisibility(View.GONE);
         }*/
-        switch (type) {
-            case COMPLETE_TRANSACTION_TYPE:
-                viewHolder.getView(R.id.iv_complete_label).setVisibility(View.GONE);
-                viewHolder.setText(R.id.tv_his_bid_deal_person,getList().get(position).getNickname());
-                viewHolder.setText(R.id.tv_hist_deal_price,getList().get(position).getDeal_price());
-                viewHolder.setText(R.id.tv_his_bid_deal_time,getList().get(position).getDeal_time());
-                viewHolder.setText(R.id.tv_his_bid_rate,getList().get(position).getRate());
-                break;
-            case LUCKY_TIME_TYPE:
-                ImageView avator = viewHolder.getView(R.id.iv_avator);
-                GlideApp.with(mContext).load(luckyBeans.get(position).getHead_img()).placeholder(R.drawable.ic_avator_default).into(avator);
-                viewHolder.setText(R.id.tv_history_lucky_name,luckyBeans.get(position).getNickname());
-                viewHolder.setText(R.id.tv_history_lucky_message,luckyBeans.get(position).getContent());
-                ImageView img = viewHolder.getView(R.id.iv_shop_show_bg);
-                GlideApp.with(mContext).load(luckyBeans.get(position).getImages()).into(img);
-                break;
-            case RULE_TYPE:
-                break;
-            default:
-                break;
-        }
+        if(type==COMPLETE_TRANSACTION_TYPE){
+            viewHolder.getView(R.id.iv_complete_label).setVisibility(View.GONE);
+            viewHolder.setText(R.id.tv_his_bid_deal_person,getList().get(position).getNickname());
+            viewHolder.setText(R.id.tv_hist_deal_price,"￥"+getList().get(position).getDeal_price());
+            viewHolder.setText(R.id.tv_his_bid_market_price,getList().get(position).getMarket_price());
+            viewHolder.setText(R.id.tv_his_bid_deal_time,getList().get(position).getDeal_time());
+            viewHolder.setText(R.id.tv_his_bid_rate,getList().get(position).getSave_rate());
+            ImageView avator = viewHolder.getView(R.id.iv_avator);
+            GlideApp.with(mContext).load(getList().get(position).getImage()).placeholder(R.drawable.shop_iphonex).into(avator);
+            viewHolder.getView(R.id.iv_complete_label).setVisibility(View.VISIBLE);
+        }else if(type==LUCKY_TIME_TYPE){
+            ImageView avator = viewHolder.getView(R.id.iv_avator);
+            GlideApp.with(mContext).load(luckyBeans.get(position).getHead_img()).placeholder(R.drawable.ic_avator_default).into(avator);
+            viewHolder.setText(R.id.tv_history_lucky_name,luckyBeans.get(position).getNickname());
+            viewHolder.setText(R.id.tv_history_lucky_message,luckyBeans.get(position).getContent());
+            ImageView img = viewHolder.getView(R.id.iv_shop_show_bg);
+            GlideApp.with(mContext).load(luckyBeans.get(position).getImages()).into(img);
+        }else if(type==RULE_TYPE){
 
+        }
         onBindListener(viewHolder,position);
     }
 

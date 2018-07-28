@@ -65,6 +65,8 @@ public class HttpUrl {
 
     public static final String HTTP_PROPERTY_URL = HTTP_SERVICE_URL + "/Api/Member/property"; //个人收支中心
 
+    public static final String HTTP_AUCTION_URL = HTTP_SERVICE_URL + "/Api/Member/myAuction"; //个人竞拍记录
+
     /*-------------------------------------------------------------------*/
 
     /**

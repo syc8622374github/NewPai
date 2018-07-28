@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -33,6 +34,7 @@ import com.cyc.newpai.http.entity.ResponseResultBean;
 import com.cyc.newpai.ui.common.entity.TopLineBean;
 import com.cyc.newpai.ui.main.HomeShopDetailActivity;
 import com.cyc.newpai.ui.main.adapter.HistoryCompleteTransactionAdapter;
+import com.cyc.newpai.ui.main.entity.BidAgeRecordBean;
 import com.cyc.newpai.ui.main.entity.HisTransactionBean;
 import com.cyc.newpai.ui.transaction.entity.CompleteTransactionBean;
 import com.cyc.newpai.util.RecyclerViewUtil;
@@ -58,6 +60,7 @@ public class CompleteTransactionFragment extends BaseFragment {
     private TextSwitcher topLine;
     private List<TopLineBean> topLineBeanList = new ArrayList<>();
     private int recyclerCount = 0;
+    private SwipeRefreshLayout refreshLayout;
 
     public static CompleteTransactionFragment newInstance() {
         Bundle args = new Bundle();
@@ -113,11 +116,20 @@ public class CompleteTransactionFragment extends BaseFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_complete_transaction,container,false);
         recyclerView = view.findViewById(R.id.list);
+        initRefreshLayout(view);
         initList(recyclerView);
         initTopLine(view);
         initVaryView();
         //varyViewHelper.showEmptyView();
         return view;
+    }
+
+    private void initRefreshLayout(View view) {
+        refreshLayout = view.findViewById(R.id.srl_transaction_refresh_layout);
+        refreshLayout.setColorSchemeResources(R.color.colorPrimary);
+        refreshLayout.setOnRefreshListener(() -> {
+            initData();
+        });
     }
 
     @Override
@@ -140,7 +152,7 @@ public class CompleteTransactionFragment extends BaseFragment {
                 try {
                     if(response.isSuccessful()){
                         String str = response.body().string();
-                        ResponseBean<ResponseResultBean<CompleteTransactionBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<CompleteTransactionBean>>>(){}.getType());
+                        ResponseBean<ResponseResultBean<BidAgeRecordBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<BidAgeRecordBean>>>(){}.getType());
                         if(data.getCode()==200&&data.getResult().getList()!=null){
                             updateNewDealData(data.getResult().getList());
                         }
@@ -156,7 +168,7 @@ public class CompleteTransactionFragment extends BaseFragment {
         OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_HEADLINE_URL, null, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                handler.post(()->refreshLayout.setRefreshing(false));
             }
 
             @Override
@@ -177,12 +189,14 @@ public class CompleteTransactionFragment extends BaseFragment {
                 } catch (Exception e) {
                     e.printStackTrace();
                     handler.post(() -> ToastManager.showToast(getContext(), "数据加载异常", Toast.LENGTH_LONG));
+                } finally {
+                    handler.post(()->refreshLayout.setRefreshing(false));
                 }
             }
         });
     }
 
-    private void updateNewDealData(List<CompleteTransactionBean> list) {
+    private void updateNewDealData(List<BidAgeRecordBean> list) {
         handler.post(()->adapter.setListNotifyCustom(list));
     }
 

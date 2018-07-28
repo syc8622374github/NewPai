@@ -18,12 +18,14 @@
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/tv_auction_time"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:text="20181720 23:22:22"
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/tv_auction_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimary"
@@ -37,6 +39,7 @@
         android:orientation="horizontal">
 
         <ImageView
+            android:id="@+id/iv_auction_icon"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:padding="10dp"
@@ -50,6 +53,7 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_auction_name"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="3"
@@ -68,12 +72,14 @@
                     android:orientation="vertical">
 
                     <TextView
+                        android:id="@+id/tv_auction_detail"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
                         android:text="已成功拍的商品"/>
 
                     <TextView
+                        android:id="@+id/tv_auction_price"
                         android:layout_width="wrap_content"
                         android:layout_height="0dp"
                         android:layout_weight="1"
@@ -82,6 +88,7 @@
                 </LinearLayout>
 
                 <TextView
+                    android:id="@+id/tv_auction_count_down"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="bottom"
@@ -102,6 +109,7 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/btn_auction_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="去竞拍"
