@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
+import com.cyc.newpai.framework.adapter.ViewHolder;
+import com.cyc.newpai.framework.adapter.interfaces.OnItemClickListener;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
@@ -215,13 +217,16 @@ public class CompleteTransactionFragment extends BaseFragment {
     private void initList(RecyclerView recyclerView) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new HistoryCompleteTransactionAdapter(recyclerView,HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE);
+        adapter = new HistoryCompleteTransactionAdapter(getActivity(),null,true,HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE);
         HeaderAndFooterRecyclerViewAdapter headerAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(adapter);
         //adapter.setListNotify(data);
         recyclerView.setAdapter(headerAndFooterRecyclerViewAdapter);
         RecyclerViewUtil.addFootView(recyclerView,new LoadingFooter(getContext()));
-        adapter.setOnClickItemListener((view, itemBean, position) -> {
-            startActivity(new Intent(getContext(), HomeShopDetailActivity.class));
+        adapter.setOnItemClickListener(new OnItemClickListener<BidAgeRecordBean>() {
+            @Override
+            public void onItemClick(ViewHolder viewHolder, BidAgeRecordBean data, int position) {
+                startActivity(new Intent(getContext(), HomeShopDetailActivity.class));
+            }
         });
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

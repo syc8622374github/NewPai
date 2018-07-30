@@ -62,20 +62,4 @@ public class HomeRecyclerViewAdapter extends BaseRecyclerAdapter<HomeBean> {
     private void onBindListener(ViewHolder viewHolder, int position) {
         viewHolder.itemView.setOnClickListener(view -> mListener.onItemClickListener(view,mList.get(position),position));
     }
-
-    public static class ViewHolderGeneral extends RecyclerView.ViewHolder {
-        //这个CardView采用两层操作
-        public final View mView;
-        public final TextView countDown;
-        public final TextView price;
-
-
-        public ViewHolderGeneral(View view) {
-            super(view);
-            mView = view;
-            countDown = view.findViewById(R.id.tv_home_category_count_down);
-            price = view.findViewById(R.id.tv_home_category_price);
-        }
-
-    }
 }

@@ -34,6 +34,9 @@ import android.widget.Toast;
 import com.cyc.newpai.GlideApp;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
+import com.cyc.newpai.framework.adapter.ViewHolder;
+import com.cyc.newpai.framework.adapter.interfaces.OnItemClickListener;
+import com.cyc.newpai.framework.adapter.interfaces.OnLoadMoreListener;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
@@ -42,6 +45,7 @@ import com.cyc.newpai.http.entity.ResponseResultBean;
 import com.cyc.newpai.ui.common.entity.TopLineBean;
 import com.cyc.newpai.ui.main.adapter.GridDivider;
 import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
+import com.cyc.newpai.ui.main.adapter.NewHomeRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.entity.BannerDataBean;
 import com.cyc.newpai.ui.main.entity.BannerResultBean;
 import com.cyc.newpai.ui.main.entity.HomeBean;
@@ -49,6 +53,7 @@ import com.cyc.newpai.ui.main.entity.HomePageBean;
 import com.cyc.newpai.ui.main.entity.HomeWindowBean;
 import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.util.RecyclerViewUtil;
+import com.cyc.newpai.util.ViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
 import com.cyc.newpai.widget.ToastManager;
 import com.google.gson.reflect.TypeToken;
@@ -79,13 +84,15 @@ public class HomeFragment extends BaseFragment {
     private BaseFragment fragment;
     private View headView;
     private List<HomeBean> beanList = new ArrayList<>();
-    private HomeRecyclerViewAdapter homeRecyclerViewAdapter;
+    //private HomeRecyclerViewAdapter homeRecyclerViewAdapter;
     private int pageSize = 10;
     private TextSwitcher topLine;
     private List<String> images;
     private int recyclerCount = 0;
     private List<TopLineBean> topLineBeanList = new ArrayList<>();
     private HeaderAndFooterRecyclerViewAdapter homeHeaderAndFooterRecyclerViewAdapter;
+    private NewHomeRecyclerViewAdapter newHomeRecyclerViewAdapter;
+    private Timer timer;
 
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -100,7 +107,7 @@ public class HomeFragment extends BaseFragment {
             switch (msg.what) {
                 case 1:
                     //adapter.notifyDataSetChanged();
-                    homeRecyclerViewAdapter.notifyItemRangeChanged(0, homeRecyclerViewAdapter.getList().size());
+                    //homeRecyclerViewAdapter.notifyItemRangeChanged(0, homeRecyclerViewAdapter.getList().size());
                     swipeRefreshLayout.setRefreshing(false);
                     break;
                 case 2:
@@ -175,12 +182,17 @@ public class HomeFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
         banner.startAutoPlay();
+        startRefreshData();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         banner.stopAutoPlay();
+        if(timer!=null){
+            timer.cancel();
+            timer=null;
+        }
     }
 
     private void initData() {
@@ -285,9 +297,6 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void updateShopData(HomePageBean bean) {
-        if(bean.getList().size()==homeRecyclerViewAdapter.getList().size()){
-
-        }
         if (bean.getList() != null) {
             beanList.clear();
             beanList.addAll(bean.getList());
@@ -295,7 +304,9 @@ public class HomeFragment extends BaseFragment {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    homeRecyclerViewAdapter.setListNotify(bean.getList());
+                    //homeRecyclerViewAdapter.setListNotify(bean.getList());
+                    //newHomeRecyclerViewAdapter.setNewData(beanList);
+                    newHomeRecyclerViewAdapter.setLoadMoreData(beanList);
                 }
             });
             //handler.sendEmptyMessage(1);
@@ -304,133 +315,121 @@ public class HomeFragment extends BaseFragment {
 
     private void initRecyclerView(View view) {
         RecyclerView rvMain = view.findViewById(R.id.rv_main);
-        homeRecyclerViewAdapter = new HomeRecyclerViewAdapter(rvMain);
         ((SimpleItemAnimator) rvMain.getItemAnimator()).setSupportsChangeAnimations(false);
-        rvMain.getItemAnimator().setChangeDuration(0);// 通过设置动画执行时间为0来解决闪烁问题
-        homeHeaderAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(homeRecyclerViewAdapter);
-        rvMain.addItemDecoration(new GridDivider(getContext(), 2, getResources().getColor(R.color.divider)));
-        homeRecyclerViewAdapter.setOnClickItemListener((view1, itemBean, position) -> startActivity(new Intent(getContext(), HomeShopDetailActivity.class)));
-        rvMain.setHasFixedSize(true);
+        rvMain.getItemAnimator().setChangeDuration(0);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         rvMain.setLayoutManager(gridLayoutManager);
-        rvMain.setAdapter(homeHeaderAndFooterRecyclerViewAdapter);
-        if (getFootView(LoadingFooter.State.Loading) != null) {
-            RecyclerViewUtil.addFootView(rvMain, getFootView(LoadingFooter.State.Loading));
-        }
-        RecyclerViewUtil.addHearView(rvMain, headView);
-        rvMain.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-                if (RecyclerView.SCROLL_STATE_IDLE == newState) {
-                    //滑动停止
-                    boolean isBottom = gridLayoutManager.findLastCompletelyVisibleItemPosition() >= homeRecyclerViewAdapter.getItemCount();
-                    if (((LoadingFooter)homeHeaderAndFooterRecyclerViewAdapter.getFooterView()).getState()==LoadingFooter.State.Loading&&isBottom && homeRecyclerViewAdapter.getItemCount() > 0) {
-                        if (!isLoadMore) {
-                            getView().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    pageSize++;
-                                    updateIndexData(new HashMap<>(), new Callback() {
-                                        @Override
-                                        public void onFailure(Call call, IOException e) {
-                                            isLoadMore = false;
-                                            pageSize--;
-                                        }
+        rvMain.addItemDecoration(new GridDivider(getContext(), 2, getResources().getColor(R.color.divider)));
+        newHomeRecyclerViewAdapter = new NewHomeRecyclerViewAdapter(getActivity(),null,true);
+        //初始化 开始加载更多的loading View
+        newHomeRecyclerViewAdapter.setLoadingView(ViewUtil.getFootView(getActivity(),LoadingFooter.State.Loading));
+        //newHomeRecyclerViewAdapter.setReloadView(LayoutInflater.from(getActivity()).inflate(R.layout.layout_emptyview, (ViewGroup) rvMain.getParent(), false));
+        //newHomeRecyclerViewAdapter.setEmptyView(R.layout.layout_emptyview);
+        //加载失败，更新footer view提示
+        newHomeRecyclerViewAdapter.setLoadFailedView(ViewUtil.getFootView(getActivity(),LoadingFooter.State.NetWorkError));
+        //加载完成，更新footer view提示
+        newHomeRecyclerViewAdapter.setLoadEndView(ViewUtil.getFootView(getActivity(),LoadingFooter.State.TheEnd));
 
-                                        @Override
-                                        public void onResponse(Call call, Response response) throws IOException {
-                                            try {
-                                                if (response.isSuccessful()) {
-                                                    String str = response.body().string();
-                                                    ResponseBean<HomePageBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
-                                                    }.getType());
-                                                    if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
-                                                        updateShopData(responseBean.getResult());
-                                                        //RecyclerViewUtil.removeFooterView(rvMain);
-                                                        //RecyclerViewUtil.addFootView(rvMain,getFootView(LoadingFooter.State.TheEnd));
-                                                        return;
-                                                    }
-                                                }
-                                                ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
-                                            } catch (Exception e) {
-                                                Log.e(TAG, e.getMessage());
-                                            } finally {
-                                                isLoadMore = false;
+        //RecyclerViewUtil.addHearView(rvMain,headView);
+        newHomeRecyclerViewAdapter.addHeaderView(headView);
+        //设置加载更多触发的事件监听
+        newHomeRecyclerViewAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(boolean isReload) {
+                //loadMore();
+                getView().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        pageSize++;
+                        updateIndexData(new HashMap<>(), new Callback() {
+                            @Override
+                            public void onFailure(Call call, IOException e) {
+                                isLoadMore = false;
+                                pageSize--;
+                            }
+
+                            @Override
+                            public void onResponse(Call call, Response response) throws IOException {
+                                try {
+                                    if (response.isSuccessful()) {
+                                        String str = response.body().string();
+                                        ResponseBean<HomePageBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
+                                        }.getType());
+                                        if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                                            if(responseBean.getResult().getList().size()>newHomeRecyclerViewAdapter.getDataCount()){
+                                                updateShopData(responseBean.getResult());
+                                            }else{
+                                                handler.post(()->newHomeRecyclerViewAdapter.loadEnd());
                                             }
-                                            pageSize--;
+                                            return;
                                         }
-                                    });
-                                    /*List<HomeBean> beanList = new ArrayList<>();
-                                    beanList.add(new HomeBean(10, "500"));
-                                    beanList.add(new HomeBean(9, "500"));
-                                    beanList.add(new HomeBean(8, "500"));
-                                    homeRecyclerViewAdapter.addListNotify(beanList);*/
+                                    }
+                                    ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
+                                } catch (Exception e) {
+                                    Log.e(TAG, e.getMessage());
+                                } finally {
+                                    isLoadMore = false;
                                 }
-                            }, 2000);
-                            isLoadMore = true;
-                        }
+                                pageSize--;
+                            }
+                        });
                     }
-                } else if (RecyclerView.SCROLL_STATE_DRAGGING == newState) {
-                    //用户正在滑动
-//                    Logger.d("用户正在滑动 position=" + mAdapter.getAdapterPosition());
-                } else {
-                    //惯性滑动
-//                    Logger.d("惯性滑动 position=" + mAdapter.getAdapterPosition());
-                }
+                }, 500);
+            }
+        });
+        rvMain.setAdapter(newHomeRecyclerViewAdapter);
+        newHomeRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener<HomeBean>() {
+            @Override
+            public void onItemClick(ViewHolder viewHolder, HomeBean data, int position) {
+                Intent intent = new Intent(getContext(),HomeShopDetailActivity.class);
+                intent.putExtra("gid",data.getId());
+                startActivity(intent);
             }
         });
         startRefreshData();
     }
 
     private void startRefreshData() {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
+        if(timer==null){
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
                 /*for (HomeBean bean : beanList) {
                     //bean.setLeft_second(bean.getLeft_second() - 1);
                     //bean.setNow_price((Double.valueOf(bean.getNow_price()) + Math.round(10))+"");
                 }*/
-                updateIndexData(new HashMap<>(), new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
+                    updateIndexData(new HashMap<>(), new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
 
-                    }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        try {
-                            if (response.isSuccessful()) {
-                                String str = response.body().string();
-                                ResponseBean<HomePageBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
-                                }.getType());
-                                if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
-                                    updateShopData(responseBean.getResult());
-
-                                    Log.i("updateIndex",str);
-                                    return;
-                                }
-                            }
-                            //ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
-                        } catch (Exception e) {
-                            Log.e(TAG, e.getMessage());
                         }
-                    }
-                });
 
-                //handler.sendEmptyMessage(1);
-            }
-        }, 1000, 1000);
-    }
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            try {
+                                if (response.isSuccessful()) {
+                                    String str = response.body().string();
+                                    ResponseBean<HomePageBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
+                                    }.getType());
+                                    if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                                        updateShopData(responseBean.getResult());
 
-    protected View getFootView(LoadingFooter.State state) {
-        LoadingFooter mFooterView = null;
-        if (mFooterView == null) {
-            mFooterView = new LoadingFooter(getActivity());
-            mFooterView.setState(state);
+                                        Log.i("updateIndex",str);
+                                        return;
+                                    }
+                                }
+                                //ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
+                            } catch (Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+                        }
+                    });
+
+                    //handler.sendEmptyMessage(1);
+                }
+            }, 1000, 1000);
         }
-        return mFooterView;
     }
 
     private void initTab(View view) {

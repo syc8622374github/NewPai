@@ -52,12 +52,15 @@
         android:orientation="vertical"
         android:padding="10dp">
 
+
         <TextView
             android:id="@+id/tv_shop_detail_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_shop_detail_hot"
             android:drawablePadding="10dp"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:text="Apple iphoneX（A1865）256GB颜色随机"
             android:textSize="16sp" />
 
@@ -162,6 +165,7 @@
             android:textColor="@color/color_default_gray_font" />
 
         <TextView
+            android:id="@+id/tv_shop_detail_use_bi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

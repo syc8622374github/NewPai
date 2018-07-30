@@ -58,7 +58,7 @@ public class HistoryCompleteTransactionFragment extends BaseFragment {
     private void initList(RecyclerView recyclerView) {
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        HistoryCompleteTransactionAdapter adapter = new HistoryCompleteTransactionAdapter(recyclerView,type);
+        HistoryCompleteTransactionAdapter adapter = new HistoryCompleteTransactionAdapter(getActivity(),null,true,type);
         /*List<HisTransactionBean> data = new ArrayList<>();
         data.add(new HisTransactionBean(R.drawable.ic_avator));
         data.add(new HisTransactionBean(R.drawable.ic_avator));

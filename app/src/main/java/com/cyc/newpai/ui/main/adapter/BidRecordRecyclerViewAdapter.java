@@ -38,14 +38,18 @@ public class BidRecordRecyclerViewAdapter extends BaseRecyclerAdapter<BidRecordI
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        ViewHolder viewHolder = (ViewHolder)holder;
-        viewHolder.setText(R.id.tv_bid_record_name,mList.get(position).getNickname());
-        viewHolder.setText(R.id.tv_bid_record_price,mList.get(position).getMoney());
-        viewHolder.setText(R.id.tv_bid_record_area,mList.get(position).getIp_address());
-        GlideApp.with(mContext)
-                .load(mList.get(position).getImg())
-                .placeholder(R.drawable.ic_avator_default)
-                .transform(new GlideCircleTransform(mContext))
-                .into((ImageView) viewHolder.getView(R.id.iv_bid_record_avator));
+        try {
+            ViewHolder viewHolder = (ViewHolder)holder;
+            viewHolder.setText(R.id.tv_bid_record_name,mList.get(position).getNickname());
+            viewHolder.setText(R.id.tv_bid_record_price,mList.get(position).getMoney());
+            viewHolder.setText(R.id.tv_bid_record_area,mList.get(position).getIp_address());
+            GlideApp.with(mContext)
+                    .load(mList.get(position).getImg())
+                    .placeholder(R.drawable.ic_avator_default)
+                    .transform(new GlideCircleTransform(mContext))
+                    .into((ImageView) viewHolder.getView(R.id.iv_bid_record_avator));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

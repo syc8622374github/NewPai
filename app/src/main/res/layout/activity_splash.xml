@@ -15,10 +15,11 @@
     <com.cyc.newpai.widget.CountDownProgressView
         android:id="@+id/cdpv_splash_count_down"
         android:textSize="15sp"
-        android:layout_width="30dp"
+        android:layout_width="35dp"
         app:circSolidColor="#4541"
         android:layout_alignParentRight="true"
-        android:layout_margin="10dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="15dp"
         android:layout_height="30dp"/>
 
 </RelativeLayout>
