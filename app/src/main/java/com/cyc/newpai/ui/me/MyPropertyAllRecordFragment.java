@@ -71,12 +71,19 @@ public class MyPropertyAllRecordFragment extends BaseFragment {
         allRecordRecyclerViewAdapter = new AllRecordRecyclerViewAdapter(list);
         list.setLayoutManager(new LinearLayoutManager(getContext()));
         list.setAdapter(allRecordRecyclerViewAdapter);
+        initVaryView();
         initData();
+    }
+
+    @Override
+    protected View getLoadingTargetView() {
+        return list;
     }
 
     private void initData() {
         Map<String,String> params = new HashMap<>();
         params.put("type","0");
+        varyViewHelper.showLoadingView();
         OkHttpManager.getInstance(getContext())
                 .postAsyncHttp(HttpUrl.HTTP_PROPERTY_URL, params, new Callback() {
                     @Override
@@ -90,8 +97,12 @@ public class MyPropertyAllRecordFragment extends BaseFragment {
                             if(response.isSuccessful()){
                                 String str = response.body().string();
                                 ResponseBean<ResponseResultBean<AllRecordBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<AllRecordBean>>>(){}.getType());
-                                if(data.getCode()==200){
+                                if(data.getCode()==200&&data.getResult().getList().size()>0){
                                     initList(data.getResult().getList());
+                                    handler.post(()->varyViewHelper.showDataView());
+                                    return;
+                                }else{
+                                    handler.post(()->varyViewHelper.showEmptyView());
                                 }
                             }
                         }catch (Exception e){

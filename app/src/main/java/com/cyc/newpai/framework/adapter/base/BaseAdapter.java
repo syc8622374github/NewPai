@@ -231,7 +231,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
      * @param recyclerView
      * @param layoutManager
      */
-    private void startLoadMore(RecyclerView recyclerView, final RecyclerView.LayoutManager layoutManager) {
+    public void startLoadMore(RecyclerView recyclerView, final RecyclerView.LayoutManager layoutManager) {
         if (!isOpenLoadMore || mLoadMoreListener == null) {
             return;
         }
@@ -274,8 +274,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     private void scrollLoadMore() {
         if (isReset) {
             return;
-        }
 
+        }
         if (mFooterLayout.getChildAt(0) == mLoadingView && !isLoading) {
             if (mLoadMoreListener != null) {
                 isLoading = true;

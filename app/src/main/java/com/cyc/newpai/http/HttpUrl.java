@@ -67,6 +67,10 @@ public class HttpUrl {
 
     public static final String HTTP_AUCTION_URL = HTTP_SERVICE_URL + "/Api/Member/myAuction"; //个人竞拍记录
 
+    public static final String HTTP_EDIT_ADDRESS_URL = HTTP_SERVICE_URL + "/Api/Member/addressUpdate"; //收货地址编辑
+
+    public static final String HTTP_ADDRESS_LIST_URL = HTTP_SERVICE_URL + "/Api/Member/addressList"; //收货地址列表
+
     /*-------------------------------------------------------------------*/
 
     /**

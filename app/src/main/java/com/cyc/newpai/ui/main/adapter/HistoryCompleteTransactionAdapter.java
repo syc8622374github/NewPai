@@ -15,6 +15,7 @@ import com.cyc.newpai.framework.adapter.ViewHolder;
 import com.cyc.newpai.framework.adapter.base.CommonBaseAdapter;
 import com.cyc.newpai.ui.main.entity.BidAgeRecordBean;
 import com.cyc.newpai.ui.main.entity.BidLuckyBean;
+import com.cyc.newpai.util.GlideCircleTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,25 +27,11 @@ public class HistoryCompleteTransactionAdapter extends CommonBaseAdapter<BidAgeR
     public static final int RULE_TYPE = 0x10003;//竞拍规则
     private int resId;
     private int type;
-    private List<BidLuckyBean> luckyBeans = new ArrayList<>();
 
     public HistoryCompleteTransactionAdapter(Context context, List<BidAgeRecordBean> datas, boolean isOpenLoadMore,int type) {
         super(context, datas, isOpenLoadMore);
         updateType(type);
     }
-
-    public void setLuckBean(List item) {
-        luckyBeans.clear();
-        luckyBeans.addAll(item);
-    }
-
-    public void addLuckBean(List item) {
-        luckyBeans.addAll(item);
-    }
-
-    /*public int getViewType(){
-        return  type;
-    }*/
 
     public void updateType(int type){
         this.type = type;
@@ -67,7 +54,11 @@ public class HistoryCompleteTransactionAdapter extends CommonBaseAdapter<BidAgeR
     public void setListNotifyCustom(List mList) {
         getAllData().clear();
         getAllData().addAll(mList);
-        notifyItemRangeChanged(getHeaderCount(),getAllData().size());
+        if(mList.size()==0){
+            notifyDataSetChanged();
+        }else{
+            notifyItemRangeChanged(getHeaderCount(),getAllData().size());
+        }
     }
 
     /*@Override
@@ -102,15 +93,23 @@ public class HistoryCompleteTransactionAdapter extends CommonBaseAdapter<BidAgeR
                 holder.setText(R.id.tv_his_bid_deal_time,getAllData().get(position).getDeal_time());
                 holder.setText(R.id.tv_his_bid_rate,getAllData().get(position).getSave_rate());
                 ImageView avator = holder.getView(R.id.iv_avator);
-                GlideApp.with(mContext).load(getAllData().get(position).getImage()).placeholder(R.drawable.ic_avator_default).into(avator);
+                GlideApp.with(mContext)
+                        .load(getAllData().get(position).getImage())
+                        .placeholder(R.drawable.ic_avator_default)
+                        .transform(new GlideCircleTransform(mContext))
+                        .into(avator);
                 holder.getView(R.id.iv_complete_label).setVisibility(View.VISIBLE);
             }else if(type==LUCKY_TIME_TYPE){
                 ImageView avator = holder.getView(R.id.iv_avator);
-                GlideApp.with(mContext).load(luckyBeans.get(position).getHead_img()).placeholder(R.drawable.ic_avator_default).into(avator);
-                holder.setText(R.id.tv_history_lucky_name,luckyBeans.get(position).getNickname());
-                holder.setText(R.id.tv_history_lucky_message,luckyBeans.get(position).getContent());
+                GlideApp.with(mContext)
+                        .load(getAllData().get(position).getHead_img())
+                        .placeholder(R.drawable.ic_avator_default)
+                        .transform(new GlideCircleTransform(mContext))
+                        .into(avator);
+                holder.setText(R.id.tv_history_lucky_name,getAllData().get(position).getNickname());
+                holder.setText(R.id.tv_history_lucky_message,getAllData().get(position).getContent());
                 ImageView img = holder.getView(R.id.iv_shop_show_bg);
-                GlideApp.with(mContext).load(luckyBeans.get(position).getImages()).into(img);
+                GlideApp.with(mContext).load(getAllData().get(position).getImages().get(0)).placeholder(R.mipmap.ic_launcher).into(img);
             }else if(type==RULE_TYPE){
 
             }

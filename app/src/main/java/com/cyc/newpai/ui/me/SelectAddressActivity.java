@@ -9,13 +9,24 @@ import android.view.View;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
 import com.cyc.newpai.framework.base.BaseActivity;
+import com.cyc.newpai.http.HttpUrl;
+import com.cyc.newpai.http.OkHttpManager;
+import com.cyc.newpai.http.entity.ResponseBean;
+import com.cyc.newpai.http.entity.ResponseResultBean;
 import com.cyc.newpai.ui.category.CommItemDecoration;
 import com.cyc.newpai.ui.me.adapter.AddressRecyclerViewAdapter;
 import com.cyc.newpai.ui.me.entity.AddressBean;
 import com.cyc.newpai.util.ScreenUtil;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class SelectAddressActivity extends BaseActivity {
 
@@ -25,18 +36,62 @@ public class SelectAddressActivity extends BaseActivity {
 
     private AddressRecyclerViewAdapter addressRecyclerViewAdapter;
     private String type = TYPE_SELECT_ADDRESS;
+    private RecyclerView rvAddressList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         type = getIntent().getStringExtra(TYPE_ADDRESS);
         initView();
+        initVaryView();
+    }
+
+    @Override
+    protected View getLoadingTargetView() {
+        return rvAddressList;
+    }
+
+    private void initData() {
+        varyViewHelper.showLoadingView();
+        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_ADDRESS_LIST_URL, null, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if(response.isSuccessful()){
+                        String str = response.body().string();
+                        ResponseBean<ResponseResultBean<AddressBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<AddressBean>>>(){}.getType());
+                        if(data.getCode()==200&&data.getResult().getList().size()>0){
+                            updateAddressList(data.getResult().getList());
+                            handler.post(()->varyViewHelper.showDataView());
+                            return;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                handler.post(()->varyViewHelper.showEmptyView());
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        initData();
+    }
+
+    private void updateAddressList(List<AddressBean> list) {
+        handler.post(()->addressRecyclerViewAdapter.setListNotify(list));
     }
 
 
-
     private void initView() {
-        RecyclerView rvAddressList = findViewById(R.id.rv_address_list);
+        rvAddressList = findViewById(R.id.rv_address_list);
         rvAddressList.setLayoutManager(new LinearLayoutManager(this));
         rvAddressList.addItemDecoration(new CommItemDecoration(this
                 ,LinearLayoutManager.VERTICAL
@@ -45,15 +100,11 @@ public class SelectAddressActivity extends BaseActivity {
         addressRecyclerViewAdapter = new AddressRecyclerViewAdapter(rvAddressList,type);
         rvAddressList.setAdapter(addressRecyclerViewAdapter);
         List<AddressBean> addressBeans = new ArrayList<>();
-        addressBeans.add(new AddressBean("生苗","18xxxxxxxx","江西省南昌市经济技术开发区西林大街2ss",true));
-        addressBeans.add(new AddressBean("生苗","18xxxxxxxx","江西省南昌市经济技术开发区西林大街2ss",false));
-        addressBeans.add(new AddressBean("生苗","18xxxxxxxx","江西省南昌市经济技术开发区西林大街2ss",false));
-        addressBeans.add(new AddressBean("生苗","18xxxxxxxx","江西省南昌市经济技术开发区西林大街2ss",false));
         addressRecyclerViewAdapter.setListNotify(addressBeans);
-        addressRecyclerViewAdapter.setOnClickItemListener((view, itemBean, position) -> {
+        addressRecyclerViewAdapter.setOnClickItemListener((BaseRecyclerAdapter.OnAdapterListener<AddressBean>) (view, itemBean, position) -> {
             for(int i=0;i<addressBeans.size();i++){
                 if(i==position){
-                    addressBeans.get(i).setCheck(!addressBeans.get(i).isCheck());
+                    itemBean.setCheck(!addressBeans.get(i).isCheck());
                 }else{
                     addressBeans.get(i).setCheck(false);
                 }
@@ -64,7 +115,9 @@ public class SelectAddressActivity extends BaseActivity {
         if(type.equals(SelectAddressActivity.TYPE_EDIT_ADDRESS)){
             ctb_toolbar.setTitle("收货地址");
             ctb_toolbar.setRightAction1("新增", v -> {
-
+                Intent intent = new Intent(this,AddOrEditAddressActivity.class);
+                intent.putExtra(AddOrEditAddressActivity.TYPE_ADDRESS,AddOrEditAddressActivity.TYPE_ADD_ADDRESS);
+                startActivity(intent);
             });
         }
     }

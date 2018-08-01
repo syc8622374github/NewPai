@@ -3,6 +3,7 @@ package com.cyc.newpai.ui.main;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -104,29 +105,33 @@ public class HomeFragment extends BaseFragment {
     public Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    //adapter.notifyDataSetChanged();
-                    //homeRecyclerViewAdapter.notifyItemRangeChanged(0, homeRecyclerViewAdapter.getList().size());
-                    swipeRefreshLayout.setRefreshing(false);
-                    break;
-                case 2:
-                    if(recyclerCount<topLineBeanList.size()){
-                        // 设置切入动画
-                        topLine.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_bottom));
-                        // 设置切出动画
-                        topLine.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_up));
-                        //items是一个字符串列表，index就是动态的要显示的items中的索引
-                        topLine.setText(Html.fromHtml("恭喜"
-                                +topLineBeanList.get(recyclerCount).getNickname()
-                                +"以"+ "<font color=#FF6A6A>￥"+topLineBeanList.get(recyclerCount).getDeal_price()+"</font>"+"拍到"+topLineBeanList.get(recyclerCount).getGoods_name()));
-                        handler.sendEmptyMessageDelayed(2,2000);
-                        recyclerCount++;
-                        if(recyclerCount==topLineBeanList.size()){
-                            recyclerCount=0;
+            try {
+                switch (msg.what) {
+                    case 1:
+                        //adapter.notifyDataSetChanged();
+                        //homeRecyclerViewAdapter.notifyItemRangeChanged(0, homeRecyclerViewAdapter.getList().size());
+                        swipeRefreshLayout.setRefreshing(false);
+                        break;
+                    case 2:
+                        if(recyclerCount<topLineBeanList.size()){
+                            // 设置切入动画
+                            topLine.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_bottom));
+                            // 设置切出动画
+                            topLine.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_up));
+                            //items是一个字符串列表，index就是动态的要显示的items中的索引
+                            topLine.setText(Html.fromHtml("恭喜"
+                                    +topLineBeanList.get(recyclerCount).getNickname()
+                                    +"以"+ "<font color=#FF6A6A>￥"+topLineBeanList.get(recyclerCount).getDeal_price()+"</font>"+"拍到"+topLineBeanList.get(recyclerCount).getGoods_name()));
+                            handler.sendEmptyMessageDelayed(2,2000);
+                            recyclerCount++;
+                            if(recyclerCount==topLineBeanList.size()){
+                                recyclerCount=0;
+                            }
                         }
-                    }
-                    break;
+                        break;
+                }
+            } catch (Exception e) {
+                Log.i(TAG,e.getMessage());
             }
         }
     };
@@ -271,7 +276,7 @@ public class HomeFragment extends BaseFragment {
                     }
                     handler.post(() -> ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG,e.getMessage());
                     handler.post(() -> ToastManager.showToast(getContext(), "数据加载异常", Toast.LENGTH_LONG));
                 }
             }
@@ -544,7 +549,7 @@ public class HomeFragment extends BaseFragment {
                 try {
                     GlideApp.with(context).load(pathStr).placeholder(R.drawable.test111).into(imageView);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG,e.getMessage());
                 }
             }
         });

@@ -1,5 +1,6 @@
 package com.cyc.newpai;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -29,6 +30,19 @@ public class MainActivity extends BaseActivity {
     private static int showPosition;
     private boolean isRestoreActivity;
     private String showFragmentTag;
+
+    public static void startAct(Context context){
+        startAct(context,false);
+    }
+
+    public static void startAct(Context context,boolean isSingleTask){
+        Intent intent = new Intent(context,MainActivity.class);
+        if(isSingleTask){
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        context.startActivity(new Intent(context,MainActivity.class));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,6 +1,7 @@
 package com.cyc.newpai.ui.me;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -28,8 +29,8 @@ import okhttp3.Response;
 
 public class MyAuctionActivity extends BaseActivity {
 
-    private String[] tabTitle = new String[]{"正在拍","未拍中","我在拍","待付款","待晒单"};
-    private String[] auctionTypes = new String[]{"1","2","3","4","5",};
+    public String[] tabTitle = new String[]{"正在拍","未拍中","我在拍","待付款","待晒单"};
+    public String[] auctionTypes = new String[]{"1","2","3","4","5"};
     private List<Fragment> fragments = new ArrayList<>();
     private int selectTabNum = 0;
 
@@ -67,12 +68,11 @@ public class MyAuctionActivity extends BaseActivity {
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimary));
         ViewPager viewPager = findViewById(R.id.vp_my_auction_view_pager);
         tabLayout.setupWithViewPager(viewPager);
-        viewPager.setOffscreenPageLimit(fragments.size());
+        //viewPager.setOffscreenPageLimit(fragments.size());
         viewPager.setAdapter(mAdapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override

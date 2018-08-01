@@ -70,13 +70,12 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
         android:background="@color/divider"/>
     
     <LinearLayout
         android:id="@+id/ll_address_edit_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -95,20 +94,23 @@
             android:layout_weight="1"
             android:textColor="@android:color/black"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:paddingLeft="10dp"
             android:text="默认地址"/>
 
         <TextView
             android:id="@+id/tv_address_edit_item_edit"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
             android:paddingRight="20dp"
             android:text="编辑"/>
 
         <TextView
             android:id="@+id/tv_address_edit_item_delete"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
             android:textColor="@color/colorPrimary"
             android:text="删除"/>
 

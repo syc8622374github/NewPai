@@ -70,8 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_shop_detail_count_down"
@@ -139,6 +138,11 @@
             android:id="@+id/rv_shop_detail_record"
             android:layout_width="match_parent"
             android:focusable="false"
+            android:background="@drawable/bg_shadow"
+            android:layout_marginTop="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingBottom="15dp"
             android:focusableInTouchMode="false"
             android:layout_height="wrap_content">
 

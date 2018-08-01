@@ -41,7 +41,7 @@ public class BidRecordRecyclerViewAdapter extends BaseRecyclerAdapter<BidRecordI
         try {
             ViewHolder viewHolder = (ViewHolder)holder;
             viewHolder.setText(R.id.tv_bid_record_name,mList.get(position).getNickname());
-            viewHolder.setText(R.id.tv_bid_record_price,mList.get(position).getMoney());
+            viewHolder.setText(R.id.tv_bid_record_price,"￥"+mList.get(position).getMoney());
             viewHolder.setText(R.id.tv_bid_record_area,mList.get(position).getIp_address());
             GlideApp.with(mContext)
                     .load(mList.get(position).getImg())

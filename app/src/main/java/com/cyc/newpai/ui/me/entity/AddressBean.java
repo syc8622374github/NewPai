@@ -1,16 +1,24 @@
 package com.cyc.newpai.ui.me.entity;
 
-public class AddressBean {
-    private String name;
-    private String phone;
-    private String address;
-    private boolean isCheck;
+import java.io.Serializable;
 
-    public AddressBean(String name, String phone, String address, boolean isCheck) {
-        this.name = name;
-        this.phone = phone;
-        this.address = address;
-        this.isCheck = isCheck;
+public class AddressBean implements Serializable{
+    private String id;
+    private String uid;
+    private String mobile;
+    private String name;
+    private String area;
+    private String address;
+    private String is_default;
+    private String add_time;
+    private boolean check;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -21,12 +29,20 @@ public class AddressBean {
         this.name = name;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getMobile() {
+        return mobile;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public void setArea(String area) {
+        this.area = area;
     }
 
     public String getAddress() {
@@ -37,11 +53,35 @@ public class AddressBean {
         this.address = address;
     }
 
+    public String getIs_default() {
+        return is_default;
+    }
+
+    public void setIs_default(String is_default) {
+        this.is_default = is_default;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getAdd_time() {
+        return add_time;
+    }
+
+    public void setAdd_time(String add_time) {
+        this.add_time = add_time;
+    }
+
     public boolean isCheck() {
-        return isCheck;
+        return check;
     }
 
     public void setCheck(boolean check) {
-        isCheck = check;
+        this.check = check;
     }
 }

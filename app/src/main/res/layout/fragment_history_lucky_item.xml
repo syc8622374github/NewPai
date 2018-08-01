@@ -55,7 +55,7 @@
             android:id="@+id/iv_shop_show_bg"
             android:layout_width="100dp"
             android:layout_height="150dp"
-            android:background="@mipmap/ic_launcher"/>
+            android:src="@mipmap/ic_launcher"/>
 
     </LinearLayout>
 

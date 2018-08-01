@@ -306,7 +306,7 @@ public class LoginActivity extends BaseActivity {
         SharePreUtil.setPref(this, Constant.TOKEN, result.getToken());
         SharePreUtil.setPref(this, Constant.UID, result.getUid());
         //handler.post(() -> ToastManager.showToast(getApplicationContext(), "uid:" + result.getUid() + " token:" + result.getUid(), Toast.LENGTH_LONG));
-        startActivity(new Intent(this, MainActivity.class));
+        MainActivity.startAct(this,true);
         finish();
     }
 }

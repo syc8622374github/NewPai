@@ -23,12 +23,13 @@ public class SplashActivity extends BaseActivity {
         countDownView.setProgressListener(progress -> {
             if(progress==0){
                 finish();
-                startActivity(new Intent(SplashActivity.this,MainActivity.class));
+                MainActivity.startAct(this);
             }
         });
         countDownView.setOnClickListener(v -> {
             finish();
-            startActivity(new Intent(SplashActivity.this,MainActivity.class));
+            MainActivity.startAct(this);
+            countDownView.stop();
         });
         countDownView.start();
     }

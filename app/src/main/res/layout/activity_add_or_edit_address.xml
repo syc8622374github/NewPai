@@ -29,13 +29,15 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:text="收货人"/>
 
             <EditText
+                android:id="@+id/et_edit_address_receiver"
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:textSize="14sp"
                 android:background="#00000000"
                 android:singleLine="true"
                 android:layout_height="wrap_content" />
@@ -55,13 +57,17 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:text="联系电话"/>
 
             <EditText
+                android:id="@+id/et_edit_address_mobile"
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:inputType="number"
+                android:maxLength="11"
+                android:textSize="14sp"
                 android:background="#00000000"
                 android:singleLine="true"
                 android:layout_height="wrap_content" />
@@ -81,13 +87,15 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:text="所在地区"/>
 
             <EditText
+                android:id="@+id/et_edit_address_local_area"
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:textSize="14sp"
                 android:background="#00000000"
                 android:singleLine="true"
                 android:layout_height="wrap_content" />
@@ -112,14 +120,16 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:text="详细地址"/>
 
             <EditText
+                android:id="@+id/et_edit_address_detail_address"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:background="#00000000"
+                android:textSize="14sp"
                 android:singleLine="true"
                 android:layout_height="wrap_content" />
 
@@ -142,9 +152,10 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="详细地址"/>
+            android:text="设为默认地址"/>
 
         <CheckBox
+            android:id="@+id/cb_address_edit_item_check"
             android:button="@null"
             android:background="@drawable/custom_checkbox_style"
             android:layout_width="20dp"
