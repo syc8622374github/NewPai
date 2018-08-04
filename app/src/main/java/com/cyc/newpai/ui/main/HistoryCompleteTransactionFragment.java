@@ -42,10 +42,10 @@ public class HistoryCompleteTransactionFragment extends BaseFragment {
 
     private void initView(View view) {
         RecyclerView recyclerView = view.findViewById(R.id.list);
-        TextView rule = view.findViewById(R.id.tv_rule);
+        //TextView rule = view.findViewById(R.id.tv_rule);
         if(type == HistoryCompleteTransactionAdapter.RULE_TYPE){
             recyclerView.setVisibility(View.GONE);
-            rule.setVisibility(View.VISIBLE);
+            //rule.setVisibility(View.VISIBLE);
         }else{
             initList(recyclerView);
         }

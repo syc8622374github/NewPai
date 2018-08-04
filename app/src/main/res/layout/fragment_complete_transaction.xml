@@ -41,7 +41,10 @@
             android:layout_height="10dp"
             android:background="@color/color_list_bg"/>
 
-        <include layout="@layout/fragment_item_list"/>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     </LinearLayout>
 

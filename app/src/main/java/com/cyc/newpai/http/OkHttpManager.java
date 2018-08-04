@@ -14,6 +14,7 @@ import com.cyc.newpai.widget.ToastManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -83,6 +85,32 @@ public class OkHttpManager {
         mOkHttpClient.newCall(request).enqueue(callback);
     }
 
+    public void postOfFileAsyncHttp(String url, Map<String,String> params, Map<String,File> files, Callback callback){
+        MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM);
+        if(params!=null){
+            Iterator<Map.Entry<String,String>> iterator = params.entrySet().iterator();
+            while (iterator.hasNext()){
+                Map.Entry<String,String>  entry = iterator.next();
+                multipartBodyBuilder.addFormDataPart(entry.getKey(),entry.getValue());
+            }
+        }
+        if(files!=null){
+            Iterator<Map.Entry<String,File>> iterator = files.entrySet().iterator();
+            while (iterator.hasNext()){
+                Map.Entry<String,File>  entry = iterator.next();
+                multipartBodyBuilder.addFormDataPart(entry.getKey()
+                        ,entry.getValue().getName()
+                        ,RequestBody.create(MediaType.parse("image/png")
+                                ,entry.getValue()));
+            }
+        }
+        RequestBody requestBody = multipartBodyBuilder.build();
+        Request.Builder builder = new Request.Builder().url(url);
+        Request request = addHeaders(builder,getHeaders()).post(requestBody).build();
+        mOkHttpClient.newCall(request).enqueue(callback);
+    }
+
     public Map<String,String> getHeaders(){
         Map<String,String> headers = defaultHeader();
         return headers;
@@ -92,8 +120,8 @@ public class OkHttpManager {
         Map<String,String> headers = new HashMap<>();
         headers.put("uid",HttpUrl.UID);
         headers.put("token",HttpUrl.TOKEN);
-//        headers.put("uid", SharePreUtil.getPref(context, Constant.UID,""));
-//        headers.put("token",SharePreUtil.getPref(context, Constant.TOKEN,""));
+        //headers.put("uid", SharePreUtil.getPref(context, Constant.UID,""));
+        //headers.put("token",SharePreUtil.getPref(context, Constant.TOKEN,""));
         return headers;
     }
 

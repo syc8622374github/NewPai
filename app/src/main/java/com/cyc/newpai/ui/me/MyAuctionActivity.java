@@ -31,17 +31,17 @@ public class MyAuctionActivity extends BaseActivity {
 
     public String[] tabTitle = new String[]{"正在拍","未拍中","我在拍","待付款","待晒单"};
     public String[] auctionTypes = new String[]{"1","2","3","4","5"};
-    private List<Fragment> fragments = new ArrayList<>();
+    private List<MyAutionAllFragment> fragments = new ArrayList<>();
     private int selectTabNum = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fragments.add(MyAutionAllFragment.newInstance());
-        fragments.add(MyAutionAllFragment.newInstance());
-        fragments.add(MyAutionAllFragment.newInstance());
-        fragments.add(MyAutionAllFragment.newInstance());
-        fragments.add(MyAutionAllFragment.newInstance());
+        fragments.add(MyAutionAllFragment.newInstance(auctionTypes[0]));
+        fragments.add(MyAutionAllFragment.newInstance(auctionTypes[1]));
+        fragments.add(MyAutionAllFragment.newInstance(auctionTypes[2]));
+        fragments.add(MyAutionAllFragment.newInstance(auctionTypes[3]));
+        fragments.add(MyAutionAllFragment.newInstance(auctionTypes[4]));
         initView();
         initData();
     }
@@ -49,9 +49,9 @@ public class MyAuctionActivity extends BaseActivity {
     private void initData() {
     }
 
-    public String getAuctionType(){
+    /*public String getAuctionType(){
         return auctionTypes[selectTabNum];
-    }
+    }*/
 
     @Override
     protected void initToolbar() {
@@ -68,7 +68,6 @@ public class MyAuctionActivity extends BaseActivity {
         tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorPrimary));
         ViewPager viewPager = findViewById(R.id.vp_my_auction_view_pager);
         tabLayout.setupWithViewPager(viewPager);
-        //viewPager.setOffscreenPageLimit(fragments.size());
         viewPager.setAdapter(mAdapter);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -78,6 +77,7 @@ public class MyAuctionActivity extends BaseActivity {
             @Override
             public void onPageSelected(int position) {
                 selectTabNum = position;
+                fragments.get(selectTabNum).refreshLayout();
             }
 
             @Override
@@ -85,6 +85,7 @@ public class MyAuctionActivity extends BaseActivity {
 
             }
         });
+        viewPager.setCurrentItem(0);
     }
 
     FragmentPagerAdapter mAdapter = new FragmentPagerAdapter(getSupportFragmentManager()) {

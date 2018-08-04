@@ -54,11 +54,11 @@ public class HistoryCompleteTransactionAdapter extends CommonBaseAdapter<BidAgeR
     public void setListNotifyCustom(List mList) {
         getAllData().clear();
         getAllData().addAll(mList);
-        if(mList.size()==0){
-            notifyDataSetChanged();
+        notifyDataSetChanged();
+        /*if(mList.size()==0){
         }else{
             notifyItemRangeChanged(getHeaderCount(),getAllData().size());
-        }
+        }*/
     }
 
     /*@Override

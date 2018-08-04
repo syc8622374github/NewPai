@@ -121,6 +121,7 @@ public class CompleteTransactionFragment extends BaseFragment {
             tv.setLayoutParams(layoutParams);
             return tv;
         });
+        handler.sendEmptyMessageDelayed(2,1000);
     }
 
     @Nullable
@@ -144,8 +145,8 @@ public class CompleteTransactionFragment extends BaseFragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initData();
     }
 
@@ -155,7 +156,7 @@ public class CompleteTransactionFragment extends BaseFragment {
         OkHttpManager.getInstance(getContext()).postAsyncHttp(HttpUrl.HTTP_NEW_DEAL, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                varyViewHelper.showErrorView();
+                handler.post(()->varyViewHelper.showErrorView());
             }
 
             @Override

@@ -351,7 +351,8 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
      * @param datas
      */
     public void setData(List<T> datas) {
-        mDatas.addAll(0, datas);
+        mDatas.clear();
+        mDatas.addAll(datas);
         notifyDataSetChanged();
     }
 

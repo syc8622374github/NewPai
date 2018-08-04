@@ -85,6 +85,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     private TextView name;
     private int countDownNum = 10;
     private String gid;
+    private String id;
     private Timer timer;
     private ShopDetailBean shopDetailBean;
     private TextView useBi;
@@ -147,7 +148,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        gid = getIntent().getStringExtra("gid");
+        id = getIntent().getStringExtra("id");
         initView();
         initData();
 
@@ -303,6 +304,10 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     }
 
     private void initTab(TabLayout mTabLayout) {
+        // 提供自定义的布局添加Tab
+        for (String title : shopCategory) {
+            tabLayout.addTab(tabLayout.newTab().setText(title));
+        }
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -319,21 +324,25 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
 
             }
         });
-        // 提供自定义的布局添加Tab
-        for (String title : shopCategory) {
-            tabLayout.addTab(tabLayout.newTab().setText(title));
-        }
     }
 
     private void onTabItemSelected(int position) {
         switch (position) {
             case 0:
-                historyCompleteTransactionAdapter.updateType(HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE);
-                historyCompleteTransactionAdapter.setListNotifyCustom(ageLists);
+                if(ageLists.size()==0){
+                    getAgeData(gid);
+                }else{
+                    historyCompleteTransactionAdapter.updateType(HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE);
+                    historyCompleteTransactionAdapter.setListNotifyCustom(ageLists);
+                }
                 break;
             case 1:
-                historyCompleteTransactionAdapter.updateType(HistoryCompleteTransactionAdapter.LUCKY_TIME_TYPE);
-                historyCompleteTransactionAdapter.setListNotifyCustom(luckLists);
+                if(luckLists.size()==0){
+                    getLuckData(gid);
+                }else{
+                    historyCompleteTransactionAdapter.updateType(HistoryCompleteTransactionAdapter.LUCKY_TIME_TYPE);
+                    historyCompleteTransactionAdapter.setListNotifyCustom(luckLists);
+                }
                 break;
             case 2:
                 break;
@@ -343,7 +352,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     private void initData() {
         Map<String, String> params = new HashMap<>();
         getShopDetailHttp(params);
-        params.put("shopid", gid);
+        params.put("shopid", id);
         OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_RECORD_URL, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -368,9 +377,12 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                 }
             }
         });
-        params.put("gid", gid);
-        params.put("p", "1");
-        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_RECORD_AGO_URL, params, new Callback() {
+    }
+
+    private void getShopDetailHttp(Map<String, String> params) {
+        params.put("id", id);
+        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_SHOP_DETAIL_URL, params, new Callback() {
+
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -381,22 +393,30 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                 try {
                     if (response.isSuccessful()) {
                         String str = response.body().string();
-                        ResponseBean<ResponseResultBean<BidAgeRecordBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<BidAgeRecordBean>>>() {
+                        ResponseBean<ResponseResultBean<ShopDetailBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<ShopDetailBean>>>() {
                         }.getType());
-                        if (responseBean.getCode() == 200 && responseBean.getResult().getList() != null) {
-                            //updateBidAgeRecordView(responseBean.getResult().getList());
-                            ageLists.clear();
-                            ageLists.addAll(responseBean.getResult().getList());
+                        if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                            shopDetailBean = responseBean.getResult().getItem();
+                            if(shopDetailBean!=null){
+                                handler.post(() -> banner.update(shopDetailBean.getImages()));
+                            }
+                            gid = shopDetailBean.getGid();
+                            if(ageLists.size()==0){
+                                getAgeData(shopDetailBean.getGid());
+                            }
                             return;
                         }
                     }
-                    //handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                    handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }
             }
         });
-        params.clear();
+    }
+
+    private void getLuckData(String gid){
+        Map<String,String> params = new HashMap<>();
         params.put("gid", gid);
         params.put("p", String.valueOf(luckTimePageSize));
         OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_LUCKY_SHOW_URL, params, new Callback() {
@@ -418,6 +438,10 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                                 luckTimePageSize++;
                                 luckLists.clear();
                                 luckLists.addAll(responseBean.getResult().getList());
+                                handler.post(()->{
+                                    historyCompleteTransactionAdapter.updateType(HistoryCompleteTransactionAdapter.LUCKY_TIME_TYPE);
+                                    historyCompleteTransactionAdapter.setListNotifyCustom(luckLists);
+                                });
                             }
                             return;
                         }
@@ -430,10 +454,11 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
         });
     }
 
-    private void getShopDetailHttp(Map<String, String> params) {
-        params.put("id", gid);
-        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_SHOP_DETAIL_URL, params, new Callback() {
-
+    private void getAgeData(String gid) {
+        Map<String,String> params = new HashMap<>();
+        params.put("gid", gid);
+        params.put("p", "1");
+        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_RECORD_AGO_URL, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -444,17 +469,19 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                 try {
                     if (response.isSuccessful()) {
                         String str = response.body().string();
-                        ResponseBean<ResponseResultBean<ShopDetailBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<ShopDetailBean>>>() {
+                        ResponseBean<ResponseResultBean<BidAgeRecordBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<BidAgeRecordBean>>>() {
                         }.getType());
-                        if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
-                            shopDetailBean = responseBean.getResult().getItem();
-                            if(shopDetailBean!=null){
-                                handler.post(() -> banner.update(shopDetailBean.getImages()));
-                            }
+                        if (responseBean.getCode() == 200 && responseBean.getResult().getList() != null) {
+                            ageLists.clear();
+                            ageLists.addAll(responseBean.getResult().getList());
+                            handler.post(()->{
+                                historyCompleteTransactionAdapter.updateType(HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE);
+                                historyCompleteTransactionAdapter.setListNotifyCustom(ageLists);
+                            });
                             return;
                         }
                     }
-                    handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                    //handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -582,7 +609,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
 
     private void updateBidView(BidResultBean item) {
         Map<String, String> params = new HashMap<>();
-        params.put("shopid", gid);
+        params.put("shopid", id);
         OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_RECORD_URL, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {

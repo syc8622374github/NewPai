@@ -21,6 +21,8 @@ public class HttpUrl {
 
     public static final String HTTP_NEW_DEAL = HttpUrl.HTTP_SERVICE_URL + "/Api/System/newDeal";//最新成交
 
+    public static final String HTTP_SUGGESTION_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/Member/feedbackAdd";//反馈意见
+
     /*-------------------------------------------------------------------*/
 
     /**

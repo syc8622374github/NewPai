@@ -43,6 +43,7 @@ import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
 import com.cyc.newpai.http.entity.ResponseBean;
 import com.cyc.newpai.http.entity.ResponseResultBean;
+import com.cyc.newpai.ui.common.RechargeActivity;
 import com.cyc.newpai.ui.common.entity.TopLineBean;
 import com.cyc.newpai.ui.main.adapter.GridDivider;
 import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
@@ -52,6 +53,7 @@ import com.cyc.newpai.ui.main.entity.BannerResultBean;
 import com.cyc.newpai.ui.main.entity.HomeBean;
 import com.cyc.newpai.ui.main.entity.HomePageBean;
 import com.cyc.newpai.ui.main.entity.HomeWindowBean;
+import com.cyc.newpai.ui.me.entity.MyAuctionBean;
 import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.util.RecyclerViewUtil;
 import com.cyc.newpai.util.ViewUtil;
@@ -85,6 +87,7 @@ public class HomeFragment extends BaseFragment {
     private BaseFragment fragment;
     private View headView;
     private List<HomeBean> beanList = new ArrayList<>();
+    private List<MyAuctionBean> myAuctionBeanList = new ArrayList<>();
     //private HomeRecyclerViewAdapter homeRecyclerViewAdapter;
     private int pageSize = 10;
     private TextSwitcher topLine;
@@ -309,8 +312,6 @@ public class HomeFragment extends BaseFragment {
             handler.post(new Runnable() {
                 @Override
                 public void run() {
-                    //homeRecyclerViewAdapter.setListNotify(bean.getList());
-                    //newHomeRecyclerViewAdapter.setNewData(beanList);
                     newHomeRecyclerViewAdapter.setLoadMoreData(beanList);
                 }
             });
@@ -325,7 +326,7 @@ public class HomeFragment extends BaseFragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         rvMain.setLayoutManager(gridLayoutManager);
         rvMain.addItemDecoration(new GridDivider(getContext(), 2, getResources().getColor(R.color.divider)));
-        newHomeRecyclerViewAdapter = new NewHomeRecyclerViewAdapter(getActivity(),null,true);
+        newHomeRecyclerViewAdapter = new NewHomeRecyclerViewAdapter(getActivity(),null,true,NewHomeRecyclerViewAdapter.HOME_DATA_TYPE);
         //初始化 开始加载更多的loading View
         newHomeRecyclerViewAdapter.setLoadingView(ViewUtil.getFootView(getActivity(),LoadingFooter.State.Loading));
         //newHomeRecyclerViewAdapter.setReloadView(LayoutInflater.from(getActivity()).inflate(R.layout.layout_emptyview, (ViewGroup) rvMain.getParent(), false));
@@ -387,7 +388,7 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void onItemClick(ViewHolder viewHolder, HomeBean data, int position) {
                 Intent intent = new Intent(getContext(),HomeShopDetailActivity.class);
-                intent.putExtra("gid",data.getId());
+                intent.putExtra("id",data.getId());
                 startActivity(intent);
             }
         });
@@ -459,10 +460,35 @@ public class HomeFragment extends BaseFragment {
         for (String title : shopCategorys) {
             tabLayout.addTab(tabLayout.newTab().setText(title));
         }
+
     }
 
     private void onTabItemSelected(int position) {
+        Map<String,String> params = new HashMap<>();
+        if(position==0){
+        }else if(position == 1){
+            getMyAuctionData(params);
+        }
+    }
 
+    private void getMyAuctionData(Map<String, String> params) {
+        OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_AUCTION_URL, params, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if(response.isSuccessful()){
+                    String str = response.body().string();
+                    ResponseBean<ResponseResultBean<MyAuctionBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<MyAuctionBean>>>(){}.getType());
+                    if(data.getCode()==200&&data.getResult().getList()!=null){
+                        newHomeRecyclerViewAdapter.setListNotifyCustom(data.getResult().getList());
+                    }
+                }
+            }
+        });
     }
 
     private void initRefresh(View view) {
@@ -504,6 +530,18 @@ public class HomeFragment extends BaseFragment {
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
                     childItem.setLayoutParams(layoutParams);
                     child.addView(childItem);
+                    int finalI = i;
+                    int finalJ = j;
+                    childItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if(finalI ==0){
+                                if(finalJ ==3){
+                                    startActivity(new Intent(getContext(), RechargeActivity.class));
+                                }
+                            }
+                        }
+                    });
                 }
                 ((ImageView) childItem.findViewById(R.id.iv_home_window_icon)).setImageResource(beanList.get(j + i * j).getImageRes());
                 ((TextView) childItem.findViewById(R.id.tv_home_window_title)).setText(beanList.get(j + i * j).getTitle());

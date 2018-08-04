@@ -59,18 +59,23 @@ public class MyAutionAllRecyclerViewAdapter extends BaseRecyclerAdapter<MyAuctio
         switch (auctionType){
             case "1":
                 tvAuctionType.setText("正在拍");
+                viewHolder.setText(R.id.tv_auction_detail,"正在竞拍商品");
                 break;
             case "2":
                 tvAuctionType.setText("未拍中");
+                viewHolder.setText(R.id.tv_auction_detail,"未成功拍的商品");
                 break;
             case "3":
                 tvAuctionType.setText("我拍中");
+                viewHolder.setText(R.id.tv_auction_detail,"已成功拍的商品");
                 break;
             case "4":
                 tvAuctionType.setText("待付款");
+                viewHolder.setText(R.id.tv_auction_detail,"待付款的商品");
                 break;
             case "5":
                 tvAuctionType.setText("待晒单");
+                viewHolder.setText(R.id.tv_auction_detail,"待晒单的商品");
                 break;
         }
     }

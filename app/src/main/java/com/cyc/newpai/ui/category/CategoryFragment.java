@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.base.BaseFragment;
@@ -19,9 +20,12 @@ import com.cyc.newpai.ui.category.adapter.CategoryDetailRecyclerAdapter;
 import com.cyc.newpai.ui.category.adapter.CategoryTitleRecyclerAdapter;
 import com.cyc.newpai.ui.category.entity.CategoryDetailBean;
 import com.cyc.newpai.ui.category.entity.CategoryMenuBean;
+import com.cyc.newpai.util.ViewUtil;
+import com.cyc.newpai.widget.LoadingFooter;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,13 +38,13 @@ public class CategoryFragment extends BaseFragment {
 
     private RecyclerView rvCategoryTitle;
     private RecyclerView rvCategoryDetail;
-    private Map<Integer,List<CategoryDetailBean>> categoryDetailBeanMap = new HashMap<>();
     public static final String FLAG = CategoryFragment.class.getName();
     private CategoryTitleRecyclerAdapter categoryTitleRecyclerAdapter;
     private CategoryDetailRecyclerAdapter categoryDetailRecyclerAdapter;
     private Map<Integer,List<CategoryDetailBean>> cacheDetailData = new HashMap<>();
-    private List<CategoryMenuBean> categoryMenuBeanList;
+    private List<CategoryMenuBean> categoryMenuBeanList = new ArrayList<>();
     private View view;
+    private LinearLayout llEmpty;
 
     public static CategoryFragment newInstance() {
         Bundle args = new Bundle();
@@ -149,7 +153,16 @@ public class CategoryFragment extends BaseFragment {
 
     private void initDetail(List<CategoryDetailBean> list) {
         if(list!=null){
-            handler.post(() -> categoryDetailRecyclerAdapter.setListNotify(list));
+            handler.post(() -> {
+                if(list.size()==0){
+                    rvCategoryDetail.setVisibility(View.GONE);
+                    llEmpty.setVisibility(View.VISIBLE);
+                }else{
+                    rvCategoryDetail.setVisibility(View.VISIBLE);
+                    llEmpty.setVisibility(View.GONE);
+                    categoryDetailRecyclerAdapter.setData(list);
+                }
+            });
         }
     }
 
@@ -157,8 +170,11 @@ public class CategoryFragment extends BaseFragment {
         rvCategoryDetail = view.findViewById(R.id.rv_category_right_category_detail);
         rvCategoryDetail.setLayoutManager(new LinearLayoutManager(getContext()));
         rvCategoryDetail.addItemDecoration(new CommItemDecoration(getContext(),1,getResources().getColor(R.color.divider),2));
-        categoryDetailRecyclerAdapter = new CategoryDetailRecyclerAdapter(rvCategoryDetail);
+        categoryDetailRecyclerAdapter = new CategoryDetailRecyclerAdapter(getContext(),null,true);
+        categoryDetailRecyclerAdapter.setLoadEndView(ViewUtil.getFootView(getContext(), LoadingFooter.State.TheEnd));
+        categoryDetailRecyclerAdapter.setLoadFailedView(ViewUtil.getFootView(getContext(), LoadingFooter.State.NetWorkError));
         rvCategoryDetail.setAdapter(categoryDetailRecyclerAdapter);
+        llEmpty = view.findViewById(R.id.ll_suggestion_empty);
     }
 
     private void initCategoryTitle(View view) {
@@ -175,7 +191,14 @@ public class CategoryFragment extends BaseFragment {
                 }
             }
             categoryTitleRecyclerAdapter.notifyDataSetChanged();
-            categoryDetailRecyclerAdapter.setListNotify(cacheDetailData.get(categoryMenuBeanList.get(position).getCate_id()));
+            if(cacheDetailData.get(categoryMenuBeanList.get(position).getCate_id())==null||cacheDetailData.get(categoryMenuBeanList.get(position).getCate_id()).size()==0){
+                llEmpty.setVisibility(View.VISIBLE);
+                rvCategoryDetail.setVisibility(View.GONE);
+            }else{
+                llEmpty.setVisibility(View.GONE);
+                rvCategoryDetail.setVisibility(View.VISIBLE);
+                categoryDetailRecyclerAdapter.setData(cacheDetailData.get(categoryMenuBeanList.get(position).getCate_id()));
+            }
         });
         rvCategoryTitle.setAdapter(categoryTitleRecyclerAdapter);
     }
