@@ -118,6 +118,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="去竞拍"
+            android:clickable="false"
             android:textColor="@color/colorPrimary"
             android:background="@drawable/shape_border_red_line_oval"
             style="?android:attr/borderlessButtonStyle" />

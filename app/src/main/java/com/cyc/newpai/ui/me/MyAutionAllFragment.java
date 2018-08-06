@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
 import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
+import com.cyc.newpai.framework.adapter.base.WrapContentLinearLayoutManager;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
@@ -92,55 +93,16 @@ public class MyAutionAllFragment extends BaseFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.i(TAG, "onViewCreated" + auctionType);
-        if ((auctionType == activity.auctionTypes[0] || auctionType == activity.auctionTypes[2])) {
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    Map<String, String> param = new HashMap<>();
-                    param.put("d_type", auctionType);
-                    param.put("p", String.valueOf(pageSize));
-                    OkHttpManager.getInstance(getContext()).postAsyncHttp(HttpUrl.HTTP_AUCTION_URL, param, new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            //handler.post(()->varyViewHelper.showErrorView());
-                            Log.e(TAG, e.getMessage());
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            try {
-                                if (response.isSuccessful()) {
-                                    String str = response.body().string();
-                                    //Log.i(TAG,str);
-                                    ResponseBean<ResponseResultBean<MyAuctionBean>> data =
-                                            getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<MyAuctionBean>>>() {
-                                            }.getType());
-                                    if (data.getCode() == 200 && data.getResult().getList() != null) {
-                                        if (data.getResult().getList().size() > 0) {
-                                            updateList(data.getResult().getList());
-                                        }
-                                        return;
-                                    }
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                }
-            }, 1000, 1000);
-        }
     }
 
     private void initView() {
         autionList = view.findViewById(R.id.list);
-        autionList.setLayoutManager(new LinearLayoutManager(getContext()));
+        autionList.setLayoutManager(new WrapContentLinearLayoutManager(getContext()));
         //recyclerView.addItemDecoration(new CommItemDecoration(getContext(),LinearLayoutManager.VERTICAL,getResources().getColor(R.color.color_list_bg), ScreenUtil.dp2px(getContext(),10)));
         myAutionAllRecyclerViewAdapter = new MyAutionAllRecyclerViewAdapter(autionList, auctionType);
         myAutionAllRecyclerViewAdapter.setOnClickItemListener((BaseRecyclerAdapter.OnAdapterListener<MyAuctionBean>) (view, itemBean, position) -> {
             Intent intent = new Intent(getContext(), HomeShopDetailActivity.class);
-            intent.putExtra("gid", itemBean.getId());
+            intent.putExtra("id", itemBean.getId());
             startActivity(intent);
         });
         HeaderAndFooterRecyclerViewAdapter headerAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(myAutionAllRecyclerViewAdapter);
@@ -221,6 +183,45 @@ public class MyAutionAllFragment extends BaseFragment {
     public void onStart() {
         Log.i(TAG, "onStart" + auctionType);
         super.onStart();
+        if (timer==null&&(auctionType == activity.auctionTypes[0] || auctionType == activity.auctionTypes[2])) {
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Map<String, String> param = new HashMap<>();
+                    param.put("d_type", auctionType);
+                    param.put("p", String.valueOf(pageSize));
+                    OkHttpManager.getInstance(getContext()).postAsyncHttp(HttpUrl.HTTP_AUCTION_URL, param, new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            //handler.post(()->varyViewHelper.showErrorView());
+                            Log.e(TAG, e.getMessage());
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            try {
+                                if (response.isSuccessful()) {
+                                    String str = response.body().string();
+                                    //Log.i(TAG,str);
+                                    ResponseBean<ResponseResultBean<MyAuctionBean>> data =
+                                            getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<MyAuctionBean>>>() {
+                                            }.getType());
+                                    if (data.getCode() == 200 && data.getResult().getList() != null) {
+                                        if (data.getResult().getList().size() > 0) {
+                                            updateList(data.getResult().getList());
+                                        }
+                                        return;
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                }
+            }, 1000, 1000);
+        }
     }
 
     @Override

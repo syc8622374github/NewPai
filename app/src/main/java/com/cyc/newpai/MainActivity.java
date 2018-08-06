@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cyc.newpai.framework.base.BaseActivity;
 import com.cyc.newpai.framework.base.BaseFragment;
@@ -22,6 +23,7 @@ import com.cyc.newpai.ui.me.MeFragment;
 import com.cyc.newpai.ui.me.SettingActivity;
 import com.cyc.newpai.ui.transaction.CompleteTransactionFragment;
 import com.cyc.newpai.util.DataGenerator;
+import com.cyc.newpai.widget.ToastManager;
 
 public class MainActivity extends BaseActivity {
 
@@ -131,6 +133,7 @@ public class MainActivity extends BaseActivity {
         }
         fragmentTransaction.show(fragment).commit();
         showPosition = position;
+        ctb_toolbar.setTitle(getTitle().toString());
         if(fragment instanceof CategoryFragment){
             ctb_toolbar.divider.setVisibility(View.GONE);
             ctb_toolbar.setLeftAction1(0,null);
@@ -141,14 +144,21 @@ public class MainActivity extends BaseActivity {
         }else if(fragment instanceof MeFragment){
             ctb_toolbar.divider.setVisibility(View.GONE);
             ctb_toolbar.setTitle("");
-            ctb_toolbar.setLeftAction1(R.drawable.ic_me_setting, v -> startActivity(new Intent(MainActivity.this, SettingActivity.class)));
+            ctb_toolbar.setLeftAction1(R.drawable.ic_me_setting, v -> startActivityForResult(new Intent(MainActivity.this, SettingActivity.class),0));
             ctb_toolbar.setRightAction1(R.drawable.ic_notification, v -> startActivity(new Intent(MainActivity.this, NotificationMessageActivity.class)));
         }else{
             //ctb_toolbar.divider.setVisibility(View.VISIBLE);
             ctb_toolbar.setLeftAction1(R.drawable.ic_search, v -> startActivity(new Intent(MainActivity.this, SearchActivity.class)));
             ctb_toolbar.setRightAction1(R.drawable.ic_notification, v -> startActivity(new Intent(MainActivity.this, NotificationMessageActivity.class)));
         }
-        ctb_toolbar.setTitle(getTitle().toString());
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==1){
+            ((MeFragment)mFragmensts[showPosition]).review();
+            ToastManager.showToast(getApplicationContext(),"账号已退出", Toast.LENGTH_SHORT);
+        }
+    }
 }

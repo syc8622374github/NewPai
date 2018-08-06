@@ -169,10 +169,8 @@ public class CategoryFragment extends BaseFragment {
     private void initCategoryDetail(View view) {
         rvCategoryDetail = view.findViewById(R.id.rv_category_right_category_detail);
         rvCategoryDetail.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvCategoryDetail.addItemDecoration(new CommItemDecoration(getContext(),1,getResources().getColor(R.color.divider),2));
+        rvCategoryDetail.addItemDecoration(new CommItemDecoration(getContext(),1,getResources().getColor(R.color.divider),1));
         categoryDetailRecyclerAdapter = new CategoryDetailRecyclerAdapter(getContext(),null,true);
-        categoryDetailRecyclerAdapter.setLoadEndView(ViewUtil.getFootView(getContext(), LoadingFooter.State.TheEnd));
-        categoryDetailRecyclerAdapter.setLoadFailedView(ViewUtil.getFootView(getContext(), LoadingFooter.State.NetWorkError));
         rvCategoryDetail.setAdapter(categoryDetailRecyclerAdapter);
         llEmpty = view.findViewById(R.id.ll_suggestion_empty);
     }

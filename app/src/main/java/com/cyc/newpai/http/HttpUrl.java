@@ -73,6 +73,8 @@ public class HttpUrl {
 
     public static final String HTTP_ADDRESS_LIST_URL = HTTP_SERVICE_URL + "/Api/Member/addressList"; //收货地址列表
 
+    public static final String HTTP_USER_INFO_URL = HTTP_SERVICE_URL + "/Api/member/userInfo"; //用户详情
+
     /*-------------------------------------------------------------------*/
 
     /**

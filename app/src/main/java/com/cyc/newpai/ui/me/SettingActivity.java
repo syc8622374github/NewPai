@@ -16,6 +16,8 @@ import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
 import com.cyc.newpai.framework.base.BaseActivity;
 import com.cyc.newpai.ui.category.CommItemDecoration;
 import com.cyc.newpai.ui.me.adapter.SettingRecyclerAdapter;
+import com.cyc.newpai.util.Constant;
+import com.cyc.newpai.util.SharePreUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +73,10 @@ public class SettingActivity extends BaseActivity {
                         .setTitle("提示")
                         .setMessage("是否要退出登录")
                         .setPositiveButton("确定", (dialog, which) -> {
+                            SharePreUtil.setPref(SettingActivity.this, Constant.TOKEN,"");
+                            SharePreUtil.setPref(SettingActivity.this, Constant.UID,"");
+                            setResult(1);
+                            finish();
                             dialog.cancel();
                         })
                         .setNegativeButton("取消", (dialog, which) -> {

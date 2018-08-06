@@ -25,6 +25,7 @@ import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
 import com.cyc.newpai.framework.adapter.ViewHolder;
 import com.cyc.newpai.framework.adapter.base.CommonBaseAdapter;
+import com.cyc.newpai.framework.adapter.base.WrapContentLinearLayoutManager;
 import com.cyc.newpai.framework.adapter.interfaces.OnItemClickListener;
 import com.cyc.newpai.framework.adapter.interfaces.OnLoadMoreListener;
 import com.cyc.newpai.framework.base.BaseActivity;
@@ -151,7 +152,6 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
         id = getIntent().getStringExtra("id");
         initView();
         initData();
-
     }
 
     @Override
@@ -367,6 +367,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                         ResponseBean<BidRecordBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<BidRecordBean>>() {
                         }.getType());
                         if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                            responseBean.getResult().getItemBeans().remove(0);
                             updateBidRecordView(responseBean.getResult());
                             return;
                         }
@@ -396,9 +397,14 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                         ResponseBean<ResponseResultBean<ShopDetailBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<ShopDetailBean>>>() {
                         }.getType());
                         if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                            boolean isUpdateBanner = false;
+                            if(shopDetailBean==null||!shopDetailBean.getId().equals(responseBean.getResult().getItem().getId())){
+                                isUpdateBanner=true;
+                            }
                             shopDetailBean = responseBean.getResult().getItem();
-                            if(shopDetailBean!=null){
+                            if(isUpdateBanner){
                                 handler.post(() -> banner.update(shopDetailBean.getImages()));
+                                isUpdateBanner = false;
                             }
                             gid = shopDetailBean.getGid();
                             if(ageLists.size()==0){
@@ -507,7 +513,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
 
     private void initBidRecord() {
         bidRecordRecyclerViewAdapter = new BidRecordRecyclerViewAdapter(bidRecord);
-        bidRecord.setLayoutManager(new LinearLayoutManager(this));
+        bidRecord.setLayoutManager(new WrapContentLinearLayoutManager(this));
         bidRecord.setAdapter(bidRecordRecyclerViewAdapter);
         bidRecord.setFocusableInTouchMode(false);
         bidRecord.requestFocus();
@@ -577,7 +583,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
 
     private void bid() {
         Map<String, String> params = new HashMap<>();
-        params.put("shopid", gid);
+        params.put("shopid", id);
         OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_URL, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -598,8 +604,8 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                             getShopDetailHttp(new HashMap<>());
                             return;
                         }
+                        handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, responseBean.getMsg(), Toast.LENGTH_SHORT));
                     }
-                    handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }

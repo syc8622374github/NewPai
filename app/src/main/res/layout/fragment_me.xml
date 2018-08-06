@@ -21,6 +21,7 @@
             android:src="@drawable/ic_me_avator_default" />
 
         <TextView
+            android:id="@+id/tv_me_mobile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -43,9 +44,10 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_me_pai_bi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="100"
+                android:text="--"
                 android:textColor="@color/colorPrimary"
                 android:textSize="22sp"
                 android:textStyle="bold" />
@@ -65,9 +67,10 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/tv_me_zeng_bi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="13"
+                android:text="--"
                 android:textColor="@color/colorPrimary"
                 android:textSize="22sp"
                 android:textStyle="bold" />

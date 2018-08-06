@@ -1,35 +1,19 @@
 package com.cyc.newpai.ui.me;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.View;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.base.BaseActivity;
-import com.cyc.newpai.http.HttpUrl;
-import com.cyc.newpai.http.OkHttpManager;
-import com.cyc.newpai.http.entity.ResponseBean;
-import com.cyc.newpai.http.entity.ResponseResultBean;
-import com.cyc.newpai.ui.me.entity.MyAuctionBean;
-import com.google.gson.reflect.TypeToken;
-
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class MyAuctionActivity extends BaseActivity {
 
-    public String[] tabTitle = new String[]{"正在拍","未拍中","我在拍","待付款","待晒单"};
+    public String[] tabTitle = new String[]{"正在拍","未拍中","我拍中","待付款","待晒单"};
     public String[] auctionTypes = new String[]{"1","2","3","4","5"};
     private List<MyAutionAllFragment> fragments = new ArrayList<>();
     private int selectTabNum = 0;

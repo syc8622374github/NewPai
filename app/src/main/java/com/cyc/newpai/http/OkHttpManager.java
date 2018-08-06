@@ -118,10 +118,10 @@ public class OkHttpManager {
 
     private Map<String, String> defaultHeader() {
         Map<String,String> headers = new HashMap<>();
-        headers.put("uid",HttpUrl.UID);
-        headers.put("token",HttpUrl.TOKEN);
-        //headers.put("uid", SharePreUtil.getPref(context, Constant.UID,""));
-        //headers.put("token",SharePreUtil.getPref(context, Constant.TOKEN,""));
+        //headers.put("uid",HttpUrl.UID);
+        //headers.put("token",HttpUrl.TOKEN);
+        headers.put("uid", SharePreUtil.getPref(context, Constant.UID,""));
+        headers.put("token",SharePreUtil.getPref(context, Constant.TOKEN,""));
         return headers;
     }
 

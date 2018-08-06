@@ -79,6 +79,11 @@ public class HistoryCompleteTransactionAdapter extends CommonBaseAdapter<BidAgeR
     }*/
 
     public int getViewType(){
+        return getViewType(0,null);
+    }
+
+    @Override
+    protected int getViewType(int position, BidAgeRecordBean data) {
         return type;
     }
 

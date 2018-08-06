@@ -15,18 +15,18 @@ import com.cyc.newpai.ui.me.entity.MyAuctionBean;
 import java.util.List;
 
 public class NewHomeRecyclerViewAdapter extends CommonBaseAdapter {
-    public static final String HOME_MY_AUCTION_TYPE = "home_my_auction_type";
-    public static final String HOME_DATA_TYPE = "home_data_type";
-    public static final String HOME_COLLECTION_TYPE = "home_collection_type";
-    private String type;
+    public static final int HOME_MY_AUCTION_TYPE = 0x11201;
+    public static final int HOME_DATA_TYPE = 0x11202;
+    public static final int HOME_COLLECTION_TYPE = 0x11203;
+    private int type;
     private int resId;
 
-    public NewHomeRecyclerViewAdapter(Context context, List datas, boolean isOpenLoadMore,String type) {
+    public NewHomeRecyclerViewAdapter(Context context, List datas, boolean isOpenLoadMore,int type) {
         super(context, datas, isOpenLoadMore);
         updateType(type);
     }
 
-    public void updateType(String type) {
+    public void updateType(int type) {
         this.type = type;
         switch (type) {
             case HOME_MY_AUCTION_TYPE:
@@ -47,7 +47,7 @@ public class NewHomeRecyclerViewAdapter extends CommonBaseAdapter {
     public void setListNotifyCustom(List mList) {
         getAllData().clear();
         getAllData().addAll(mList);
-        if (mList.size() == 0) {
+        if (getAllData().size() == 0) {
             notifyDataSetChanged();
         } else {
             notifyItemRangeChanged(getHeaderCount(), getAllData().size());
@@ -102,6 +102,11 @@ public class NewHomeRecyclerViewAdapter extends CommonBaseAdapter {
     }
 
     @Override
+    protected int getViewType(int position, Object data) {
+        return type;
+    }
+
+    @Override
     protected int getItemLayoutId() {
         return resId;
     }
@@ -111,6 +116,6 @@ public class NewHomeRecyclerViewAdapter extends CommonBaseAdapter {
         isLoading = false;
         getAllData().clear();
         getAllData().addAll(datas);
-        notifyItemRangeChanged(getHeaderCount(), getAllData().size());
+        notifyDataSetChanged();
     }
 }

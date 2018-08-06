@@ -8,6 +8,8 @@ public class SharePreUtil {
 
     public static final String SAVE_FRIEND_INFO = "save_friend_info";
 
+    public static final String SAVE_USER_INFO = "save_user_info";
+
     public static void setPref(Context context,String key,String value){
         int mode = 2;
         mode = context.MODE_PRIVATE;
