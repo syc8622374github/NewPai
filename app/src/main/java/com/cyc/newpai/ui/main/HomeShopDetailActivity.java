@@ -371,6 +371,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                             updateBidRecordView(responseBean.getResult());
                             return;
                         }
+
                     }
                     handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
