@@ -367,11 +367,9 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                         ResponseBean<BidRecordBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<BidRecordBean>>() {
                         }.getType());
                         if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
-                            responseBean.getResult().getItemBeans().remove(0);
                             updateBidRecordView(responseBean.getResult());
                             return;
                         }
-
                     }
                     handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
@@ -522,6 +520,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
 
     private void updateBidRecordView(BidRecordBean data) {
         handler.post(() -> {
+            data.getItemBeans().remove(0);
             List<BidRecordItemBean> list = bidRecordRecyclerViewAdapter.getList();
             if (list.size() == 0 || !list.get(0).getMoney().equals(data.getItemBeans().get(0).getMoney())) {
                 bidRecordRecyclerViewAdapter.setListNotify(data.getItemBeans());
@@ -575,9 +574,8 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                 alertDialog.setTitle("交易提示")
                         .setCancelable(false)
                         .setMessage("确认支付" + bidNume.getText() + "个拍币竞拍？")
-                        .setNegativeButton("确定", (dialog, which) -> {
-                            bid();
-                        }).setPositiveButton("取消", (dialog, which) -> dialog.dismiss()).show();
+                        .setNegativeButton("取消", (dialog, which) -> {
+                        }).setPositiveButton("确定", (dialog, which) -> bid()).show();
                 break;
         }
     }

@@ -128,7 +128,7 @@ public class RegisterAndResetPasswdActivity extends BaseActivity implements View
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.tv_user_protocol:
-
+                startActivity(new Intent(this,UserProtocolActivity.class));
                 break;
             case R.id.tv_send_sms:
                 sendSMS();

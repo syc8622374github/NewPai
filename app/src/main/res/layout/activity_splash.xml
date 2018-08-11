@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:background="@drawable/ic_splash"/>
+        android:background="@drawable/ic_splash_bg"/>
     
     <com.cyc.newpai.widget.CountDownProgressView
         android:id="@+id/cdpv_splash_count_down"

@@ -7,14 +7,18 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.base.BaseActivity;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
 import com.cyc.newpai.http.entity.ResponseBean;
 import com.cyc.newpai.ui.me.entity.AddressBean;
+import com.cyc.newpai.util.LocationHelper;
 import com.cyc.newpai.util.NumUtil;
 import com.cyc.newpai.widget.ToastManager;
 import com.google.gson.JsonSyntaxException;
@@ -41,8 +45,8 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
     private CheckBox checkBox;
     private EditText etMobile;
     private EditText etReceiver;
-    private EditText etLocalArea;
     private EditText etDetailAddress;
+    private TextView tvLocalArea;
     private String id;
 
     @Override
@@ -52,6 +56,19 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
         id = getIntent().getStringExtra(TYPE_ID);
         addressBean = (AddressBean) getIntent().getSerializableExtra(TYPE_DATA);
         initView();
+        initData();
+    }
+
+    private void initData() {
+        LocationHelper locationHelper = new LocationHelper(this);
+        locationHelper.setBdLocationListener(new BDLocationListener() {
+            @Override
+            public void onReceiveLocation(BDLocation bdLocation) {
+                tvLocalArea.setText(bdLocation.getProvince() +" "+bdLocation.getCity());
+                etDetailAddress.setText(bdLocation.getAddrStr());
+            }
+        });
+        locationHelper.startLocation();
     }
 
     private void initView() {
@@ -59,7 +76,7 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
         checkBox = findViewById(R.id.cb_address_edit_item_check);
         etMobile = findViewById(R.id.et_edit_address_mobile);
         etReceiver = findViewById(R.id.et_edit_address_receiver);
-        etLocalArea = findViewById(R.id.et_edit_address_local_area);
+        tvLocalArea = findViewById(R.id.tv_edit_address_local_area);
         etDetailAddress = findViewById(R.id.et_edit_address_detail_address);
         ctb_toolbar.tv_title.setTextColor(getResources().getColor(android.R.color.black));
         if(type.equals(TYPE_ADD_ADDRESS)){
@@ -70,7 +87,7 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
             if(addressBean!=null){
                 etReceiver.setText(addressBean.getName());
                 etMobile.setText(addressBean.getMobile());
-                etLocalArea.setText(addressBean.getArea());
+                tvLocalArea.setText(addressBean.getArea());
                 etDetailAddress.setText(addressBean.getAddress());
                 checkBox.setChecked(addressBean.getIs_default().equals("1")?true:false);
             }
@@ -82,7 +99,7 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
             public void onClick(View v) {
                 String receiverStr = etReceiver.getText().toString();
                 String mobileStr = etMobile.getText().toString();
-                String localAreaStr = etLocalArea.getText().toString();
+                String localAreaStr = tvLocalArea.getText().toString();
                 String detailAddressStr = etDetailAddress.getText().toString();
                 boolean isDefault = checkBox.isChecked();
                 if(TextUtils.isEmpty(receiverStr)){
@@ -146,6 +163,14 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
         switch (v.getId()){
             case R.id.ll_add_address_set_default_address:
                 checkBox.setChecked(!checkBox.isChecked());
+                break;
+        }
+    }
+
+    public void clickEvent(View view) {
+        switch (view.getId()){
+            case R.id.ll_edit_address_area:
+
                 break;
         }
     }

@@ -10,6 +10,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.adapter.BaseRecyclerAdapter;
@@ -18,6 +19,7 @@ import com.cyc.newpai.ui.category.CommItemDecoration;
 import com.cyc.newpai.ui.me.adapter.SettingRecyclerAdapter;
 import com.cyc.newpai.util.Constant;
 import com.cyc.newpai.util.SharePreUtil;
+import com.cyc.newpai.widget.ToastManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +80,7 @@ public class SettingActivity extends BaseActivity {
                             setResult(1);
                             finish();
                             dialog.cancel();
+                            ToastManager.showToast(getApplicationContext(),"账号已退出", Toast.LENGTH_SHORT);
                         })
                         .setNegativeButton("取消", (dialog, which) -> {
                             dialog.cancel();

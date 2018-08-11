@@ -1,13 +1,16 @@
 package com.cyc.newpai;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,10 +26,12 @@ import com.cyc.newpai.ui.me.MeFragment;
 import com.cyc.newpai.ui.me.SettingActivity;
 import com.cyc.newpai.ui.transaction.CompleteTransactionFragment;
 import com.cyc.newpai.util.DataGenerator;
+import com.cyc.newpai.util.LoginUtil;
 import com.cyc.newpai.widget.ToastManager;
 
 public class MainActivity extends BaseActivity {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private BaseFragment []mFragmensts;
     private TabLayout mTabLayout;
     private static int showPosition;
@@ -43,12 +48,15 @@ public class MainActivity extends BaseActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
                     Intent.FLAG_ACTIVITY_NEW_TASK);
         }
+        ((Activity)context).overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
         context.startActivity(new Intent(context,MainActivity.class));
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         mFragmensts = DataGenerator.getFragments("");
         if(savedInstanceState!=null){
             isRestoreActivity = savedInstanceState.getBoolean("isRestoreActivity");
@@ -101,6 +109,33 @@ public class MainActivity extends BaseActivity {
         outState.putBoolean("isRestoreActivity",true);
         outState.putString("showFragmentTag",mFragmensts[showPosition].getClass().getName());
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.i(TAG,"newIntent");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG,"newIntent");
+        if(LoginUtil.isLogin(this)&& mFragmensts[showPosition] instanceof MeFragment){
+            ((MeFragment)mFragmensts[showPosition]).initData();
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i(TAG,"onRestart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(TAG,"onResume");
     }
 
     @Override
@@ -158,7 +193,20 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==1){
             ((MeFragment)mFragmensts[showPosition]).review();
-            ToastManager.showToast(getApplicationContext(),"账号已退出", Toast.LENGTH_SHORT);
+        }
+    }
+
+    private long firstTime = 0l;
+
+    @Override
+    public void onBackPressed() {
+        long secondTime = System.currentTimeMillis();
+        if(secondTime - firstTime > 2000){
+            ToastManager.showToast(this,"再按一次退出",Toast.LENGTH_SHORT);
+            firstTime = secondTime;
+        }else{
+            finish();
+            super.onBackPressed();
         }
     }
 }

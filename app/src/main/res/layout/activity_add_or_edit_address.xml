@@ -80,10 +80,12 @@
             android:background="@color/divider"/>
 
         <LinearLayout
+            android:id="@+id/ll_edit_address_area"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:gravity="center_vertical"
             android:layout_marginRight="15dp"
+            android:onClick="clickEvent"
             android:orientation="horizontal">
 
             <TextView
@@ -91,8 +93,8 @@
                 android:layout_height="wrap_content"
                 android:text="所在地区"/>
 
-            <EditText
-                android:id="@+id/et_edit_address_local_area"
+            <TextView
+                android:id="@+id/tv_edit_address_local_area"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:textSize="14sp"

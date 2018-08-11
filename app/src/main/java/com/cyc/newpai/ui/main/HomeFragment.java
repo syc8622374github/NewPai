@@ -98,6 +98,9 @@ public class HomeFragment extends BaseFragment {
     private String selectType = "1";
     private View loading;
     private RecyclerView rvMain;
+    private String[] shopCategorys = new String[]{"正在热拍", "我在拍", "我的收藏"};
+    private HomeViewModel mViewModel;
+    boolean isLoadMore = false;
 
     public static HomeFragment newInstance() {
         Bundle args = new Bundle();
@@ -139,12 +142,6 @@ public class HomeFragment extends BaseFragment {
             }
         }
     };
-
-    private String[] shopCategorys = new String[]{"正在热拍", "我在拍", "我的收藏"};
-
-    private HomeViewModel mViewModel;
-
-    boolean isLoadMore = false;
 
     @Nullable
     @Override
@@ -445,7 +442,7 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 onTabItemSelected(tab.getPosition());
-            }
+        }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {

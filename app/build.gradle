@@ -16,6 +16,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main{
+            jniLibs.srcDir 'libs'
+            jni.srcDirs = []
+        }
+    }
     buildToolsVersion '27.0.3'
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -47,5 +53,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
     api 'com.tencent.bugly:crashreport:latest.release'
-    api 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
+    api 'com.tencent.bugly:nativecrashreport:latest.release'
+    //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
+    implementation files('libs/BaiduLBS_Android.jar')
 }

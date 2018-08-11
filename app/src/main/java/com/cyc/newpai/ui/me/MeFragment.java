@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import com.cyc.newpai.ui.user.LoginActivity;
 import com.cyc.newpai.util.GlideCircleTransform;
 import com.cyc.newpai.util.LoginUtil;
 import com.cyc.newpai.widget.ToastManager;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -37,6 +39,7 @@ import okhttp3.Response;
 
 public class MeFragment extends BaseFragment implements View.OnClickListener {
 
+    private static final String TAG = MeFragment.class.getSimpleName();
     private View view;
     private ImageView avator;
     private TextView mobile;
@@ -56,29 +59,51 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         view = inflater.inflate(R.layout.fragment_me, container, false);
         initView();
         initData();
+        Log.i(TAG,"onCreateView");
         return view;
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.i(TAG,"onCreate");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.i(TAG,"onStart");
+    }
+
     public void initData() {
-        OkHttpManager.getInstance(getContext()).postAsyncHttp(HttpUrl.HTTP_USER_INFO_URL, null, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
+        if(LoginUtil.isLogin(getActivity())){
+            OkHttpManager.getInstance(getContext()).postAsyncHttp(HttpUrl.HTTP_USER_INFO_URL, null, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
 
-            }
+                }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if(response.isSuccessful()){
-                    String str = response.body().string();
-                    ResponseBean<ResponseResultBean<UserInfoBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<UserInfoBean>>>(){}.getType());
-                    if(data.getCode()==200&&data.getResult().getItem()!=null){
-                        updateData(data.getResult().getItem());
-                    }else if(data.getCode()==1000){
-                        review();
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    try {
+                        if(response.isSuccessful()){
+                            String str = response.body().string();
+                            ResponseBean<ResponseResultBean<UserInfoBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<UserInfoBean>>>(){}.getType());
+                            if(data.getCode()==200&&data.getResult().getItem()!=null){
+                                updateData(data.getResult().getItem());
+                            }else if(data.getCode()==1000){
+                                review();
+                            }
+                            return;
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
-            }
-        });
+            });
+        }else{
+            review();
+        }
     }
 
     public void review() {
@@ -134,7 +159,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.tv_me_avator:
                 if(!LoginUtil.isLogin(getContext())){
-                    startActivity(new Intent(getContext(), LoginActivity.class));
+                    startActivityForResult(new Intent(getContext(), LoginActivity.class),1);
                 }
                 break;
             case R.id.ll_me_suggestion:
