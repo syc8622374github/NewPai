@@ -9,35 +9,55 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cyc.newpai.GlideApp;
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.base.BaseActivity;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
+import com.cyc.newpai.ui.me.entity.MyAuctionBean;
+import com.cyc.newpai.util.DateUtil;
+
+import java.util.Date;
 
 public class OrderDetailActivity extends BaseActivity {
 
+    public static final String ORDER_DATA_BEAN = "order_data_bean";
+    private MyAuctionBean myAuctionBean;
+
     private TextView title;
-    private TextView nowPrice;
+    private TextView dealPrice;
     private ImageView shopIcon;
-    private TextView orderCount;
-    private TextView time;
+    private TextView dealTime;
+    private TextView countDownTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        myAuctionBean = (MyAuctionBean) getIntent().getSerializableExtra(ORDER_DATA_BEAN);
         initView();
         initData();
     }
 
     private void initData() {
+        if(myAuctionBean!=null){
+            title.setText(myAuctionBean.getGoods_name());
+            dealPrice.setText(myAuctionBean.getDeal_price());
+            GlideApp.with(this).load(myAuctionBean.getImage()).placeholder(R.drawable.shop_iphonex).into(shopIcon);
+            long time = (Long.valueOf(myAuctionBean.getLast_bid_time())*1000+7200000-System.currentTimeMillis());
+            Date countDownDate = new Date(time>0?time:0);
+            countDownTime.setText("剩余:"+(time>0?countDownDate.getDay():0)+"天"+(time>0?countDownDate.getHours():0)+"小时"+(time>0?countDownDate.getMinutes():0)+"分钟"+(time>0?countDownDate.getSeconds():0)+"秒");
+            dealTime.setText(DateUtil.formatDate(Long.valueOf(myAuctionBean.getLast_bid_time()),"yyyy:MM:dd HH:mm:ss"));
+        }else{
+            finish();
+        }
     }
 
     private void initView() {
         title = findViewById(R.id.tv_order_detail_title);
-        nowPrice = findViewById(R.id.tv_order_detail_now_price);
+        dealPrice = findViewById(R.id.tv_order_detail_deal_price);
         shopIcon = findViewById(R.id.iv_order_detail_icon);
-        orderCount = findViewById(R.id.tv_order_detail_order_count);
-        time = findViewById(R.id.tv_order_detail_time);
+        dealTime = findViewById(R.id.tv_order_detail_time);
+        countDownTime = findViewById(R.id.tv_order_detail_count_down_time);
     }
 
     @Override

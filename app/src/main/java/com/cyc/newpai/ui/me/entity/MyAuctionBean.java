@@ -1,6 +1,8 @@
 package com.cyc.newpai.ui.me.entity;
 
-public class MyAuctionBean {
+import java.io.Serializable;
+
+public class MyAuctionBean implements Serializable {
     private String id;
     private String gid;
     private String now_price;
