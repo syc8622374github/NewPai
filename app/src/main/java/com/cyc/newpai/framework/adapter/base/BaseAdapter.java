@@ -428,9 +428,9 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         mEmptyView = emptyView;
     }
 
-    public void setEmptyView(int rsid) {
+    /*public void setEmptyView(int rsid) {
         setEmptyView(Util.inflate(mContext,rsid));
-    }
+    }*/
 
     /**
      * 移除emptyView

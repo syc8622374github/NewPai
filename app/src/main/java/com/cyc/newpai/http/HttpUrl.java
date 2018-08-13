@@ -52,6 +52,8 @@ public class HttpUrl {
 
     public static final String HTTP_BID_SEARCH_DELETE_URL = HTTP_SERVICE_URL + "/Api/Jingpai/searchDelete"; //商品搜索记录清除
 
+    public static final String HTTP_MAIN_LUCKY_SHOW_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/Jingpai/lucyList"; //首页幸运晒单
+
     /*-------------------------------------------------------------------*/
 
     /**
@@ -74,6 +76,8 @@ public class HttpUrl {
     public static final String HTTP_ADDRESS_LIST_URL = HTTP_SERVICE_URL + "/Api/Member/addressList"; //收货地址列表
 
     public static final String HTTP_USER_INFO_URL = HTTP_SERVICE_URL + "/Api/member/userInfo"; //用户详情
+
+    public static final String HTTP_MY_LUCKY_LIST = HTTP_SERVICE_URL + "/Api/Member/myLucyList"; //我的幸运晒单记录
 
     /*-------------------------------------------------------------------*/
 

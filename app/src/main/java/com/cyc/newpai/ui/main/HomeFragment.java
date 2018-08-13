@@ -55,7 +55,6 @@ import com.cyc.newpai.ui.main.entity.BannerResultBean;
 import com.cyc.newpai.ui.main.entity.HomeBean;
 import com.cyc.newpai.ui.main.entity.HomePageBean;
 import com.cyc.newpai.ui.main.entity.HomeWindowBean;
-import com.cyc.newpai.ui.me.entity.MyAuctionBean;
 import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.util.RecyclerViewUtil;
 import com.cyc.newpai.util.ViewUtil;
@@ -341,58 +340,51 @@ public class HomeFragment extends BaseFragment {
         //RecyclerViewUtil.addHearView(rvMain,headView);
         newHomeRecyclerViewAdapter.addHeaderView(headView);
         //设置加载更多触发的事件监听
-        newHomeRecyclerViewAdapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(boolean isReload) {
-                //loadMore();
-                getView().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        pageSize+=10;
-                        updateIndexData(selectType, new Callback() {
-                            @Override
-                            public void onFailure(Call call, IOException e) {
-                                isLoadMore = false;
-                                pageSize-=10;
-                            }
+        newHomeRecyclerViewAdapter.setOnLoadMoreListener(isReload -> {
+            getView().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    pageSize+=10;
+                    updateIndexData(selectType, new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            isLoadMore = false;
+                            pageSize-=10;
+                        }
 
-                            @Override
-                            public void onResponse(Call call, Response response) throws IOException {
-                                try {
-                                    if (response.isSuccessful()) {
-                                        String str = response.body().string();
-                                        ResponseBean<HomePageBean> responseBean = getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
-                                        }.getType());
-                                        if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
-                                            if (responseBean.getResult().getList().size() > newHomeRecyclerViewAdapter.getDataCount()) {
-                                                updateShopData(responseBean.getResult());
-                                            } else {
-                                                handler.post(() -> newHomeRecyclerViewAdapter.loadEnd());
-                                            }
-                                            return;
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            try {
+                                if (response.isSuccessful()) {
+                                    String str = response.body().string();
+                                    ResponseBean<HomePageBean> responseBean = getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
+                                    }.getType());
+                                    if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                                        if (responseBean.getResult().getList().size() > newHomeRecyclerViewAdapter.getDataCount()) {
+                                            updateShopData(responseBean.getResult());
+                                        } else {
+                                            handler.post(() -> newHomeRecyclerViewAdapter.loadEnd());
                                         }
+                                        return;
                                     }
-                                    ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
-                                } catch (Exception e) {
-                                    Log.e(TAG, e.getMessage());
-                                } finally {
-                                    isLoadMore = false;
                                 }
-                                pageSize-=10;
+                                ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
+                            } catch (Exception e) {
+                                Log.e(TAG, e.getMessage());
+                            } finally {
+                                isLoadMore = false;
                             }
-                        });
-                    }
-                }, 500);
-            }
+                            pageSize-=10;
+                        }
+                    });
+                }
+            }, 500);
         });
         rvMain.setAdapter(newHomeRecyclerViewAdapter);
-        newHomeRecyclerViewAdapter.setOnItemClickListener(new OnItemClickListener<HomeBean>() {
-            @Override
-            public void onItemClick(ViewHolder viewHolder, HomeBean data, int position) {
-                Intent intent = new Intent(getContext(), HomeShopDetailActivity.class);
-                intent.putExtra("id", data.getId());
-                startActivity(intent);
-            }
+        newHomeRecyclerViewAdapter.setOnItemClickListener((OnItemClickListener<HomeBean>) (viewHolder, data, position) -> {
+            Intent intent = new Intent(getContext(), HomeShopDetailActivity.class);
+            intent.putExtra("id", data.getId());
+            startActivity(intent);
         });
         startRefreshData();
     }
@@ -421,7 +413,6 @@ public class HomeFragment extends BaseFragment {
                                         return;
                                     }
                                 }
-                                //ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
                             } catch (Exception e) {
                                 Log.e(TAG, e.getMessage());
                             }
@@ -477,7 +468,6 @@ public class HomeFragment extends BaseFragment {
                             if(responseBean.getResult().getList().size()>0){
                                 updateShopData(responseBean.getResult());
                             }
-
                             rvMain.post(()->varyViewHelper.showDataView());
                             return;
                         }
@@ -493,9 +483,7 @@ public class HomeFragment extends BaseFragment {
     private void initRefresh(View view) {
         swipeRefreshLayout = view.findViewById(R.id.srl_refresh_layout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            initData();
-        });
+        swipeRefreshLayout.setOnRefreshListener(() -> initData());
     }
 
     private void initWindow(View view) {
@@ -534,6 +522,8 @@ public class HomeFragment extends BaseFragment {
                             if (finalI == 0) {
                                 if (finalJ == 3) {
                                     startActivity(new Intent(getContext(), RechargeActivity.class));
+                                }else if(finalJ == 4){
+                                    startActivity(new Intent(getContext(), MainLuckyTimeActivity.class));
                                 }
                             }
                         }

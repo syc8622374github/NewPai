@@ -3,6 +3,7 @@ package com.cyc.newpai.framework.adapter;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Author: Othershe
@@ -26,9 +27,13 @@ public class Util {
     }
 
     public static View inflate(Context context, int layoutId) {
+        return inflate(context,layoutId,null,false);
+    }
+
+    public static View inflate(Context context, int layoutId, ViewGroup rootView, boolean attachToRoot) {
         if (layoutId <= 0) {
             return null;
         }
-        return LayoutInflater.from(context).inflate(layoutId, null);
+        return LayoutInflater.from(context).inflate(layoutId, rootView,attachToRoot);
     }
 }

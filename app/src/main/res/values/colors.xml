@@ -16,6 +16,8 @@
     <color name="color_default_gray_font">#9F9F9F</color>
     <color name="color_grey_search_bg">#999999</color>
 
+    <color name="color_grey_sun_drying_bg">#f8f8f8</color>
+
     <color name="color_home_shop_prompt">#666666</color>
     <color name="color_home_shop_count_down">#fe770a</color>
 

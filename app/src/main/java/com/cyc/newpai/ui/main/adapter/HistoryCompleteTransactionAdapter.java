@@ -92,11 +92,11 @@ public class HistoryCompleteTransactionAdapter extends CommonBaseAdapter<BidAgeR
         try {
             if(type==COMPLETE_TRANSACTION_TYPE){
                 holder.getView(R.id.iv_complete_label).setVisibility(View.GONE);
-                holder.setText(R.id.tv_his_bid_deal_person,getAllData().get(position).getNickname());
-                holder.setText(R.id.tv_hist_deal_price,"￥"+getAllData().get(position).getDeal_price());
-                holder.setText(R.id.tv_his_bid_market_price,getAllData().get(position).getMarket_price());
-                holder.setText(R.id.tv_his_bid_deal_time,getAllData().get(position).getDeal_time());
-                holder.setText(R.id.tv_his_bid_rate,getAllData().get(position).getSave_rate());
+                holder.setText(R.id.tv_his_bid_deal_person,data.getNickname());
+                holder.setText(R.id.tv_hist_deal_price,"￥"+data.getDeal_price());
+                holder.setText(R.id.tv_his_bid_market_price,data.getMarket_price());
+                holder.setText(R.id.tv_his_bid_deal_time,data.getDeal_time());
+                holder.setText(R.id.tv_his_bid_rate,data.getRate());
                 ImageView avator = holder.getView(R.id.iv_avator);
                 GlideApp.with(mContext)
                         .load(getAllData().get(position).getImage())

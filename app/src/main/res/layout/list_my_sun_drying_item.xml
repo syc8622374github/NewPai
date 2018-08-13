@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="15dp"
+    android:padding="10dp"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_sun_drying_avator"
+            android:layout_width="60dp"
+            android:src="@drawable/ic_me_avator_default"
+            android:layout_height="60dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="5dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_sun_drying_name"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:textColor="@android:color/holo_blue_light"
+                android:text="wsadfdsfsdf"
+                android:textSize="16sp"
+                android:gravity="center_vertical"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tv_sun_drying_date"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:textColor="@color/color_default_gray_font"
+                android:text="daskljdlkasjdlksajd"
+                android:textSize="12sp"
+                android:gravity="center_vertical"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_sun_drying_comment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="fhskdjfsdhfhsdkhfkdsfh"
+        android:layout_marginLeft="65dp"/>
+
+    <ImageView
+        android:id="@+id/tv_sun_drying_sun_pic"
+        android:layout_width="220dp"
+        android:layout_height="150dp"
+        android:src="@drawable/test111"
+        android:scaleType="centerCrop"
+        android:layout_marginLeft="65dp"/>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/iv_sun_drying_shop_icon"
+            android:layout_width="110dp"
+            android:src="@drawable/shop_iphonex"
+            android:background="@drawable/shape_border_grey_line"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/color_grey_sun_drying_bg"
+            android:padding="10dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_sun_drying_shop_name"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:text="Apple 8 颜色随机颜色随颜色随颜色随颜色随颜色随颜色随颜色随机颜色随机dasdsadsdas"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:layout_weight="1"/>
+
+            <TextView
+                android:id="@+id/tv_sun_drying_shop_deal_price"
+                android:layout_width="wrap_content"
+                android:text="成交价：￥150"
+                android:gravity="center_vertical"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_sun_drying_delete"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="删除"
+        android:textColor="@color/color_default_gray_font"
+        android:layout_gravity="right"
+        android:background="@drawable/shape_border_grey_line_radiu_50dp"/>
+
+</LinearLayout>

@@ -15,9 +15,9 @@ public class ScreenUtil {
         return context.getResources().getDisplayMetrics().density;
     }
 
-    public static int dp2px(Context context, float px) {
+    public static int dp2px(Context context, float dp) {
         final float scale = getScreenDensity(context);
-        return (int) (px * scale + 0.5);
+        return (int) (dp * scale + 0.5);
     }
 
     /**

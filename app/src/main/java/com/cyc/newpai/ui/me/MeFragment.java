@@ -59,24 +59,24 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         view = inflater.inflate(R.layout.fragment_me, container, false);
         initView();
         initData();
-        Log.i(TAG,"onCreateView");
+        Log.i(TAG, "onCreateView");
         return view;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i(TAG,"onCreate");
+        Log.i(TAG, "onCreate");
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.i(TAG,"onStart");
+        Log.i(TAG, "onStart");
     }
 
     public void initData() {
-        if(LoginUtil.isLogin(getActivity())){
+        if (LoginUtil.isLogin(getActivity())) {
             OkHttpManager.getInstance(getContext()).postAsyncHttp(HttpUrl.HTTP_USER_INFO_URL, null, new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -86,12 +86,13 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     try {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             String str = response.body().string();
-                            ResponseBean<ResponseResultBean<UserInfoBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<UserInfoBean>>>(){}.getType());
-                            if(data.getCode()==200&&data.getResult().getItem()!=null){
+                            ResponseBean<ResponseResultBean<UserInfoBean>> data = getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<UserInfoBean>>>() {
+                            }.getType());
+                            if (data.getCode() == 200 && data.getResult().getItem() != null) {
                                 updateData(data.getResult().getItem());
-                            }else if(data.getCode()==1000){
+                            } else if (data.getCode() == 1000) {
                                 review();
                             }
                             return;
@@ -101,13 +102,13 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                     }
                 }
             });
-        }else{
+        } else {
             review();
         }
     }
 
     public void review() {
-        handler.post(()->{
+        handler.post(() -> {
             avator.setImageResource(R.drawable.ic_avator_default);
             mobile.setText("");
             paiBi.setText("--");
@@ -116,15 +117,15 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     }
 
     private void updateData(UserInfoBean item) {
-        handler.post(()->{
+        handler.post(() -> {
             GlideApp.with(getContext())
                     .load(item.getImg())
                     .placeholder(R.drawable.ic_avator_default)
                     .transform(new GlideCircleTransform(getContext()))
                     .into(avator);
             mobile.setText(item.getNickname());
-            paiBi.setText(item.getMoney().substring(0,item.getMoney().indexOf(".")));
-            zengBi.setText(item.getMoney_zeng().substring(0,item.getMoney_zeng().indexOf(".")));
+            paiBi.setText(item.getMoney().substring(0, item.getMoney().indexOf(".")));
+            zengBi.setText(item.getMoney_zeng().substring(0, item.getMoney_zeng().indexOf(".")));
         });
     }
 
@@ -138,6 +139,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         view.findViewById(R.id.ll_me_address).setOnClickListener(this);
         view.findViewById(R.id.ll_me_order_detail).setOnClickListener(this);
         view.findViewById(R.id.ll_me_auction).setOnClickListener(this);
+        view.findViewById(R.id.ll_me_my_lucky_time).setOnClickListener(this);
         avator = view.findViewById(R.id.tv_me_avator);
         mobile = view.findViewById(R.id.tv_me_mobile);
         paiBi = view.findViewById(R.id.tv_me_pai_bi);
@@ -150,32 +152,41 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.ll_me_my_property:
-                startActivity(new Intent(getContext(), MyPropertyActivity.class));
-                break;
-            case R.id.btn_me_recharge:
-                startActivity(new Intent(getContext(), RechargeActivity.class));
-                break;
-            case R.id.tv_me_avator:
-                if(!LoginUtil.isLogin(getContext())){
-                    startActivityForResult(new Intent(getContext(), LoginActivity.class),1);
-                }
-                break;
-            case R.id.ll_me_suggestion:
-                startActivity(new Intent(getContext(), SuggestionActivity.class));
-                break;
-            case R.id.ll_me_address:
-                Intent intent = new Intent(getContext(), SelectAddressActivity.class);
-                intent.putExtra(SelectAddressActivity.TYPE_ADDRESS,SelectAddressActivity.TYPE_EDIT_ADDRESS);
-                startActivity(intent);
-                break;
-            case R.id.ll_me_order_detail:
-                startActivity(new Intent(getContext(),OrderDetailActivity.class));
-                break;
-            case R.id.ll_me_auction:
-                startActivity(new Intent(getContext(),MyAuctionActivity.class));
-                break;
+        if (LoginUtil.isLogin(getActivity())) {
+            switch (v.getId()) {
+                case R.id.ll_me_my_property:
+                    startActivity(new Intent(getContext(), MyPropertyActivity.class));
+                    break;
+                case R.id.btn_me_recharge:
+                    startActivity(new Intent(getContext(), RechargeActivity.class));
+                    break;
+                case R.id.tv_me_avator:
+                    startActivityForResult(new Intent(getContext(), LoginActivity.class), 1);
+                    break;
+                case R.id.ll_me_suggestion:
+                    startActivity(new Intent(getContext(), SuggestionActivity.class));
+                    break;
+                case R.id.ll_me_address:
+                    Intent intent = new Intent(getContext(), SelectAddressActivity.class);
+                    intent.putExtra(SelectAddressActivity.TYPE_ADDRESS, SelectAddressActivity.TYPE_EDIT_ADDRESS);
+                    startActivity(intent);
+                    break;
+                case R.id.ll_me_order_detail:
+                    startActivity(new Intent(getContext(), OrderDetailActivity.class));
+                    break;
+                case R.id.ll_me_auction:
+                    startActivity(new Intent(getContext(), MyAuctionActivity.class));
+                    break;
+                case R.id.ll_me_my_lucky_time:
+                    startActivity(new Intent(getContext(), MyLuckTimeActivity.class));
+                    break;
+                default:
+                    ToastManager.showToast(getActivity(), "该功能暂未开放", Toast.LENGTH_SHORT);
+                    break;
+            }
+        }else{
+            startActivityForResult(new Intent(getContext(), LoginActivity.class), 1);
+            ToastManager.showToast(getActivity(),"未检测账号登录",Toast.LENGTH_SHORT);
         }
     }
 }
