@@ -274,7 +274,6 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     private void scrollLoadMore() {
         if (isReset) {
             return;
-
         }
         if (mFooterLayout.getChildAt(0) == mLoadingView && !isLoading) {
             if (mLoadMoreListener != null) {
@@ -369,7 +368,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         mDatas.clear();
         mDatas.addAll(datas);
         //notifyDataSetChanged();
-        notifyItemRangeChanged(getHeaderCount(),datas.size());
+        notifyItemRangeChanged(getHeaderCount(),mDatas.size());
         mEmptyView = null;
         mReloadView = null;
     }
@@ -493,17 +492,26 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
     }
 
     /**
+     * 数据加载完成
+     */
+    public void loadLoad() {
+        if (mLoadingView != null) {
+            addFooterView(mLoadingView);
+        } else {
+            addFooterView(new View(mContext));
+        }
+        isLoading = false;
+    }
+
+    /**
      * 数据加载失败
      */
     public void loadFailed() {
         addFooterView(mLoadFailedView);
-        mLoadFailedView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                addFooterView(mLoadingView);
-                if (mLoadMoreListener != null) {
-                    mLoadMoreListener.onLoadMore(true);
-                }
+        mLoadFailedView.setOnClickListener(view -> {
+            addFooterView(mLoadingView);
+            if (mLoadMoreListener != null) {
+                mLoadMoreListener.onLoadMore(true);
             }
         });
     }

@@ -109,7 +109,11 @@
         <activity
             android:name=".ui.me.MyLuckTimeActivity"
             android:label="幸运晒单" />
-        <activity android:name=".ui.main.MainLuckyTimeActivity"></activity>
+        <activity android:name=".ui.main.MainLuckyTimeActivity"
+            android:label="我的晒单"/>
+
+        <activity android:name=".ui.common.SelectGPSPostionActivity"
+            android:label="选择地址"/>
     </application>
 
 </manifest>

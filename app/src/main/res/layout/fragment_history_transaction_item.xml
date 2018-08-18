@@ -5,10 +5,9 @@
     android:padding="10dp"
     android:orientation="horizontal">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="50dp"
         android:layout_height="50dp">
-
         <ImageView
             android:id="@+id/iv_avator"
             android:src="@drawable/ic_avator_default"
@@ -21,8 +20,7 @@
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-    </RelativeLayout>
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

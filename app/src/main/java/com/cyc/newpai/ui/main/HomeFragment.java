@@ -3,7 +3,6 @@ package com.cyc.newpai.ui.main;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,7 +10,6 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,11 +33,8 @@ import android.widget.Toast;
 
 import com.cyc.newpai.GlideApp;
 import com.cyc.newpai.R;
-import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
-import com.cyc.newpai.framework.adapter.ViewHolder;
 import com.cyc.newpai.framework.adapter.base.WrapContentGridLayoutManager;
 import com.cyc.newpai.framework.adapter.interfaces.OnItemClickListener;
-import com.cyc.newpai.framework.adapter.interfaces.OnLoadMoreListener;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
@@ -48,7 +43,6 @@ import com.cyc.newpai.http.entity.ResponseResultBean;
 import com.cyc.newpai.ui.common.RechargeActivity;
 import com.cyc.newpai.ui.common.entity.TopLineBean;
 import com.cyc.newpai.ui.main.adapter.GridDivider;
-import com.cyc.newpai.ui.main.adapter.HomeRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.adapter.NewHomeRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.entity.BannerDataBean;
 import com.cyc.newpai.ui.main.entity.BannerResultBean;
@@ -57,6 +51,7 @@ import com.cyc.newpai.ui.main.entity.HomePageBean;
 import com.cyc.newpai.ui.main.entity.HomeWindowBean;
 import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.util.RecyclerViewUtil;
+import com.cyc.newpai.util.ScreenUtil;
 import com.cyc.newpai.util.ViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
 import com.cyc.newpai.widget.ToastManager;
@@ -113,11 +108,6 @@ public class HomeFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             try {
                 switch (msg.what) {
-                    case 1:
-                        //adapter.notifyDataSetChanged();
-                        //homeRecyclerViewAdapter.notifyItemRangeChanged(0, homeRecyclerViewAdapter.getList().size());
-                        swipeRefreshLayout.setRefreshing(false);
-                        break;
                     case 2:
                         if (recyclerCount < topLineBeanList.size()) {
                             // 设置切入动画
@@ -201,7 +191,7 @@ public class HomeFragment extends BaseFragment {
         }
     }
 
-    private void initBannerData(){
+    private void initBannerData() {
         OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_BANNER_URL, null, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -226,7 +216,9 @@ public class HomeFragment extends BaseFragment {
                 }
             }
         });
-    };
+    }
+
+    ;
 
     private void initData() {
         updateIndexData(selectType, new Callback() {
@@ -339,47 +331,43 @@ public class HomeFragment extends BaseFragment {
         newHomeRecyclerViewAdapter.setLoadEndView(ViewUtil.getFootView(getActivity(), LoadingFooter.State.TheEnd));
         //RecyclerViewUtil.addHearView(rvMain,headView);
         newHomeRecyclerViewAdapter.addHeaderView(headView);
+        //newHomeRecyclerViewAdapter.setEmptyView(Util.inflate(getActivity(),R.layout.layout_emptyview,(ViewGroup) rvMain,false));
         //设置加载更多触发的事件监听
-        newHomeRecyclerViewAdapter.setOnLoadMoreListener(isReload -> {
-            getView().postDelayed(new Runnable() {
+        newHomeRecyclerViewAdapter.setOnLoadMoreListener(isReload -> getView().postDelayed(() -> {
+            pageSize += 10;
+            updateIndexData(selectType, new Callback() {
                 @Override
-                public void run() {
-                    pageSize+=10;
-                    updateIndexData(selectType, new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            isLoadMore = false;
-                            pageSize-=10;
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            try {
-                                if (response.isSuccessful()) {
-                                    String str = response.body().string();
-                                    ResponseBean<HomePageBean> responseBean = getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
-                                    }.getType());
-                                    if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
-                                        if (responseBean.getResult().getList().size() > newHomeRecyclerViewAdapter.getDataCount()) {
-                                            updateShopData(responseBean.getResult());
-                                        } else {
-                                            handler.post(() -> newHomeRecyclerViewAdapter.loadEnd());
-                                        }
-                                        return;
-                                    }
-                                }
-                                ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
-                            } catch (Exception e) {
-                                Log.e(TAG, e.getMessage());
-                            } finally {
-                                isLoadMore = false;
-                            }
-                            pageSize-=10;
-                        }
-                    });
+                public void onFailure(Call call, IOException e) {
+                    isLoadMore = false;
+                    pageSize -= 10;
                 }
-            }, 500);
-        });
+
+                @Override
+                public void onResponse(Call call, Response response) {
+                    try {
+                        if (response.isSuccessful()) {
+                            String str = response.body().string();
+                            ResponseBean<HomePageBean> responseBean = getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
+                            }.getType());
+                            if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
+                                if (responseBean.getResult().getList().size() > newHomeRecyclerViewAdapter.getDataCount()) {
+                                    updateShopData(responseBean.getResult());
+                                } else {
+                                    handler.post(() -> newHomeRecyclerViewAdapter.loadEnd());
+                                }
+                                return;
+                            }
+                        }
+                        ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG);
+                    } catch (Exception e) {
+                        Log.e(TAG, e.getMessage());
+                    } finally {
+                        isLoadMore = false;
+                    }
+                    pageSize -= 10;
+                }
+            });
+        }, 500));
         rvMain.setAdapter(newHomeRecyclerViewAdapter);
         newHomeRecyclerViewAdapter.setOnItemClickListener((OnItemClickListener<HomeBean>) (viewHolder, data, position) -> {
             Intent intent = new Intent(getContext(), HomeShopDetailActivity.class);
@@ -433,7 +421,7 @@ public class HomeFragment extends BaseFragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 onTabItemSelected(tab.getPosition());
-        }
+            }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
@@ -448,34 +436,32 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void onTabItemSelected(int position) {
-        selectType = position+1+"";
+        selectType = position + 1 + "";
         varyViewHelper.showLoadingView();
         newHomeRecyclerViewAdapter.setData(new ArrayList());
         updateIndexData(selectType, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                handler.post(()->varyViewHelper.showEmptyView());
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, Response response) {
                 try {
                     if (response.isSuccessful()) {
                         String str = response.body().string();
                         ResponseBean<HomePageBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<HomePageBean>>() {
                         }.getType());
                         if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
-                            if(responseBean.getResult().getList().size()>0){
+                            if (responseBean.getResult().getList().size() > 0) {
                                 updateShopData(responseBean.getResult());
                             }
-                            rvMain.post(()->varyViewHelper.showDataView());
+                            rvMain.post(() -> varyViewHelper.showDataView());
                             return;
                         }
                     }
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }
-                handler.post(()->varyViewHelper.showEmptyView());
             }
         });
     }
@@ -483,7 +469,10 @@ public class HomeFragment extends BaseFragment {
     private void initRefresh(View view) {
         swipeRefreshLayout = view.findViewById(R.id.srl_refresh_layout);
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        swipeRefreshLayout.setOnRefreshListener(() -> initData());
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            initBannerData();
+            initData();
+        });
     }
 
     private void initWindow(View view) {
@@ -497,11 +486,13 @@ public class HomeFragment extends BaseFragment {
         int columns = 5;
         int rows = (int) Math.ceil(beanList.size() / columns);
         LinearLayout windowRoot = view.findViewById(R.id.ll_window_root);
+        //windowRoot.setPadding(ScreenUtil.dp2px(getActivity(),10),0,ScreenUtil.dp2px(getActivity(),10),0);
         for (int i = 0; i < rows; i++) {
             LinearLayout child = (LinearLayout) windowRoot.getChildAt(i);
             if (child == null) {
                 LinearLayout llChild = new LinearLayout(getContext());
                 LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                llChild.setGravity(Gravity.CENTER);
                 llChild.setLayoutParams(layoutParams);
                 llChild.setOrientation(LinearLayout.HORIZONTAL);
                 child = llChild;
@@ -510,21 +501,19 @@ public class HomeFragment extends BaseFragment {
             for (int j = 0; j < columns; j++) {
                 View childItem = child.getChildAt(j);
                 if (childItem == null) {
+                    int itemWidth = ScreenUtil.getScreenWidth(getActivity()) / columns;
                     childItem = View.inflate(getContext(), R.layout.home_window_item, null);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1.0f);
-                    childItem.setLayoutParams(layoutParams);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(itemWidth - ScreenUtil.dp2px(getActivity(),20), itemWidth - ScreenUtil.dp2px(getActivity(),20));
+                    childItem.findViewById(R.id.iv_home_window_icon).setLayoutParams(layoutParams);
                     child.addView(childItem);
                     int finalI = i;
                     int finalJ = j;
-                    childItem.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (finalI == 0) {
-                                if (finalJ == 3) {
-                                    startActivity(new Intent(getContext(), RechargeActivity.class));
-                                }else if(finalJ == 4){
-                                    startActivity(new Intent(getContext(), MainLuckyTimeActivity.class));
-                                }
+                    childItem.setOnClickListener(v -> {
+                        if (finalI == 0) {
+                            if (finalJ == 3) {
+                                startActivity(new Intent(getContext(), RechargeActivity.class));
+                            } else if (finalJ == 4) {
+                                startActivity(new Intent(getContext(), MainLuckyTimeActivity.class));
                             }
                         }
                     });
@@ -539,22 +528,21 @@ public class HomeFragment extends BaseFragment {
         banner = view.findViewById(R.id.banner);
         banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR);
         banner.setIndicatorGravity(BannerConfig.CENTER);
-        banner.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getAction();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:// 经测试，ViewPager的DOWN事件不会被分发下来
-                    case MotionEvent.ACTION_MOVE:
-                        swipeRefreshLayout.setEnabled(false);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        swipeRefreshLayout.setEnabled(true);
-                        break;
-                }
-                return false;
+        banner.setOnTouchListener((v, event) -> {
+            int action = event.getAction();
+            switch (action) {
+                case MotionEvent.ACTION_DOWN:// 经测试，ViewPager的DOWN事件不会被分发下来
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    swipeRefreshLayout.setEnabled(false);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                    swipeRefreshLayout.setEnabled(true);
+                    break;
             }
+            return false;
         });
         banner.setImageLoader(new ImageLoader() {
 

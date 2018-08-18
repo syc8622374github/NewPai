@@ -1,5 +1,6 @@
 package com.cyc.newpai;
 
+import com.baidu.mapapi.SDKInitializer;
 import com.cyc.newpai.framework.BasicApp;
 import com.cyc.newpai.util.Constant;
 import com.cyc.newpai.util.SharePreUtil;
@@ -12,5 +13,6 @@ public class App extends BasicApp {
         super.onCreate();
         CrashReport.initCrashReport(getApplicationContext());
         CrashReport.setUserId(SharePreUtil.getPref(getApplicationContext(),Constant.UID,"defaultId"));
+        SDKInitializer.initialize(getApplicationContext());
     }
 }

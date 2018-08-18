@@ -17,9 +17,15 @@ public class SharePreUtil {
         editor.putString(key, value).commit();
     }
     public static void setPref(Context context,String key,int value){
-        SharedPreferences.Editor editor = context.getSharedPreferences(SHARED_NAME, Context.MODE_WORLD_WRITEABLE).edit();
+        SharedPreferences.Editor editor = context.getSharedPreferences(SHARED_NAME, Context.MODE_PRIVATE).edit();
         editor.putInt(key, value).commit();
     }
+
+    public static void setPref(Context context,String key,float value){
+        SharedPreferences.Editor editor = context.getSharedPreferences(SHARED_NAME, Context.MODE_PRIVATE).edit();
+        editor.putFloat(key, value).commit();
+    }
+
     public static int getPref(Context context, String key,
                               int defaultValue) {
         int value = 0;
@@ -31,6 +37,19 @@ public class SharePreUtil {
         }
         return value;
     }
+
+    public static float getPref(Context context, String key,
+                              float defaultValue) {
+        float value = 0;
+        try {
+            value = context.getSharedPreferences(SHARED_NAME, 0).getFloat(
+                    key, defaultValue);
+        } catch (Exception ex) {
+            value = defaultValue;
+        }
+        return value;
+    }
+
     public static String getPref(Context context ,String key ,String defaultValue){
         String value = "";
         try {

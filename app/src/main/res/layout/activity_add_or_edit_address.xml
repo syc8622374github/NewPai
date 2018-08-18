@@ -132,7 +132,8 @@
                 android:layout_weight="1"
                 android:background="#00000000"
                 android:textSize="14sp"
-                android:singleLine="true"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:layout_height="wrap_content" />
 
         </LinearLayout>

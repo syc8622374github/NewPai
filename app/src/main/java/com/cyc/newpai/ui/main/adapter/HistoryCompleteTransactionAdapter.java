@@ -61,23 +61,6 @@ public class HistoryCompleteTransactionAdapter extends CommonBaseAdapter<BidAgeR
         }*/
     }
 
-    /*@Override
-    public int getItemViewType(int position) {
-        //return super.getItemViewType(position);
-        return type;
-    }*/
-
-    /*@Override
-    public int getItemCount() {
-        switch (type) {
-            case LUCKY_TIME_TYPE:
-                return luckyBeans.size();
-            case RULE_TYPE:
-                return 1;
-        }
-        return getAllData().size();
-    }*/
-
     public int getViewType(){
         return getViewType(0,null);
     }
@@ -96,7 +79,7 @@ public class HistoryCompleteTransactionAdapter extends CommonBaseAdapter<BidAgeR
                 holder.setText(R.id.tv_hist_deal_price,"￥"+data.getDeal_price());
                 holder.setText(R.id.tv_his_bid_market_price,data.getMarket_price());
                 holder.setText(R.id.tv_his_bid_deal_time,data.getDeal_time());
-                holder.setText(R.id.tv_his_bid_rate,data.getRate());
+                holder.setText(R.id.tv_his_bid_rate,data.getSave_rate());
                 ImageView avator = holder.getView(R.id.iv_avator);
                 GlideApp.with(mContext)
                         .load(getAllData().get(position).getImage())

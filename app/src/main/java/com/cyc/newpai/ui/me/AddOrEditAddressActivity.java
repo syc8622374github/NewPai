@@ -1,5 +1,6 @@
 package com.cyc.newpai.ui.me;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
@@ -17,6 +18,8 @@ import com.cyc.newpai.framework.base.BaseActivity;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
 import com.cyc.newpai.http.entity.ResponseBean;
+import com.cyc.newpai.ui.common.SelectGPSPostionActivity;
+import com.cyc.newpai.ui.common.entity.LocationBean;
 import com.cyc.newpai.ui.me.entity.AddressBean;
 import com.cyc.newpai.util.LocationHelper;
 import com.cyc.newpai.util.NumUtil;
@@ -48,6 +51,7 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
     private EditText etDetailAddress;
     private TextView tvLocalArea;
     private String id;
+    private LocationHelper locationHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +64,7 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
     }
 
     private void initData() {
-        LocationHelper locationHelper = new LocationHelper(this);
+        locationHelper = new LocationHelper(this);
         locationHelper.setBdLocationListener(new BDLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation bdLocation) {
@@ -170,8 +174,27 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
     public void clickEvent(View view) {
         switch (view.getId()){
             case R.id.ll_edit_address_area:
-
+                startActivityForResult(new Intent(this, SelectGPSPostionActivity.class),1);
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==2){
+            LocationBean locationBean = getGson().fromJson(data.getStringExtra(LocationHelper.LOCATION_BEAN+""),new TypeToken<LocationBean>(){}.getType());
+            int areaIndex = locationBean.getkAddress().indexOf("市")+1;
+            if(areaIndex!=0){
+                tvLocalArea.setText(locationBean.getAddressComponent().province +" "+locationBean.getAddressComponent().city);
+                etDetailAddress.setText(locationBean.getkAddress().substring(areaIndex)+" "+locationBean.getName());
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        locationHelper.stopLocation();
     }
 }

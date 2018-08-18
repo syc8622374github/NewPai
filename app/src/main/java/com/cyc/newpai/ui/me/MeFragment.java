@@ -118,14 +118,16 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
 
     private void updateData(UserInfoBean item) {
         handler.post(() -> {
-            GlideApp.with(getContext())
-                    .load(item.getImg())
-                    .placeholder(R.drawable.ic_avator_default)
-                    .transform(new GlideCircleTransform(getContext()))
-                    .into(avator);
-            mobile.setText(item.getNickname());
-            paiBi.setText(item.getMoney().substring(0, item.getMoney().indexOf(".")));
-            zengBi.setText(item.getMoney_zeng().substring(0, item.getMoney_zeng().indexOf(".")));
+            if(!getActivity().isDestroyed()){
+                GlideApp.with(getActivity())
+                        .load(item.getImg())
+                        .placeholder(R.drawable.ic_avator_default)
+                        .transform(new GlideCircleTransform(getContext()))
+                        .into(avator);
+                mobile.setText(item.getNickname());
+                paiBi.setText(item.getMoney().substring(0, item.getMoney().indexOf(".")));
+                zengBi.setText(item.getMoney_zeng().substring(0, item.getMoney_zeng().indexOf(".")));
+            }
         });
     }
 

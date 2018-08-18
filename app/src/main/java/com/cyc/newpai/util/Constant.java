@@ -10,4 +10,7 @@ public class Constant {
     public static final int SMS_TYPE_REGISTER = 1;
     public static final int SMS_TYPE_QUICKLOGIN = 2;
     public static final int SMS_TYPE_RESETPWD = 3;
+
+    public static final String KEY_IM_LAT     = "ImLat";      // 纬度
+    public static final String KEY_IM_LON     = "ImLon";      // 经度
 }

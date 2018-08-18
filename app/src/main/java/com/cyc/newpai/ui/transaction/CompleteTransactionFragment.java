@@ -27,10 +27,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cyc.newpai.R;
-import com.cyc.newpai.framework.adapter.HeaderAndFooterRecyclerViewAdapter;
-import com.cyc.newpai.framework.adapter.ViewHolder;
-import com.cyc.newpai.framework.adapter.interfaces.OnItemClickListener;
-import com.cyc.newpai.framework.adapter.interfaces.OnLoadMoreListener;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
@@ -41,10 +37,6 @@ import com.cyc.newpai.ui.common.entity.TopLineBean;
 import com.cyc.newpai.ui.main.HomeShopDetailActivity;
 import com.cyc.newpai.ui.main.adapter.HistoryCompleteTransactionAdapter;
 import com.cyc.newpai.ui.main.entity.BidAgeRecordBean;
-import com.cyc.newpai.ui.main.entity.HisTransactionBean;
-import com.cyc.newpai.ui.transaction.entity.CompleteTransactionBean;
-import com.cyc.newpai.util.RecyclerViewUtil;
-import com.cyc.newpai.util.ScreenUtil;
 import com.cyc.newpai.util.ViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
 import com.cyc.newpai.widget.ToastManager;
@@ -235,22 +227,14 @@ public class CompleteTransactionFragment extends BaseFragment {
         adapter.setLoadingView(ViewUtil.getFootView(getActivity(), LoadingFooter.State.Loading));
         adapter.setLoadEndView(ViewUtil.getFootView(getActivity(), LoadingFooter.State.TheEnd));
         adapter.setLoadFailedView(ViewUtil.getFootView(getActivity(), LoadingFooter.State.NetWorkError));
-        RecyclerViewUtil.addFootView(recyclerView, ViewUtil.getFootView(getActivity(), LoadingFooter.State.Loading));
         adapter.setOnItemClickListener((viewHolder, data, position) -> {
             Intent intent = new Intent(getContext(), HomeShopDetailActivity.class);
             intent.putExtra("gid",data.getId());
             startActivity(intent);
         });
-        adapter.setOnLoadMoreListener(new OnLoadMoreListener() {
-            @Override
-            public void onLoadMore(boolean isReload) {
-                loadMore();
-            }
-        });
+        adapter.setOnLoadMoreListener(isReload -> loadMore());
         adapter.startLoadMore(recyclerView,linearLayoutManager);
     }
-
-
 
     private void loadMore() {
         Map<String,String> params = new HashMap<>();
@@ -262,7 +246,7 @@ public class CompleteTransactionFragment extends BaseFragment {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, Response response) {
                 try {
                     if(response.isSuccessful()){
                         String str = response.body().string();

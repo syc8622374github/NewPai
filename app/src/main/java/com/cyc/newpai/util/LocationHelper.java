@@ -8,6 +8,15 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.search.core.PoiInfo;
 
@@ -28,6 +37,8 @@ public class LocationHelper extends BDAbstractLocationListener {
 
 	LocationClientOption defaultLocationClientOption;
 
+	public static final String LOCATION_BEAN = "locationBean";
+
 	public static final int BAIDU_READ_PHONE_STATE = 1001;
 
 	public LocationHelper(Context context) {
@@ -43,10 +54,11 @@ public class LocationHelper extends BDAbstractLocationListener {
 			//可选，是否需要位置描述信息，默认为不需要，即参数为false
 			//如果开发者需要获得当前点的位置信息，此处必须为true
 
-            /*defaultLocationClientOption = new LocationClientOption();
+            defaultLocationClientOption = new LocationClientOption();
             defaultLocationClientOption.setOpenGps(true);
             defaultLocationClientOption.setAddrType("all");
-            defaultLocationClientOption.setCoorType("bd09ll");*/
+            defaultLocationClientOption.setCoorType("bd09ll");
+            defaultLocationClientOption.disableCache(false);// 禁止启用缓存定位
 			//locationClient.setLocOption(defaultLocationClientOption);
 			//mLocationClient为第二步初始化过的LocationClient对象
 			//需将配置好的LocationClientOption对象，通过setLocOption方法传递给LocationClient对象使用
@@ -54,13 +66,6 @@ public class LocationHelper extends BDAbstractLocationListener {
 		}
 	}
 
-	// 不能用单例，因为监听器会被覆盖掉
-	//	public static LocationHelper getInstance(Context context) {
-	//		if (instance == null) {
-	//			instance = new LocationHelper(context);
-	//		}
-	//		return instance;
-	//	}
 	public BDLocation getLocation() {
 		return location;
 	}
@@ -77,12 +82,16 @@ public class LocationHelper extends BDAbstractLocationListener {
 		this.bdLocationListener = bdLocationListener;
 	}
 
-	//开始定位
+	/**
+	 * 开始定位
+	 */
 	public void startLocation() {
 		startLocation(defaultLocationClientOption);
 	}
 
-	//开始定位
+	/**
+	 * 开始定位
+	 */
 	public void startLocation(LocationClientOption option) {
 		if (option != null) {
 			locationClient.setLocOption(option);
@@ -94,7 +103,9 @@ public class LocationHelper extends BDAbstractLocationListener {
 			Log.d("LocationUtil", "locationClient is null or not started");
 	}
 
-	//停止定位
+	/**
+	 * 停止定位
+	 */
 	public void stopLocation() {
 		if (locationClient != null)
 			locationClient.stop();
@@ -110,8 +121,8 @@ public class LocationHelper extends BDAbstractLocationListener {
 		}
 	}
 
-	/*//添加marker标记
-	public void addMarker(LatLng latlng, BaiduMap baiduMap, int rsid) {
+	//添加marker标记
+	public void addMarker(LatLng latlng, BaiduMap baiduMap,int rsid) {
 		baiduMap.clear();
 		System.out.println("add marker==>" + latlng.toString());
 		// 构建Marker图标
@@ -122,7 +133,7 @@ public class LocationHelper extends BDAbstractLocationListener {
 		baiduMap.addOverlay(option);
 	}
 
-	public void addMarkerWithAnimation(LatLng latlng, BaiduMap baiduMap, int rsid) {
+	public void addMarkerWithAnimation(LatLng latlng, BaiduMap baiduMap,int rsid) {
 		baiduMap.clear();
 		System.out.println("add marker==>" + latlng.toString());
 		// 构建Marker图标
@@ -134,7 +145,7 @@ public class LocationHelper extends BDAbstractLocationListener {
 	}
 
 	//移动到坐标位置
-	public void moveToPosition(LatLng latLng, PoiInfo newPosition, BaiduMap baiduMap) {
+	public void moveToPosition(LatLng latLng,PoiInfo newPosition, BaiduMap baiduMap) {
 		if(newPosition!=null){
 			latLng = newPosition.location;
 		}
@@ -144,7 +155,7 @@ public class LocationHelper extends BDAbstractLocationListener {
 	}
 
 	//绘制当前位置
-	public void initMyLocData(BDLocation location, BaiduMap baiduMap) {
+	public void initMyLocData(BDLocation location,BaiduMap baiduMap) {
 		if (location == null || baiduMap == null) {
 			return;
 		}
@@ -153,7 +164,7 @@ public class LocationHelper extends BDAbstractLocationListener {
 				// 此处设置开发者获取到的方向信息，顺时针0-360
 				.direction(100).latitude(location.getLatitude())
 				.longitude(location.getLongitude()).build();
-		baiduMap.setMyLocationConfigeration(new MyLocationConfiguration(MyLocationConfiguration.LocationMode.FOLLOWING, false, null));
+		baiduMap.setMyLocationConfiguration(new MyLocationConfiguration(MyLocationConfiguration.LocationMode.FOLLOWING, false, null));
 		baiduMap.setMyLocationData(locData);
 	}
 
@@ -164,10 +175,10 @@ public class LocationHelper extends BDAbstractLocationListener {
 		}
 		MyLocationData locData = new MyLocationData.Builder()
 				.accuracy(location.getRadius())
-						// 此处设置开发者获取到的方向信息，顺时针0-360
+				// 此处设置开发者获取到的方向信息，顺时针0-360
 				.direction(xdirection).latitude(location.getLatitude())
 				.longitude(location.getLongitude()).build();
-		baiduMap.setMyLocationConfigeration(new MyLocationConfiguration(MyLocationConfiguration.LocationMode.NORMAL, false, null));
+		baiduMap.setMyLocationConfiguration(new MyLocationConfiguration(MyLocationConfiguration.LocationMode.NORMAL, false, null));
 		baiduMap.setMyLocationData(locData);
-	}*/
+	}
 }
