@@ -40,7 +40,7 @@ public class SplashActivity extends BaseActivity {
                 != PackageManager.PERMISSION_GRANTED){
             Toast.makeText(getApplicationContext(),"没有权限,请手动开启定位权限", Toast.LENGTH_SHORT).show();
             // 申请一个（或多个）权限，并提供用于回调返回的获取码（用户定义）
-            ActivityCompat.requestPermissions(SplashActivity.this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LocationHelper.BAIDU_READ_PHONE_STATE);
+            ActivityCompat.requestPermissions(SplashActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LocationHelper.BAIDU_READ_PHONE_STATE);
         }
     }
 
