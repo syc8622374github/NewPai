@@ -305,12 +305,7 @@ public class HomeFragment extends BaseFragment {
             beanList.clear();
             beanList.addAll(bean.getList());
             pageSize = beanList.size();
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    newHomeRecyclerViewAdapter.setListNotifyCustom(beanList);
-                }
-            });
+            handler.post(() -> newHomeRecyclerViewAdapter.setListNotifyCustom(beanList));
         }
     }
 

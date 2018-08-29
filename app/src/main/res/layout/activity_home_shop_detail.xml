@@ -28,7 +28,12 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal">
 
+        <!--<Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />-->
+
         <LinearLayout
+            android:id="@+id/ll_shop_detail_bid_num"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_margin="10dp"

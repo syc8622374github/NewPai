@@ -63,9 +63,11 @@
                     android:text="金额（元）" />
 
                 <EditText
+                    android:id="@+id/et_recharge_rmb"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="请输入充值金额"
+                    android:editable="false"
                     android:textColorHint="@color/color_default_gray_font"
                     android:background="#00000000" />
 
@@ -80,22 +82,16 @@
                 android:layout_width="match_parent"
                 android:background="@android:color/white"
                 android:layout_height="50dp"
-                android:gravity="center"
+                android:gravity="center_vertical"
                 android:paddingLeft="10dp">
 
                 <TextView
+                    android:id="@+id/tv_recharge_get_pai_bi"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:padding="5dp"
                     android:text="预计获得0拍币" />
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColorHint="@color/color_default_gray_font"
-                    android:background="#00000000" />
 
             </LinearLayout>
 
@@ -115,6 +111,7 @@
                 android:layout_height="wrap_content" />
 
             <Button
+                android:id="@+id/btn_recharge_pay_ok"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_margin="20dp"

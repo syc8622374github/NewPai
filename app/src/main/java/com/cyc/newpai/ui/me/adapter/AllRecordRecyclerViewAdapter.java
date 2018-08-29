@@ -3,6 +3,7 @@ package com.cyc.newpai.ui.me.adapter;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,15 +31,16 @@ public class AllRecordRecyclerViewAdapter extends BaseRecyclerAdapter<AllRecordB
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.setText(R.id.tv_all_record_shop_name,mList.get(position).getTitle());
-        viewHolder.setText(R.id.tv_all_record__pay,mList.get(position).getMoney());
         String type = mList.get(position).getType();
         TextView pay = viewHolder.getView(R.id.tv_all_record__pay);
         switch (type){
             case AllRecordBean.RECORD_PRODUCT:
                 pay.setTextColor(mContext.getResources().getColor(R.color.color_category_title_default));
+                ((TextView)viewHolder.getView(R.id.tv_all_record__pay)).setTextColor(mContext.getResources().getColor(android.R.color.black));
+                viewHolder.setText(R.id.tv_all_record__pay, Html.fromHtml("<font color='#000000'>+"+mList.get(position).getMoney()).toString());
                 break;
             default:
-                pay.setTextColor(mContext.getResources().getColor(R.color.colorPrimary));
+                viewHolder.setText(R.id.tv_all_record__pay, Html.fromHtml("<font color='"+mContext.getResources().getColor(R.color.colorPrimary)+"'>-"+mList.get(position).getMoney()).toString());
                 break;
         }
         viewHolder.setText(R.id.tv_all_record_type,"["+mList.get(position).getType()+"]");

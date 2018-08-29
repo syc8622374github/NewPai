@@ -1,30 +1,30 @@
 package com.cyc.newpai.ui.common.entity;
 
 public class AmountBean {
-    private String amount;
-    private String rmb;
+    private String zeng_money;
+    private String money;
     private boolean isSelect;
 
-    public AmountBean(String amount, String rmb, boolean isSelect) {
-        this.amount = amount;
-        this.rmb = rmb;
+    public AmountBean(String zeng_money, String money, boolean isSelect) {
+        this.zeng_money = zeng_money;
+        this.money = money;
         this.isSelect = isSelect;
     }
 
-    public String getAmount() {
-        return amount;
+    public String getZeng_money() {
+        return zeng_money;
     }
 
-    public void setAmount(String amount) {
-        this.amount = amount;
+    public void setZeng_money(String zeng_money) {
+        this.zeng_money = zeng_money;
     }
 
-    public String getRmb() {
-        return rmb;
+    public String getMoney() {
+        return money;
     }
 
-    public void setRmb(String rmb) {
-        this.rmb = rmb;
+    public void setMoney(String money) {
+        this.money = money;
     }
 
     public boolean isSelect() {

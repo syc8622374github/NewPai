@@ -1,5 +1,6 @@
 package com.cyc.newpai.ui.category;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.cyc.newpai.R;
+import com.cyc.newpai.framework.adapter.ViewHolder;
+import com.cyc.newpai.framework.adapter.interfaces.OnItemChildClickListener;
+import com.cyc.newpai.framework.adapter.interfaces.OnItemClickListener;
 import com.cyc.newpai.framework.base.BaseFragment;
 import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
@@ -20,6 +24,7 @@ import com.cyc.newpai.ui.category.adapter.CategoryDetailRecyclerAdapter;
 import com.cyc.newpai.ui.category.adapter.CategoryTitleRecyclerAdapter;
 import com.cyc.newpai.ui.category.entity.CategoryDetailBean;
 import com.cyc.newpai.ui.category.entity.CategoryMenuBean;
+import com.cyc.newpai.ui.main.HomeShopDetailActivity;
 import com.cyc.newpai.util.ViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
 import com.google.gson.reflect.TypeToken;
@@ -173,6 +178,11 @@ public class CategoryFragment extends BaseFragment {
         categoryDetailRecyclerAdapter = new CategoryDetailRecyclerAdapter(getContext(),null,true);
         rvCategoryDetail.setAdapter(categoryDetailRecyclerAdapter);
         llEmpty = view.findViewById(R.id.ll_suggestion_empty);
+        categoryDetailRecyclerAdapter.setOnItemClickListener((viewHolder, data, position) -> {
+            Intent intent = new Intent(getContext(), HomeShopDetailActivity.class);
+            intent.putExtra("id",data.getId());
+            startActivity(intent);
+        });
     }
 
     private void initCategoryTitle(View view) {

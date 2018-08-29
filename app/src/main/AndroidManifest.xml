@@ -108,6 +108,8 @@
 
         <activity android:name=".ui.common.SelectGPSPostionActivity"
             android:label="选择地址"/>
+
+        <activity android:name=".ui.common.BaseWebViewActivity"/>
     </application>
 
 </manifest>

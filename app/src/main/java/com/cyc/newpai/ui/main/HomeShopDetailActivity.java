@@ -1,6 +1,7 @@
 package com.cyc.newpai.ui.main;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,10 +11,13 @@ import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +36,7 @@ import com.cyc.newpai.ui.main.entity.BidRecordBean;
 import com.cyc.newpai.ui.main.entity.BidRecordItemBean;
 import com.cyc.newpai.ui.main.entity.BidResultBean;
 import com.cyc.newpai.ui.main.entity.ShopDetailBean;
+import com.cyc.newpai.util.DialogUtil;
 import com.cyc.newpai.util.GlideCircleTransform;
 import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.util.ViewUtil;
@@ -88,6 +93,9 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     private boolean historyCompleteLoadMoreStatue;
     private boolean luckyTimeLoadMoreStatue;
     private String time;
+    private boolean isDeal;
+    private ProgressDialog progressDialog;
+    private ImageView priceIcon;
 
     Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -99,6 +107,8 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
             }
         }
     };
+    private LinearLayout llBidNum;
+    private Button btnBid;
 
     private void updateMainBidInfo(BidRecordItemBean item) {
         handler.post(() -> {
@@ -112,9 +122,23 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                         time = "00:00:" + shopDetailBean.getLimit_second();
                     }
                 }
-                nowPrice.setText("￥" + item.getMoney());
-                name.setText(item.getNickname());
                 countDown.setText(time);
+                if(isDeal){
+                    name.setText(Html.fromHtml(item.getNickname()+" <font color='#9F9F9F' size='12'>("+item.getIp_address()+")</font>"));
+                    countDown.setVisibility(View.GONE);
+                    priceIcon.setBackgroundResource(R.drawable.ic_shop_detail_final_winner);
+                    prompt.setText("最终以" + item.getMoney() + "拍的本商品");
+                    llBidNum.setVisibility(View.GONE);
+                    btnBid.setText("下一期竞拍");
+                }else{
+                    countDown.setVisibility(View.VISIBLE);
+                    name.setText(item.getNickname());
+                    priceIcon.setBackgroundResource(R.drawable.ic_shop_detail_new_pricer);
+                    prompt.setText("若无人出价，将以￥" + item.getMoney() + "拍的本商品");
+                    llBidNum.setVisibility(View.VISIBLE);
+                    btnBid.setText("出价\n一拍币/次");
+                }
+                nowPrice.setText("￥" + item.getMoney());
                 if (oldBidRecordItemBean == null
                         || (!oldBidRecordItemBean.getNickname().equals(item.getNickname())
                         && !oldBidRecordItemBean.getIp_address().equals(item.getIp_address()))) {
@@ -132,9 +156,8 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                     oldBidRecordItemBean = item;
                 }
             } catch (Exception e) {
-                Log.i(TAG, e.getMessage());
+                e.printStackTrace();
             }
-            prompt.setText("若无人出价，将以￥" + item.getMoney() + "拍的本商品");
         });
     }
 
@@ -142,6 +165,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         id = getIntent().getStringExtra("id");
+        progressDialog = DialogUtil.getProgressDialog(this);
         initView();
         initData();
     }
@@ -171,7 +195,9 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
         findViewById(R.id.tv_bid_less).setOnClickListener(this);
         bidNume = findViewById(R.id.tv_bid_num);
         findViewById(R.id.tv_bid_add).setOnClickListener(this);
-        findViewById(R.id.btn_bid).setOnClickListener(this);
+        llBidNum = findViewById(R.id.ll_shop_detail_bid_num);
+        btnBid = findViewById(R.id.btn_bid);
+        btnBid.setOnClickListener(this);
     }
 
     private void initList() {
@@ -223,7 +249,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                             }
                             return;
                         }
-                        handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                        /*handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));*/
                     } catch (Exception e) {
                         Log.e(TAG, e.getMessage());
                     }
@@ -261,7 +287,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                             }
                             return;
                         }
-                        handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                        /*handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));*/
                     } catch (Exception e) {
                         Log.e(TAG, e.getMessage());
                     } finally {
@@ -282,6 +308,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
         name = head.findViewById(R.id.tv_shop_detail_nickname);
         nowPrice = head.findViewById(R.id.tv_shop_detail_now_price);
         marketPrice = head.findViewById(R.id.tv_shop_detail_market_price);
+        priceIcon = head.findViewById(R.id.iv_shop_detail_price_icon);
         shopName = head.findViewById(R.id.tv_shop_detail_name);
         countDown = head.findViewById(R.id.tv_shop_detail_count_down);
         countDown.setText("00:00:" + countDownNum);
@@ -292,17 +319,24 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     }
 
     private void startTime() {
-        if (timer == null) {
-            timer = new Timer();
-            timer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    handler.post(() -> {
-                        updateBidView();
-                        getShopDetailHttp(new HashMap<>());
-                    });
-                }
-            }, 1000, 1000);
+        if(!isDeal){
+            if (timer == null) {
+                timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        handler.post(() -> {
+                            updateBidView();
+                            getShopDetailHttp(new HashMap<>());
+                        });
+                    }
+                }, 1000, 1000);
+            }
+        }else{
+            if(timer != null){
+                timer.cancel();
+                timer = null;
+            }
         }
     }
 
@@ -384,7 +418,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                             return;
                         }
                     }
-                    handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                    //handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -419,13 +453,14 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                                 isUpdateBanner = false;
                             }
                             gid = shopDetailBean.getGid();
+                            isDeal = shopDetailBean.getDeal_status().equals("1")?true:false;
                             if (ageLists.size() == 0) {
                                 getAgeData(shopDetailBean.getGid());
                             }
                             return;
                         }
                     }
-                    handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                    //handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -464,7 +499,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                             return;
                         }
                     }
-                    handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                    //handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 }
@@ -583,12 +618,16 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                     bidNume.setText(n - 1 + "");
                 break;
             case R.id.btn_bid:
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                alertDialog.setTitle("交易提示")
-                        .setCancelable(false)
-                        .setMessage("确认支付" + bidNume.getText() + "个拍币竞拍？")
-                        .setNegativeButton("取消", (dialog, which) -> {
-                        }).setPositiveButton("确定", (dialog, which) -> bid()).show();
+                if(isDeal){
+
+                }else{
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                    alertDialog.setTitle("交易提示")
+                            .setCancelable(false)
+                            .setMessage("确认支付" + bidNume.getText() + "个拍币竞拍？")
+                            .setNegativeButton("取消", (dialog, which) -> {
+                            }).setPositiveButton("确定", (dialog, which) -> bid()).show();
+                }
                 break;
         }
     }
@@ -614,9 +653,8 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                             handler.post(() -> useBi.setText("我已消耗" + bidResultBean.getMoney() + "拍币/赠币"));
                             updateBidView();
                             getShopDetailHttp(new HashMap<>());
-                            return;
+                            handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, responseBean.getMsg(), Toast.LENGTH_SHORT));
                         }
-                        handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, responseBean.getMsg(), Toast.LENGTH_SHORT));
                     }
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
@@ -631,7 +669,9 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
         OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_RECORD_URL, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                if(progressDialog.isShowing()){
+                    progressDialog.cancel();
+                }
             }
 
             @Override
@@ -642,14 +682,18 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                         ResponseBean<BidRecordBean> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<BidRecordBean>>() {
                         }.getType());
                         if (responseBean.getCode() == 200 && responseBean.getResult() != null) {
-                            updateBidRecordView(responseBean.getResult());
                             updateMainBidInfo(responseBean.getResult().getItemBeans().get(0));
+                            updateBidRecordView(responseBean.getResult());
                             return;
                         }
                     }
-                    handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
+                    //handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, "数据加载失败", Toast.LENGTH_LONG));
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
+                } finally {
+                    if(progressDialog.isShowing()){
+                        progressDialog.cancel();
+                    }
                 }
             }
         });

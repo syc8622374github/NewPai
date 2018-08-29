@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/colorPrimary"
-        android:textSize="22sp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:text="60拍币"/>
 
@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/color_recharge_rmb"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:text="售价50元"/>
 
 </LinearLayout>

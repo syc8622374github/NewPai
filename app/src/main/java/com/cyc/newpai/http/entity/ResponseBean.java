@@ -4,6 +4,7 @@ public class ResponseBean<T> {
     private int code;
     private String msg;
     private T result;
+    private String url;
 
     public int getCode() {
         return code;
@@ -29,12 +30,11 @@ public class ResponseBean<T> {
         this.result = result;
     }
 
-    @Override
-    public String toString() {
-        return "ResponseBean{" +
-                "code=" + code +
-                ", meg='" + msg + '\'' +
-                ", result=" + result.toString() +
-                '}';
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

@@ -8,7 +8,7 @@ public class HttpUrl {
     /**
      * 服务器地址
      */
-    public static final String HTTP_SERVICE_URL = "http://pai.aimeichuang.cn";
+    public static final String HTTP_SERVICE_URL = "http://app.zhideting.cn";
 
     /*-------------------------------------------------------------------*/
 
@@ -22,6 +22,8 @@ public class HttpUrl {
     public static final String HTTP_NEW_DEAL = HttpUrl.HTTP_SERVICE_URL + "/Api/System/newDeal";//最新成交
 
     public static final String HTTP_SUGGESTION_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/Member/feedbackAdd";//反馈意见
+
+    public static final String HTTP_RECHARGE_AMOUNT_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/System/chargeConfig"; //充值金额
 
     /*-------------------------------------------------------------------*/
 
@@ -79,12 +81,23 @@ public class HttpUrl {
 
     public static final String HTTP_MY_LUCKY_LIST = HTTP_SERVICE_URL + "/Api/Member/myLucyList"; //我的幸运晒单记录
 
+    public static final String HTTP_PAY_SUCESS_RECOMMEND_GOODS_LIST = HTTP_SERVICE_URL + "/Api/Jingpai/tuijian"; //支付成功推荐
+
     /*-------------------------------------------------------------------*/
 
     /**
      * 系统通用
      */
     public static final String HTTP_SEND_SMS_URL = HTTP_SERVICE_URL + "/Api/System/send_sms"; //短信验证码发送
+
+    /**
+     * 支付
+     */
+    public static final String HTTP_PAY_REQUEST_URL = "https://pay.bbbapi.com/?format=json"; // 支付发起接口
+
+    public static final String HTTP_RECHATGE_URL = HTTP_SERVICE_URL + "/Api/System/payCharge"; //充值
+
+    public static final String HTTP_RECHARGE_STATUS_URL = HTTP_SERVICE_URL + "/Api/System/chargeCheckOrder"; //充值状态
 
     /*-------------------------------------------------------------------*/
 

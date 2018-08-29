@@ -26,6 +26,12 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="external_multiple_apps_matched_exit">Exit Private Browsing?</string>
+    <string name="external_app_prompt_no_app_title">Find an app that can open link</string>
+    <string name="external_app_prompt_no_app">None of the apps on your device are able to open this link. You can leave %1$s to search %2$s for an app that can.</string>
+    <string name="action_ok">OK</string>
+    <string name="font_roboto_medium">sans-serif-medium</string>
+    <string name="action_cancel">Cancel</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>

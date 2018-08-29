@@ -131,9 +131,7 @@ public class CompleteTransactionFragment extends BaseFragment {
     private void initRefreshLayout(View view) {
         refreshLayout = view.findViewById(R.id.srl_transaction_refresh_layout);
         refreshLayout.setColorSchemeResources(R.color.colorPrimary);
-        refreshLayout.setOnRefreshListener(() -> {
-            initData();
-        });
+        refreshLayout.setOnRefreshListener(() -> initData());
     }
 
     @Override
@@ -229,7 +227,7 @@ public class CompleteTransactionFragment extends BaseFragment {
         adapter.setLoadFailedView(ViewUtil.getFootView(getActivity(), LoadingFooter.State.NetWorkError));
         adapter.setOnItemClickListener((viewHolder, data, position) -> {
             Intent intent = new Intent(getContext(), HomeShopDetailActivity.class);
-            intent.putExtra("gid",data.getId());
+            intent.putExtra("id",data.getId());
             startActivity(intent);
         });
         adapter.setOnLoadMoreListener(isReload -> loadMore());

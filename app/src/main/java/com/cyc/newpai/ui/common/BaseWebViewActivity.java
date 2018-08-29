@@ -1,11 +1,16 @@
 package com.cyc.newpai.ui.common;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import android.util.Log;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
@@ -17,12 +22,38 @@ import android.webkit.WebViewClient;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.base.BaseActivity;
+import com.cyc.newpai.http.HttpUrl;
+import com.cyc.newpai.http.OkHttpManager;
+import com.cyc.newpai.http.entity.ResponseBean;
+import com.cyc.newpai.ui.common.entity.RechargeDetailBean;
+import com.cyc.newpai.ui.me.PaySuccessActivity;
+import com.cyc.newpai.util.DialogUtil;
+import com.cyc.newpai.util.IntentUtils;
+import com.cyc.newpai.util.UrlUtils;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class BaseWebViewActivity extends BaseActivity{
 
     public static final String REQUEST_URL = "request_url";
-
+    public static final String REQUEST_STATUS = "request_status";
+    public static final String STATUS_RECHARGE = "status_recharge";
+    public static final String STATUS_RECHARGE_DATA = "status_recharge_data";
+    private static final String TAG = BaseWebViewActivity.class.getSimpleName();
+    private Timer timer;
     private WebView webView;
+    private String status;
+    private RechargeDetailBean rechargeDetailBean;
 
     @Override
     public int getLayoutId() {
@@ -36,7 +67,7 @@ public class BaseWebViewActivity extends BaseActivity{
         String dir = this.getApplicationContext().getDir("database", Context.MODE_PRIVATE).getPath();//设置定位的数据库路径
         String appCachePath = getApplicationContext().getCacheDir().getAbsolutePath();// h5 缓存路径
         webView.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);//设置渲染优先级
-        //webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 设置缓存模式
+        webView.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 设置缓存模式
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             webView.getSettings().setAllowUniversalAccessFromFileURLs(true);//允许通过file url加载的Javascript可以访问其他的源
             webView.getSettings().setAllowFileAccessFromFileURLs(true);//允许通过file url加载的Javascript读取其他的本地文件
@@ -87,6 +118,57 @@ public class BaseWebViewActivity extends BaseActivity{
 
             @Override
             public boolean shouldOverrideUrlLoading(final WebView view, String url) {
+                if (url.equals("about:blank")) {
+                    return false;
+                }
+                final Uri uri = Uri.parse(url);
+                if (!UrlUtils.isSupportedProtocol(uri.getScheme()) &&
+                        IntentUtils.handleExternalUri(view.getContext(),  view, url)) {
+                    switch (status){
+                        case STATUS_RECHARGE:
+                            ProgressDialog progressDialog = DialogUtil.getCustomProgressDialog(BaseWebViewActivity.this,"充值中...");
+                            timer = new Timer();
+                            timer.schedule(new TimerTask() {
+                                @Override
+                                public void run() {
+                                    handler.post(() -> {
+                                        Map<String,String> params = new HashMap<>();
+                                        params.put("orderid",rechargeDetailBean.getOrderid());
+                                        OkHttpManager.getInstance(BaseWebViewActivity.this).postAsyncHttp(HttpUrl.HTTP_RECHARGE_STATUS_URL,params,new Callback(){
+
+                                            @Override
+                                            public void onFailure(Call call, IOException e) {
+
+                                            }
+
+                                            @Override
+                                            public void onResponse(Call call, Response response) throws IOException {
+                                                try {
+                                                    if(response.isSuccessful()){
+                                                        String str = response.body().string();
+                                                        ResponseBean<Map<String,String>> data = getGson().fromJson(str,new TypeToken<ResponseBean<Map<String,String>>>(){}.getType());
+                                                        if(data.getResult().get("order_code").equals("success")){
+                                                            Intent intent = new Intent(BaseWebViewActivity.this, PaySuccessActivity.class);
+                                                            intent.putExtra(REQUEST_STATUS,status);
+                                                            intent.putExtra(STATUS_RECHARGE_DATA,rechargeDetailBean);
+                                                            startActivity(intent);
+                                                            progressDialog.cancel();
+                                                            timer.cancel();
+                                                        }
+                                                        Log.i(TAG,data.getResult().toString());
+                                                    }
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        });
+                                    });
+                                }
+                            },1000,1000);
+                            break;
+                    }
+                    return true;
+                }
                 return super.shouldOverrideUrlLoading(view, url);
             }
 
@@ -123,6 +205,22 @@ public class BaseWebViewActivity extends BaseActivity{
             }
         });
         String url = getIntent().getStringExtra(REQUEST_URL);
+        status = getIntent().getStringExtra(REQUEST_STATUS);
+        if(status.equals(STATUS_RECHARGE)){
+            rechargeDetailBean = (RechargeDetailBean) getIntent().getSerializableExtra(STATUS_RECHARGE_DATA);
+            if(rechargeDetailBean.getIstype().equals("2")){
+                url = "http://mobile.qq.com/qrcode?url=" + url;
+            }
+        }
         webView.loadUrl(url);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(timer!=null){
+            timer.cancel();
+            timer = null;
+        }
     }
 }
