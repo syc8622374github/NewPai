@@ -85,9 +85,11 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
                             selectPosition = 0;
                             amountBeans.addAll(data.getResult().get("list"));
                             amountBeans.get(0).setSelect(true);
-                            rechargeRmb.setText(amountBeans.get(0).getMoney());
-                            rechargePaiBi.setText("预计获得"+(Integer.valueOf(amountBeans.get(0).getMoney())+Integer.valueOf(amountBeans.get(0).getZeng_money()))+"拍币");
-                            handler.post(()->gridViewAdapter.notifyDataSetChanged());
+                            handler.post(()->{
+                                rechargeRmb.setText(amountBeans.get(0).getMoney());
+                                rechargePaiBi.setText("预计获得"+(Integer.valueOf(amountBeans.get(0).getMoney())+Integer.valueOf(amountBeans.get(0).getZeng_money()))+"拍币");
+                                gridViewAdapter.notifyDataSetChanged();
+                            });
                         }
                     }
                 } catch (Exception e) {
@@ -169,17 +171,23 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_recharge_pay_ok:
+                if(selectPosition==-1){
+                    ToastManager.showToast(this,"请选择充值金额", Toast.LENGTH_SHORT);
+                    return;
+                }
                 /*Map<String,String> params = new HashMap<>();
                 params.put("uid","6b8b17d0e90c3cc3dc3d05d1");
+                params.put("token","2c6116ef05e77a6c0a337ebdde69c81c");
                 params.put("price","0.01");
                 params.put("istype","1");
                 params.put("notify_url","http://app.zhideting.cn/Crontab/paysPayReturnBack.html");
                 params.put("return_url","http://app.zhideting.cn/Crontab/paysPayReturnBack.html");
                 params.put("orderid",System.currentTimeMillis()+"");
-                params.put("orderuid","1111");
-                params.put("goodsname","111");
+                params.put("orderuid","1111"+Math.random());
+                params.put("goodsname","测试111");
                 List<String> keys = new ArrayList<>();
                 keys.add("uid");
+                keys.add("token");
                 keys.add("price");
                 keys.add("istype");
                 keys.add("notify_url");
@@ -187,25 +195,25 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
                 keys.add("orderid");
                 keys.add("orderuid");
                 keys.add("goodsname");
-                PayHelper.pay(this, HttpUrl.HTTP_PAY_REQUEST_URL, keys, params, new Callback() {
+                PayHelper.pay(this, HttpUrl.HTTP_PAY_PAGE_QEQUEST_URL, keys, params, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         Log.e("pay",e.getMessage());
-
                     }
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
                         if(response.isSuccessful()){
                             String str = response.body().string();
+                            Intent intent = new Intent(RechargeActivity.this,BaseWebViewActivity.class);
+                            intent.putExtra(BaseWebViewActivity.REQUEST_STATUS,BaseWebViewActivity.STATUS_RECHARGE);
+                            intent.putExtra(BaseWebViewActivity.REQUEST_DATA,str);
+                            startActivity(intent);
                             Log.e("pay",str);
                         }
                     }
                 });*/
-                if(selectPosition==-1){
-                    ToastManager.showToast(this,"请选择充值金额", Toast.LENGTH_SHORT);
-                    return;
-                }
+
                 Map<String,String> params = new HashMap<>();
                 params.put("price",amountBeans.get(selectPosition).getMoney());
                 params.put("istype", String.valueOf(PayMethod));

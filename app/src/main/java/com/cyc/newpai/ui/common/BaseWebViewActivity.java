@@ -46,6 +46,7 @@ import okhttp3.Response;
 public class BaseWebViewActivity extends BaseActivity{
 
     public static final String REQUEST_URL = "request_url";
+    public static final String REQUEST_DATA = "request_data";
     public static final String REQUEST_STATUS = "request_status";
     public static final String STATUS_RECHARGE = "status_recharge";
     public static final String STATUS_RECHARGE_DATA = "status_recharge_data";
@@ -205,14 +206,19 @@ public class BaseWebViewActivity extends BaseActivity{
             }
         });
         String url = getIntent().getStringExtra(REQUEST_URL);
+        String requestData = getIntent().getStringExtra(REQUEST_DATA);
         status = getIntent().getStringExtra(REQUEST_STATUS);
-        if(status.equals(STATUS_RECHARGE)){
+        if(!TextUtils.isEmpty(status)&&status.equals(STATUS_RECHARGE)){
             rechargeDetailBean = (RechargeDetailBean) getIntent().getSerializableExtra(STATUS_RECHARGE_DATA);
-            if(rechargeDetailBean.getIstype().equals("2")){
+            if(rechargeDetailBean!=null&&rechargeDetailBean.getIstype().equals("2")){
                 url = "http://mobile.qq.com/qrcode?url=" + url;
             }
         }
-        webView.loadUrl(url);
+        if(!TextUtils.isEmpty(url)){
+            webView.loadUrl(url);
+        }else if(!TextUtils.isEmpty(requestData)){
+            webView.loadData(requestData,"text/html", "UTF-8");
+        }
     }
 
     @Override

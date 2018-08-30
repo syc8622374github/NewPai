@@ -95,6 +95,8 @@ public class HttpUrl {
      */
     public static final String HTTP_PAY_REQUEST_URL = "https://pay.bbbapi.com/?format=json"; // 支付发起接口
 
+    public static final String HTTP_PAY_PAGE_QEQUEST_URL = "https://pay.bbbapi.com/"; //支付页面
+
     public static final String HTTP_RECHATGE_URL = HTTP_SERVICE_URL + "/Api/System/payCharge"; //充值
 
     public static final String HTTP_RECHARGE_STATUS_URL = HTTP_SERVICE_URL + "/Api/System/chargeCheckOrder"; //充值状态
