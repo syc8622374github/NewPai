@@ -16,6 +16,9 @@ import com.cyc.newpai.framework.adapter.ViewHolder;
 import com.cyc.newpai.ui.me.AddOrEditAddressActivity;
 import com.cyc.newpai.ui.me.SelectAddressActivity;
 import com.cyc.newpai.ui.me.entity.AddressBean;
+import com.cyc.newpai.util.Constant;
+import com.cyc.newpai.util.GsonManager;
+import com.cyc.newpai.util.SharePreUtil;
 
 public class AddressRecyclerViewAdapter extends BaseRecyclerAdapter<AddressBean> {
     String type;
@@ -75,6 +78,7 @@ public class AddressRecyclerViewAdapter extends BaseRecyclerAdapter<AddressBean>
         String defaultAddr = "";
         if(isDefault.equals("1")){
             defaultAddr = "<font color=#FF6A6A>[默认地址] </font>";
+            SharePreUtil.setPref(mContext, Constant.DEFAULT_ADDRESS, GsonManager.getGson().toJson(getList().get(position)));
         }
         Spanned spanned = Html.fromHtml(defaultAddr+getList().get(position).getArea()+" "+getList().get(position).getAddress());
         ((TextView)viewHolder.getView(R.id.tv_address_item_str)).setText(spanned);

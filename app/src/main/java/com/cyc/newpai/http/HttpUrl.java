@@ -83,6 +83,10 @@ public class HttpUrl {
 
     public static final String HTTP_PAY_SUCESS_RECOMMEND_GOODS_LIST = HTTP_SERVICE_URL + "/Api/Jingpai/tuijian"; //支付成功推荐
 
+    public static final String HTTP_PAY_SUCCESS_SHOP_DETAIL_URL = HTTP_SERVICE_URL + "/Api/Member/auctionOrder"; //竞拍成功商品详情
+
+    public static final String HTTP_PAY_SUBMIT_ORDER_URL = HTTP_SERVICE_URL + "/Api/Jingpai/createOrder"; //竞拍订单支付发起
+
     /*-------------------------------------------------------------------*/
 
     /**

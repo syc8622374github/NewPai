@@ -50,12 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                     .setLoadingView(View.inflate(this, R.layout.layout_loadingview, null))
                     .setEmptyView(View.inflate(this, R.layout.layout_emptyview, null))
                     .setErrorView(View.inflate(this, R.layout.layout_errorview, null))
-                    .setRefreshListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            onRetryLoad();
-                        }
-                    })
+                    .setRefreshListener(v -> onRetryLoad())
                     .build();
         }
     }

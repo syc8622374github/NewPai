@@ -85,7 +85,7 @@ public class MyAutionAllFragment extends BaseFragment {
         initView();
         initVaryView();
         Log.i(TAG, "onCreateView" + auctionType);
-        initData();
+        refreshLayout();
         return view;
     }
 
@@ -101,14 +101,16 @@ public class MyAutionAllFragment extends BaseFragment {
         //recyclerView.addItemDecoration(new CommItemDecoration(getContext(),LinearLayoutManager.VERTICAL,getResources().getColor(R.color.color_list_bg), ScreenUtil.dp2px(getContext(),10)));
         myAutionAllRecyclerViewAdapter = new MyAutionAllRecyclerViewAdapter(autionList, auctionType);
         myAutionAllRecyclerViewAdapter.setOnClickItemListener((BaseRecyclerAdapter.OnAdapterListener<MyAuctionBean>) (view, itemBean, position) -> {
-            if(getAuctionType().equals("1")|| getAuctionType().equals("2")){
+            if (getAuctionType().equals("1") || getAuctionType().equals("2")) {
                 Intent intent = new Intent(getContext(), HomeShopDetailActivity.class);
                 intent.putExtra("id", itemBean.getId());
                 startActivity(intent);
-            }else if(getAuctionType().equals("3")){
-                Intent intent = new Intent(getContext(),OrderDetailActivity.class);
-                intent.putExtra(OrderDetailActivity.ORDER_DATA_BEAN,itemBean);
+            } else if (getAuctionType().equals("3")) {
+                Intent intent = new Intent(getContext(), OrderDetailActivity.class);
+                intent.putExtra(OrderDetailActivity.ORDER_DATA_BEAN, itemBean);
                 startActivity(intent);
+            } else if(getAuctionType().equals("4")){
+
             }
         });
         HeaderAndFooterRecyclerViewAdapter headerAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(myAutionAllRecyclerViewAdapter);
@@ -119,6 +121,9 @@ public class MyAutionAllFragment extends BaseFragment {
     }
 
     public void refreshLayout() {
+        if (swipeRefreshLayout == null) {
+            initView();
+        }
         swipeRefreshLayout.post(() -> {
             swipeRefreshLayout.setRefreshing(true);
             onRefreshListener.onRefresh();
@@ -189,7 +194,7 @@ public class MyAutionAllFragment extends BaseFragment {
     public void onStart() {
         Log.i(TAG, "onStart" + auctionType);
         super.onStart();
-        if (timer==null&&(auctionType == activity.auctionTypes[0] || auctionType == activity.auctionTypes[2])) {
+        if (timer == null && (auctionType == activity.auctionTypes[0] || auctionType == activity.auctionTypes[2])) {
             timer = new Timer();
             timer.schedule(new TimerTask() {
                 @Override

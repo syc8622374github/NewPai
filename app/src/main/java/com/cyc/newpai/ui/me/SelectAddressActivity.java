@@ -33,9 +33,10 @@ public class SelectAddressActivity extends BaseActivity {
     public static final String TYPE_SELECT_ADDRESS = "type_select_address";
     public static final String TYPE_EDIT_ADDRESS = "type_edit_address";
     public static final String TYPE_ADDRESS = "type_address";
+    public static final String TYPE_SELECT_DATA =  "type_select_data";
 
     private AddressRecyclerViewAdapter addressRecyclerViewAdapter;
-    private String type = TYPE_SELECT_ADDRESS;
+    private String type = "";
     private RecyclerView rvAddressList;
 
     @Override
@@ -62,19 +63,20 @@ public class SelectAddressActivity extends BaseActivity {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try {
-                    if(response.isSuccessful()){
+                    if (response.isSuccessful()) {
                         String str = response.body().string();
-                        ResponseBean<ResponseResultBean<AddressBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<AddressBean>>>(){}.getType());
-                        if(data.getCode()==200&&data.getResult().getList().size()>0){
+                        ResponseBean<ResponseResultBean<AddressBean>> data = getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<AddressBean>>>() {
+                        }.getType());
+                        if (data.getCode() == 200 && data.getResult().getList().size() > 0) {
                             updateAddressList(data.getResult().getList());
-                            handler.post(()->varyViewHelper.showDataView());
+                            handler.post(() -> varyViewHelper.showDataView());
                             return;
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                handler.post(()->varyViewHelper.showEmptyView());
+                handler.post(() -> varyViewHelper.showEmptyView());
             }
         });
     }
@@ -86,7 +88,7 @@ public class SelectAddressActivity extends BaseActivity {
     }
 
     private void updateAddressList(List<AddressBean> list) {
-        handler.post(()->addressRecyclerViewAdapter.setListNotify(list));
+        handler.post(() -> addressRecyclerViewAdapter.setListNotify(list));
     }
 
 
@@ -94,32 +96,28 @@ public class SelectAddressActivity extends BaseActivity {
         rvAddressList = findViewById(R.id.rv_address_list);
         rvAddressList.setLayoutManager(new LinearLayoutManager(this));
         rvAddressList.addItemDecoration(new CommItemDecoration(this
-                ,LinearLayoutManager.VERTICAL
-                ,getResources().getColor(R.color.color_list_bg)
-        , ScreenUtil.dp2px(this,15)));
-        addressRecyclerViewAdapter = new AddressRecyclerViewAdapter(rvAddressList,type);
+                , LinearLayoutManager.VERTICAL
+                , getResources().getColor(R.color.color_list_bg)
+                , ScreenUtil.dp2px(this, 15)));
+        addressRecyclerViewAdapter = new AddressRecyclerViewAdapter(rvAddressList, type);
         rvAddressList.setAdapter(addressRecyclerViewAdapter);
-        List<AddressBean> addressBeans = new ArrayList<>();
-        addressRecyclerViewAdapter.setListNotify(addressBeans);
         addressRecyclerViewAdapter.setOnClickItemListener((BaseRecyclerAdapter.OnAdapterListener<AddressBean>) (view, itemBean, position) -> {
-            for(int i=0;i<addressBeans.size();i++){
-                if(i==position){
-                    itemBean.setCheck(!addressBeans.get(i).isCheck());
-                }else{
-                    addressBeans.get(i).setCheck(false);
-                }
+            if(type.equals(TYPE_SELECT_ADDRESS)){
+                Intent intent = new Intent();
+                intent.putExtra(TYPE_SELECT_DATA,itemBean);
+                setResult(2,intent);
+                finish();
             }
-            addressRecyclerViewAdapter.notifyDataSetChanged();
         });
         ctb_toolbar.tv_title.setTextColor(getResources().getColor(android.R.color.black));
-        if(type.equals(SelectAddressActivity.TYPE_EDIT_ADDRESS)){
+        if (type.equals(SelectAddressActivity.TYPE_EDIT_ADDRESS)) {
             ctb_toolbar.setTitle("收货地址");
-            ctb_toolbar.setRightAction1("新增", v -> {
-                Intent intent = new Intent(this,AddOrEditAddressActivity.class);
-                intent.putExtra(AddOrEditAddressActivity.TYPE_ADDRESS,AddOrEditAddressActivity.TYPE_ADD_ADDRESS);
-                startActivity(intent);
-            });
         }
+        ctb_toolbar.setRightAction1("新增", v -> {
+            Intent intent = new Intent(this, AddOrEditAddressActivity.class);
+            intent.putExtra(AddOrEditAddressActivity.TYPE_ADDRESS, AddOrEditAddressActivity.TYPE_ADD_ADDRESS);
+            startActivity(intent);
+        });
     }
 
     @Override
@@ -128,10 +126,10 @@ public class SelectAddressActivity extends BaseActivity {
     }
 
     public void clickEvent(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btn_address_add:
-                Intent intent = new Intent(this,AddOrEditAddressActivity.class);
-                intent.putExtra(AddOrEditAddressActivity.TYPE_ADDRESS,AddOrEditAddressActivity.TYPE_ADD_ADDRESS);
+                Intent intent = new Intent(this, AddOrEditAddressActivity.class);
+                intent.putExtra(AddOrEditAddressActivity.TYPE_ADDRESS, AddOrEditAddressActivity.TYPE_ADD_ADDRESS);
                 startActivity(intent);
                 break;
         }

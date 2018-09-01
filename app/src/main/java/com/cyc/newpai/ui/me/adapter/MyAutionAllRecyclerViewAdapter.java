@@ -53,12 +53,7 @@ public class MyAutionAllRecyclerViewAdapter extends BaseRecyclerAdapter<MyAuctio
             timeStr = "00:00:" + time;
         }
         viewHolder.setText(R.id.tv_auction_count_down,timeStr);
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mListener.onItemClickListener(v,getList().get(position),position);
-            }
-        });
+        viewHolder.itemView.setOnClickListener(v -> mListener.onItemClickListener(v,getList().get(position),position));
         Button auctionOk = viewHolder.getView(R.id.btn_auction_ok);
         switch (auctionType){
             case "1":
@@ -82,10 +77,12 @@ public class MyAutionAllRecyclerViewAdapter extends BaseRecyclerAdapter<MyAuctio
             case "4":
                 tvAuctionType.setText("待付款");
                 viewHolder.setText(R.id.tv_auction_detail,"待付款的商品");
+                auctionOk.setText("去付款");
                 break;
             case "5":
                 tvAuctionType.setText("待晒单");
                 viewHolder.setText(R.id.tv_auction_detail,"待晒单的商品");
+                auctionOk.setText("去晒单");
                 break;
         }
     }

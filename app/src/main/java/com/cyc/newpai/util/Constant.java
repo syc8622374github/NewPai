@@ -3,6 +3,7 @@ package com.cyc.newpai.util;
 public class Constant {
     public static final String TOKEN = "token";
     public static final String UID = "uid";
+    public static final String DEFAULT_ADDRESS = "default_address";
 
     /**
      * sms 发送状态 1注册 2快捷登录 3修改密码

@@ -21,8 +21,11 @@ import com.cyc.newpai.http.entity.ResponseBean;
 import com.cyc.newpai.ui.common.SelectGPSPostionActivity;
 import com.cyc.newpai.ui.common.entity.LocationBean;
 import com.cyc.newpai.ui.me.entity.AddressBean;
+import com.cyc.newpai.util.Constant;
+import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.util.LocationHelper;
 import com.cyc.newpai.util.NumUtil;
+import com.cyc.newpai.util.SharePreUtil;
 import com.cyc.newpai.widget.ToastManager;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
@@ -98,62 +101,66 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
         }
         llSetDefaultAddress.setVisibility(View.VISIBLE);
         llSetDefaultAddress.setOnClickListener(this);
-        ctb_toolbar.setRightAction1("保存",R.color.colorPrimary, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String receiverStr = etReceiver.getText().toString();
-                String mobileStr = etMobile.getText().toString();
-                String localAreaStr = tvLocalArea.getText().toString();
-                String detailAddressStr = etDetailAddress.getText().toString();
-                boolean isDefault = checkBox.isChecked();
-                if(TextUtils.isEmpty(receiverStr)){
-                    ToastManager.showToast(AddOrEditAddressActivity.this,"请输入收货人",Toast.LENGTH_SHORT);
-                }else if(TextUtils.isEmpty(mobileStr)){
-                    ToastManager.showToast(AddOrEditAddressActivity.this,"请输入收货人手机号",Toast.LENGTH_SHORT);
-                }else if(TextUtils.isEmpty(localAreaStr)){
-                    ToastManager.showToast(AddOrEditAddressActivity.this,"请选择收货地址",Toast.LENGTH_SHORT);
-                }else if(TextUtils.isEmpty(detailAddressStr)){
-                    ToastManager.showToast(AddOrEditAddressActivity.this,"请输入详细收货地址",Toast.LENGTH_SHORT);
-                }else if(!NumUtil.isPhoneNum(mobileStr)){
-                    ToastManager.showToast(AddOrEditAddressActivity.this,"请输入正确的手机号码",Toast.LENGTH_SHORT);
+        ctb_toolbar.setRightAction1("保存",R.color.colorPrimary, v -> {
+            String receiverStr = etReceiver.getText().toString();
+            String mobileStr = etMobile.getText().toString();
+            String localAreaStr = tvLocalArea.getText().toString();
+            String detailAddressStr = etDetailAddress.getText().toString();
+            boolean isDefault = checkBox.isChecked();
+            if(TextUtils.isEmpty(receiverStr)){
+                ToastManager.showToast(AddOrEditAddressActivity.this,"请输入收货人",Toast.LENGTH_SHORT);
+            }else if(TextUtils.isEmpty(mobileStr)){
+                ToastManager.showToast(AddOrEditAddressActivity.this,"请输入收货人手机号",Toast.LENGTH_SHORT);
+            }else if(TextUtils.isEmpty(localAreaStr)){
+                ToastManager.showToast(AddOrEditAddressActivity.this,"请选择收货地址",Toast.LENGTH_SHORT);
+            }else if(TextUtils.isEmpty(detailAddressStr)){
+                ToastManager.showToast(AddOrEditAddressActivity.this,"请输入详细收货地址",Toast.LENGTH_SHORT);
+            }else if(!NumUtil.isPhoneNum(mobileStr)){
+                ToastManager.showToast(AddOrEditAddressActivity.this,"请输入正确的手机号码",Toast.LENGTH_SHORT);
+            }
+            Map<String,String> params = new HashMap<>();
+            if(!TextUtils.isEmpty(id+"")){
+                params.put("id",id);
+            }
+            params.put("name",receiverStr);
+            params.put("mobile",mobileStr);
+            params.put("area",localAreaStr);
+            params.put("address",detailAddressStr);
+            params.put("is_default",isDefault?"1":"0");
+            addressBean.setName(receiverStr);
+            addressBean.setMobile(mobileStr);
+            addressBean.setArea(localAreaStr);
+            addressBean.setIs_default(isDefault?"1":"0");
+            ctb_toolbar.iv_left_action1.setClickable(false);
+            OkHttpManager.getInstance(AddOrEditAddressActivity.this).postAsyncHttp(HttpUrl.HTTP_EDIT_ADDRESS_URL, params, new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    handler.post(()->ctb_toolbar.iv_left_action1.setClickable(true));
                 }
-                Map<String,String> params = new HashMap<>();
-                if(!TextUtils.isEmpty(id+"")){
-                    params.put("id",id);
-                }
-                params.put("name",receiverStr);
-                params.put("mobile",mobileStr);
-                params.put("area",localAreaStr);
-                params.put("address",detailAddressStr);
-                params.put("is_default",isDefault?"1":"0");
-                ctb_toolbar.iv_left_action1.setClickable(false);
-                OkHttpManager.getInstance(AddOrEditAddressActivity.this).postAsyncHttp(HttpUrl.HTTP_EDIT_ADDRESS_URL, params, new Callback() {
-                    @Override
-                    public void onFailure(Call call, IOException e) {
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    try {
+                        if(response.isSuccessful()){
+                            String str = response.body().string();
+                            ResponseBean<Object> data = getGson().fromJson(str,new TypeToken<ResponseBean<Object>>(){}.getType());
+                            if(data.getCode()==200){
+                                handler.post(()->ToastManager.showToast(AddOrEditAddressActivity.this,"新增地址成功",Toast.LENGTH_SHORT));
+                                if(isDefault){
+                                    SharePreUtil.setPref(AddOrEditAddressActivity.this, Constant.DEFAULT_ADDRESS, GsonManager.getGson().toJson(addressBean));
+                                }
+                                finish();
+                                return;
+                            }
+                            handler.post(()-> ToastManager.showToast(AddOrEditAddressActivity.this,data.getMsg(), Toast.LENGTH_SHORT));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }finally {
                         handler.post(()->ctb_toolbar.iv_left_action1.setClickable(true));
                     }
-
-                    @Override
-                    public void onResponse(Call call, Response response) throws IOException {
-                        try {
-                            if(response.isSuccessful()){
-                                String str = response.body().string();
-                                ResponseBean<Object> data = getGson().fromJson(str,new TypeToken<ResponseBean<Object>>(){}.getType());
-                                if(data.getCode()==200){
-                                    handler.post(()->ToastManager.showToast(AddOrEditAddressActivity.this,"新增地址成功",Toast.LENGTH_SHORT));
-                                    finish();
-                                    return;
-                                }
-                                handler.post(()-> ToastManager.showToast(AddOrEditAddressActivity.this,data.getMsg(), Toast.LENGTH_SHORT));
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }finally {
-                            handler.post(()->ctb_toolbar.iv_left_action1.setClickable(true));
-                        }
-                    }
-                });
-            }
+                }
+            });
         });
     }
 

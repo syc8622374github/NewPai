@@ -8,8 +8,23 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.cyc.newpai.framework.base.BaseActivity;
+import com.cyc.newpai.http.HttpUrl;
+import com.cyc.newpai.http.OkHttpManager;
+import com.cyc.newpai.http.entity.ResponseBean;
+import com.cyc.newpai.http.entity.ResponseResultBean;
+import com.cyc.newpai.ui.me.entity.AddressBean;
+import com.cyc.newpai.util.Constant;
+import com.cyc.newpai.util.GsonManager;
 import com.cyc.newpai.util.LocationHelper;
+import com.cyc.newpai.util.SharePreUtil;
 import com.cyc.newpai.widget.CountDownProgressView;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 public class SplashActivity extends BaseActivity {
 
@@ -33,6 +48,39 @@ public class SplashActivity extends BaseActivity {
         });
         countDownView.start();
         requestPermission();
+        initData();
+    }
+
+    /**
+     * 初始化信息数据
+     */
+    private void initData() {
+        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_ADDRESS_LIST_URL, null, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if(response.isSuccessful()){
+                        String str = response.body().string();
+                        ResponseBean<ResponseResultBean<AddressBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<AddressBean>>>(){}.getType());
+                        if(data.getCode()==200&&data.getResult().getList().size()>0){
+                            for(AddressBean addressBean : data.getResult().getList()){
+                                if(addressBean.getIs_default().equals("1")?true:false){
+                                    SharePreUtil.setPref(SplashActivity.this, Constant.DEFAULT_ADDRESS, GsonManager.getGson().toJson(addressBean));
+                                }
+                            }
+                            return;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void requestPermission() {

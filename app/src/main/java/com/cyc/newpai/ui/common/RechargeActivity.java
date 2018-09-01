@@ -229,11 +229,17 @@ public class RechargeActivity extends BaseActivity implements View.OnClickListen
                             String str = response.body().string();
                             ResponseBean<RechargeResultBean<RechargeDetailBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<RechargeResultBean<RechargeDetailBean>>>(){}.getType());
                             if(data.getCode()==200){
-                                Intent intent = new Intent(RechargeActivity.this,BaseWebViewActivity.class);
-                                intent.putExtra(BaseWebViewActivity.REQUEST_STATUS,BaseWebViewActivity.STATUS_RECHARGE);
-                                intent.putExtra(BaseWebViewActivity.STATUS_RECHARGE_DATA,data.getResult().getData());
-                                intent.putExtra(BaseWebViewActivity.REQUEST_URL,data.getResult().getData().getQrcode());
-                                startActivity(intent);
+                                if(PayMethod==1){
+                                    Intent intent = new Intent(RechargeActivity.this,BaseWebViewActivity.class);
+                                    intent.putExtra(BaseWebViewActivity.REQUEST_STATUS,BaseWebViewActivity.STATUS_RECHARGE);
+                                    intent.putExtra(BaseWebViewActivity.STATUS_RECHARGE_DATA,data.getResult().getData());
+                                    intent.putExtra(BaseWebViewActivity.REQUEST_URL,data.getResult().getData().getQrcode());
+                                    startActivity(intent);
+                                }else if(PayMethod==2){
+                                    Intent intent = new Intent(RechargeActivity.this,WeiChatActivity.class);
+                                    intent.putExtra(WeiChatActivity.TYPE_DATA,data.getResult().getData());
+                                    startActivity(intent);
+                                }
                             }
                         }
                     }
