@@ -73,7 +73,8 @@
         <activity
             android:name=".ui.me.UserHelpActivity"
             android:label="新手帮助" />
-        <activity android:name=".ui.me.SuggestionActivity" />
+        <activity android:name=".ui.me.SuggestionActivity"
+            android:label="投诉建议"/>
         <activity
             android:name=".ui.common.NotificationMessageActivity"
             android:label="信息" />
@@ -110,7 +111,9 @@
             android:name=".ui.common.SelectGPSPostionActivity"
             android:label="选择地址" />
         <activity android:name=".ui.common.BaseWebViewActivity" />
-        <activity android:name=".ui.common.WeiChatActivity"></activity>
+        <activity android:name=".ui.common.WeiChatActivity" />
+        <activity android:name=".ui.me.MyOrderListActivity"
+            android:label="我拍中"/>
     </application>
 
 </manifest>

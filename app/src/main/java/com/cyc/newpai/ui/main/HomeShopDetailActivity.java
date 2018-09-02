@@ -3,6 +3,7 @@ package com.cyc.newpai.ui.main;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,9 +37,11 @@ import com.cyc.newpai.ui.main.entity.BidRecordBean;
 import com.cyc.newpai.ui.main.entity.BidRecordItemBean;
 import com.cyc.newpai.ui.main.entity.BidResultBean;
 import com.cyc.newpai.ui.main.entity.ShopDetailBean;
+import com.cyc.newpai.ui.user.LoginActivity;
 import com.cyc.newpai.util.DialogUtil;
 import com.cyc.newpai.util.GlideCircleTransform;
 import com.cyc.newpai.util.GsonManager;
+import com.cyc.newpai.util.LoginUtil;
 import com.cyc.newpai.util.ViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
 import com.cyc.newpai.widget.ToastManager;
@@ -123,14 +126,14 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                     }
                 }
                 countDown.setText(time);
-                if(isDeal){
-                    name.setText(Html.fromHtml(item.getNickname()+" <font color='#9F9F9F' size='12'>("+item.getIp_address()+")</font>"));
+                if (isDeal) {
+                    name.setText(Html.fromHtml(item.getNickname() + " <font color='#9F9F9F' size='12'>(" + item.getIp_address() + ")</font>"));
                     countDown.setVisibility(View.GONE);
                     priceIcon.setBackgroundResource(R.drawable.ic_shop_detail_final_winner);
                     prompt.setText("最终以" + item.getMoney() + "拍的本商品");
                     llBidNum.setVisibility(View.GONE);
                     btnBid.setText("下一期竞拍");
-                }else{
+                } else {
                     countDown.setVisibility(View.VISIBLE);
                     name.setText(item.getNickname());
                     priceIcon.setBackgroundResource(R.drawable.ic_shop_detail_new_pricer);
@@ -319,7 +322,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     }
 
     private void startTime() {
-        if(!isDeal){
+        if (!isDeal) {
             if (timer == null) {
                 timer = new Timer();
                 timer.schedule(new TimerTask() {
@@ -332,8 +335,8 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                     }
                 }, 1000, 1000);
             }
-        }else{
-            if(timer != null){
+        } else {
+            if (timer != null) {
                 timer.cancel();
                 timer = null;
             }
@@ -453,7 +456,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                                 isUpdateBanner = false;
                             }
                             gid = shopDetailBean.getGid();
-                            isDeal = shopDetailBean.getDeal_status().equals("1")?true:false;
+                            isDeal = shopDetailBean.getDeal_status().equals("1") ? true : false;
                             if (ageLists.size() == 0) {
                                 getAgeData(shopDetailBean.getGid());
                             }
@@ -618,15 +621,20 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                     bidNume.setText(n - 1 + "");
                 break;
             case R.id.btn_bid:
-                if(isDeal){
+                if (LoginUtil.isLogin(HomeShopDetailActivity.this)) {
+                    if (isDeal) {
 
-                }else{
-                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                    alertDialog.setTitle("交易提示")
-                            .setCancelable(false)
-                            .setMessage("确认支付" + bidNume.getText() + "个拍币竞拍？")
-                            .setNegativeButton("取消", (dialog, which) -> {
-                            }).setPositiveButton("确定", (dialog, which) -> bid()).show();
+                    } else {
+                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                        alertDialog.setTitle("交易提示")
+                                .setCancelable(false)
+                                .setMessage("确认支付" + bidNume.getText() + "个拍币竞拍？")
+                                .setNegativeButton("取消", (dialog, which) -> {
+                                }).setPositiveButton("确定", (dialog, which) -> bid()).show();
+                    }
+                } else {
+                    startActivityForResult(new Intent(HomeShopDetailActivity.this, LoginActivity.class), 1);
+                    ToastManager.showToast(HomeShopDetailActivity.this, "未检测账号登录", Toast.LENGTH_SHORT);
                 }
                 break;
         }
@@ -653,8 +661,8 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                             handler.post(() -> useBi.setText("我已消耗" + bidResultBean.getMoney() + "拍币/赠币"));
                             updateBidView();
                             getShopDetailHttp(new HashMap<>());
-                            handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, responseBean.getMsg(), Toast.LENGTH_SHORT));
                         }
+                        handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, responseBean.getMsg(), Toast.LENGTH_SHORT));
                     }
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
@@ -669,7 +677,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
         OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_RECORD_URL, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                if(progressDialog.isShowing()){
+                if (progressDialog.isShowing()) {
                     progressDialog.cancel();
                 }
             }
@@ -691,7 +699,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
                 } finally {
-                    if(progressDialog.isShowing()){
+                    if (progressDialog.isShowing()) {
                         progressDialog.cancel();
                     }
                 }

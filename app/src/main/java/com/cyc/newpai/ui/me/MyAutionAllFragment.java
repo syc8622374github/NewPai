@@ -206,7 +206,7 @@ public class MyAutionAllFragment extends BaseFragment {
                         @Override
                         public void onFailure(Call call, IOException e) {
                             //handler.post(()->varyViewHelper.showErrorView());
-                            Log.e(TAG, e.getMessage());
+                            Log.e(TAG, e.getMessage()+"");
                         }
 
                         @Override

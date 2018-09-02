@@ -70,6 +70,12 @@ public class SuggestionActivity extends BaseActivity {
         initData();
     }
 
+    @Override
+    protected void initToolbar() {
+        super.initToolbar();
+        ctb_toolbar.tv_title.setTextColor(getResources().getColor(android.R.color.black));
+    }
+
     private void initData() {
         images.add("-1");
         gvPicture.setAdapter(gridViewAdapter = new GridViewAdapter(images));
@@ -80,37 +86,33 @@ public class SuggestionActivity extends BaseActivity {
         rbShopProgram = findViewById(R.id.rb_suggestion_shop_program);
         etContent = findViewById(R.id.et_suggestion_content);
         gvPicture = findViewById(R.id.gv_suggestion_picture);
-        gvPicture.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!isDelete) {
-                    final String url = images.get(position);
-                    if (url.equals("-1")) {//调用图片选择
-                        Intent intentFromGallery = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                        intentFromGallery.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                        startActivityForResult(intentFromGallery, IMAGE_REQUEST_CODE);
-                    } else {//查看上传图片
-                        /*Intent intent = new Intent(ComplaintaAdvice.this,LookImageActivity.class);
-                        intent.putStringArrayListExtra(LookImageActivity.IMG_PATH,images);
-                        intent.putExtra(LookImageActivity.IMG_SELECT,position);
-                        startActivity(intent);*/
-                    }
-                } else {
-                    gridViewAdapter.notifyDataSetChanged();
+        ImageView iv = findViewById(R.id.iv_suggestion_show);
+        gvPicture.setOnItemClickListener((parent, view, position, id) -> {
+            if (!isDelete) {
+                final String url = images.get(position);
+                if (url.equals("-1")) {//调用图片选择
+                    Intent intentFromGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    intentFromGallery.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                    startActivityForResult(intentFromGallery, IMAGE_REQUEST_CODE);
+                } else {//查看上传图片
+                    /*Intent intent = new Intent(ComplaintaAdvice.this,LookImageActivity.class);
+                    intent.putStringArrayListExtra(LookImageActivity.IMG_PATH,images);
+                    intent.putExtra(LookImageActivity.IMG_SELECT,position);
+                    startActivity(intent);*/
+                    //iv.setImageBitmap(imagesCache.get(images.get(position)));
                 }
-                isDelete = false;
+            } else {
+                gridViewAdapter.notifyDataSetChanged();
             }
+            isDelete = false;
         });
-        gvPicture.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                String url = images.get(position);
-                if (!url.equals("-1")) {
-                    isDelete = true;
-                    gridViewAdapter.notifyDataSetChanged();
-                }
-                return true;
+        gvPicture.setOnItemLongClickListener((parent, view, position, id) -> {
+            String url = images.get(position);
+            if (!url.equals("-1")) {
+                isDelete = true;
+                gridViewAdapter.notifyDataSetChanged();
             }
+            return true;
         });
     }
 
@@ -153,34 +155,35 @@ public class SuggestionActivity extends BaseActivity {
             final ImageView img = convertView.findViewById(R.id.image);
             ImageView delete = convertView.findViewById(R.id.delete);
             final String data = getItem(position);
-            if (data.equals("-1")) {
-                img.setImageResource(R.drawable.complaint_camera_icon);
-                delete.setVisibility(View.GONE);
-            } else {
-                GlideApp
-                        .with(SuggestionActivity.this)
-                        .load(new File(images.get(position)))
-                        .override(ScreenUtil.px2dp(SuggestionActivity.this, 300), ScreenUtil.px2dp(SuggestionActivity.this, 300)) //设置大小
-                        .into(img);
-                if (isDelete) {
-                    delete.setVisibility(View.VISIBLE);
-                } else {
+            try {
+                if (data.equals("-1")) {
+                    img.setImageResource(R.drawable.complaint_camera_icon);
                     delete.setVisibility(View.GONE);
-                }
-            }
-            delete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    images.remove(data);
-                    imagesCache.remove(data);
-                    /*if(images.size()>1){
-                        isDelete = true;
-                    }*/
-                    if(!images.get(0).equals("-1")){
-                        images.add(0,"-1");
+                } else {
+                    GlideApp
+                            .with(SuggestionActivity.this)
+                            .load(new File(images.get(position)))
+                            .override(ScreenUtil.px2dp(SuggestionActivity.this, 300), ScreenUtil.px2dp(SuggestionActivity.this, 300)) //设置大小
+                            .into(img);
+                    if (isDelete) {
+                        delete.setVisibility(View.VISIBLE);
+                    } else {
+                        delete.setVisibility(View.GONE);
                     }
-                    gridViewAdapter.notifyDataSetChanged();
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            delete.setOnClickListener(v -> {
+                images.remove(data);
+                imagesCache.remove(data);
+                /*if(images.size()>1){
+                    isDelete = true;
+                }*/
+                if(!images.get(0).equals("-1")){
+                    images.add(0,"-1");
+                }
+                gridViewAdapter.notifyDataSetChanged();
             });
             convertView.setBackgroundColor(Color.parseColor("#00000000"));
             return convertView;
@@ -254,10 +257,10 @@ public class SuggestionActivity extends BaseActivity {
                             fileParams.put(image,new File(image));
                         }
                     }
-                    OkHttpManager.getInstance(this).postOfFileAsyncHttp(HttpUrl.HTTP_SUGGESTION_URL,params,fileParams,new Callback() {
+                    OkHttpManager.getInstance(this).postOfFileAsyncHttp(HttpUrl.HTTP_SUGGESTION_URL,params,imagesCache,new Callback() {
                         @Override
                         public void onFailure(Call call, IOException e) {
-
+                            Log.e(TAG,e.getMessage()+"");
                         }
 
                         @Override
@@ -268,14 +271,14 @@ public class SuggestionActivity extends BaseActivity {
                                     ResponseBean<Object> data = getGson().fromJson(str, new TypeToken<ResponseBean<Object>>() {
                                     }.getType());
                                     if (data.getCode() == 200) {
-                                        ToastManager.showToast(SuggestionActivity.this, "感谢您反馈给我们的意见。", Toast.LENGTH_LONG);
+                                        handler.post(()->ToastManager.showToast(SuggestionActivity.this, "感谢您反馈给我们的意见。", Toast.LENGTH_LONG));
                                         return;
                                     }
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            ToastManager.showToast(SuggestionActivity.this, "反馈失败，请稍后再试。", Toast.LENGTH_SHORT);
+                            handler.post(()->ToastManager.showToast(SuggestionActivity.this, "反馈失败，请稍后再试。", Toast.LENGTH_LONG));
                         }
                     });
                 }

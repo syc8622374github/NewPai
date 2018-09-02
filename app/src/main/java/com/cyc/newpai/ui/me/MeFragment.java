@@ -118,15 +118,19 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
 
     private void updateData(UserInfoBean item) {
         handler.post(() -> {
-            if(!getActivity().isDestroyed()){
-                GlideApp.with(getActivity())
-                        .load(item.getImg())
-                        .placeholder(R.drawable.ic_avator_default)
-                        .transform(new GlideCircleTransform(getContext()))
-                        .into(avator);
-                mobile.setText(item.getNickname());
-                paiBi.setText(item.getMoney().substring(0, item.getMoney().indexOf(".")));
-                zengBi.setText(item.getMoney_zeng().substring(0, item.getMoney_zeng().indexOf(".")));
+            try {
+                if(getActivity()!=null&&!getActivity().isDestroyed()){
+                    GlideApp.with(getActivity())
+                            .load(item.getImg())
+                            .placeholder(R.drawable.ic_avator_default)
+                            .transform(new GlideCircleTransform(getContext()))
+                            .into(avator);
+                    mobile.setText(item.getNickname());
+                    paiBi.setText(item.getMoney().substring(0, item.getMoney().indexOf(".")));
+                    zengBi.setText(item.getMoney_zeng().substring(0, item.getMoney_zeng().indexOf(".")));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
     }
@@ -139,9 +143,10 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         view.findViewById(R.id.tv_me_avator).setOnClickListener(this);
         view.findViewById(R.id.ll_me_suggestion).setOnClickListener(this);
         view.findViewById(R.id.ll_me_address).setOnClickListener(this);
-        view.findViewById(R.id.ll_me_order_detail).setOnClickListener(this);
+        view.findViewById(R.id.ll_me_order_list).setOnClickListener(this);
         view.findViewById(R.id.ll_me_auction).setOnClickListener(this);
         view.findViewById(R.id.ll_me_my_lucky_time).setOnClickListener(this);
+        view.findViewById(R.id.ll_me_submit_order).setOnClickListener(this);
         avator = view.findViewById(R.id.tv_me_avator);
         mobile = view.findViewById(R.id.tv_me_mobile);
         paiBi = view.findViewById(R.id.tv_me_pai_bi);
@@ -163,7 +168,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                     startActivity(new Intent(getContext(), RechargeActivity.class));
                     break;
                 case R.id.tv_me_avator:
-                    startActivityForResult(new Intent(getContext(), LoginActivity.class), 1);
+                    //startActivityForResult(new Intent(getContext(), LoginActivity.class), 1);
                     break;
                 case R.id.ll_me_suggestion:
                     startActivity(new Intent(getContext(), SuggestionActivity.class));
@@ -173,8 +178,15 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
                     intent.putExtra(SelectAddressActivity.TYPE_ADDRESS, SelectAddressActivity.TYPE_EDIT_ADDRESS);
                     startActivity(intent);
                     break;
-                case R.id.ll_me_order_detail:
-                    startActivity(new Intent(getContext(), OrderDetailActivity.class));
+                case R.id.ll_me_order_list:
+                    Intent intent2 = new Intent(getContext(), MyOrderListActivity.class);
+                    intent2.putExtra(MyOrderListActivity.TYPE,"3");
+                    startActivity(intent2);
+                    break;
+                case R.id.ll_me_submit_order:
+                    Intent intent3 = new Intent(getContext(), MyOrderListActivity.class);
+                    intent3.putExtra(MyOrderListActivity.TYPE,"4");
+                    startActivity(intent3);
                     break;
                 case R.id.ll_me_auction:
                     startActivity(new Intent(getContext(), MyAuctionActivity.class));

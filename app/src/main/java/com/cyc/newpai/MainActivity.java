@@ -139,6 +139,11 @@ public class MainActivity extends BaseActivity {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        //super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
     protected void initToolbar() {
         super.initToolbar();
         ctb_toolbar.setLeftAction1(R.drawable.ic_search,null);

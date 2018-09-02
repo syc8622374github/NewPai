@@ -152,7 +152,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_me_order_detail"
+            android:id="@+id/ll_me_order_list"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -173,6 +173,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_me_submit_order"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

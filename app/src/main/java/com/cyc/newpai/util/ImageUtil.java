@@ -28,8 +28,8 @@ public class ImageUtil {
             int w = newOpts.outWidth;
             int h = newOpts.outHeight;
             //现在主流手机比较多是800*480分辨率，所以高和宽我们设置为
-            float hh = 1280f;//这里设置高度为800f
-            float ww = 800f;//这里设置宽度为480f
+            float hh = 800f;//这里设置高度为800f
+            float ww = 480f;//这里设置宽度为480f
             //缩放比。由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
             int be = 1;//be=1表示不缩放
             if (w > h && w > ww) {//如果宽度大的话根据宽度固定大小缩放
@@ -42,7 +42,7 @@ public class ImageUtil {
             newOpts.inSampleSize = be;//设置缩放比例
             //重新读入图片，注意此时已经把options.inJustDecodeBounds 设回false了
             bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
-            return compressImage(bitmap,1000);//压缩好比例大小后再进行质量压缩
+            return compressImage(bitmap,500);//压缩好比例大小后再进行质量压缩
         } catch (Exception e) {
             Log.e(TAG,e.getMessage());
         }

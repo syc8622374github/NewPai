@@ -1,6 +1,7 @@
 package com.cyc.newpai.http;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.cyc.newpai.widget.ToastManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -85,7 +87,7 @@ public class OkHttpManager {
         mOkHttpClient.newCall(request).enqueue(callback);
     }
 
-    public void postOfFileAsyncHttp(String url, Map<String,String> params, Map<String,File> files, Callback callback){
+    public void postOfFileAsyncHttp(String url, Map<String,String> params, Map<String,Bitmap> files, Callback callback){
         MultipartBody.Builder multipartBodyBuilder = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM);
         if(params!=null){
@@ -96,13 +98,26 @@ public class OkHttpManager {
             }
         }
         if(files!=null){
-            Iterator<Map.Entry<String,File>> iterator = files.entrySet().iterator();
+            Iterator<Map.Entry<String,Bitmap>> iterator = files.entrySet().iterator();
             while (iterator.hasNext()){
-                Map.Entry<String,File>  entry = iterator.next();
-                multipartBodyBuilder.addFormDataPart(entry.getKey()
-                        ,entry.getValue().getName()
-                        ,RequestBody.create(MediaType.parse("image/png")
-                                ,entry.getValue()));
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                try {
+                    Map.Entry<String,Bitmap>  entry = iterator.next();
+                    entry.getValue().compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    multipartBodyBuilder.addFormDataPart(entry.getKey()
+                            ,entry.getKey()
+                            ,RequestBody.create(MediaType.parse("image/png")
+                                    ,baos.toByteArray()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }finally {
+                    try {
+                        baos.flush();
+                        baos.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         RequestBody requestBody = multipartBodyBuilder.build();

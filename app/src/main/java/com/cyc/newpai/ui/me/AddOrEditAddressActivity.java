@@ -62,6 +62,7 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
         type = getIntent().getStringExtra(TYPE_ADDRESS);
         id = getIntent().getStringExtra(TYPE_ID);
         addressBean = (AddressBean) getIntent().getSerializableExtra(TYPE_DATA);
+        addressBean = addressBean == null? new AddressBean():addressBean;
         initView();
         initData();
     }
@@ -127,6 +128,7 @@ public class AddOrEditAddressActivity extends BaseActivity implements View.OnCli
             params.put("area",localAreaStr);
             params.put("address",detailAddressStr);
             params.put("is_default",isDefault?"1":"0");
+
             addressBean.setName(receiverStr);
             addressBean.setMobile(mobileStr);
             addressBean.setArea(localAreaStr);

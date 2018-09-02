@@ -70,9 +70,11 @@
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
             android:textSize="14sp"
+            android:gravity="top"
+            android:maxLines="5"
             android:lineSpacingMultiplier="1.4"
             android:hint="请输入您的反馈意见，细致的描述可使我们更好地发现问题，感谢您的宝贵的建议~"
-            android:background="#00000000"/>
+            android:background="#00ffffff"/>
 
         <GridView
             android:id="@+id/gv_suggestion_picture"
@@ -96,5 +98,11 @@
         android:onClick="clickEvent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/iv_suggestion_show"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
 
 </LinearLayout>
