@@ -1,14 +1,14 @@
 package com.cyc.newpai.framework.base;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.cyc.newpai.R;
 import com.cyc.newpai.framework.util.varyview.VaryViewHelper;
@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 public abstract class BaseFragment extends Fragment {
 
     protected VaryViewHelper varyViewHelper;
+    private Activity mActivity;
 
     public Handler handler = new Handler(Looper.getMainLooper());
 
@@ -29,11 +30,26 @@ public abstract class BaseFragment extends Fragment {
         gsonManager = GsonManager.getInstance();
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mActivity = activity;
+    }
+
+    public Activity getMyActivity(){
+
+        return mActivity;
+    }
+
     protected Gson getGson(){
         return  GsonManager.getGson();
     }
 
     public void updateFragmentData(){
+
+    }
+
+    public void review(){
 
     }
 

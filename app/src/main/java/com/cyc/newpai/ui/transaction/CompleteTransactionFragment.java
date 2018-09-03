@@ -170,7 +170,7 @@ public class CompleteTransactionFragment extends BaseFragment {
                 handler.post(() -> ToastManager.showToast(getContext(), "数据加载失败", Toast.LENGTH_LONG));
             }
         });
-        OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_HEADLINE_URL, null, new Callback() {
+        OkHttpManager.getInstance(getMyActivity()).postAsyncHttp(HttpUrl.HTTP_HEADLINE_URL, null, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
                 handler.post(()->refreshLayout.setRefreshing(false));
@@ -219,12 +219,12 @@ public class CompleteTransactionFragment extends BaseFragment {
     private void initList(RecyclerView recyclerView) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new HistoryCompleteTransactionAdapter(getActivity(),null,true,HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE);
-        recyclerView.addItemDecoration(new CommItemDecoration(getActivity(),DividerItemDecoration.VERTICAL,getResources().getColor(R.color.divider), 1));
+        adapter = new HistoryCompleteTransactionAdapter(getMyActivity(),null,true,HistoryCompleteTransactionAdapter.COMPLETE_TRANSACTION_TYPE);
+        recyclerView.addItemDecoration(new CommItemDecoration(getMyActivity(),DividerItemDecoration.VERTICAL,getResources().getColor(R.color.divider), 1));
         recyclerView.setAdapter(adapter);
-        adapter.setLoadingView(ViewUtil.getFootView(getActivity(), LoadingFooter.State.Loading));
-        adapter.setLoadEndView(ViewUtil.getFootView(getActivity(), LoadingFooter.State.TheEnd));
-        adapter.setLoadFailedView(ViewUtil.getFootView(getActivity(), LoadingFooter.State.NetWorkError));
+        adapter.setLoadingView(ViewUtil.getFootView(getMyActivity(), LoadingFooter.State.Loading));
+        adapter.setLoadEndView(ViewUtil.getFootView(getMyActivity(), LoadingFooter.State.TheEnd));
+        adapter.setLoadFailedView(ViewUtil.getFootView(getMyActivity(), LoadingFooter.State.NetWorkError));
         adapter.setOnItemClickListener((viewHolder, data, position) -> {
             Intent intent = new Intent(getContext(), HomeShopDetailActivity.class);
             intent.putExtra("id",data.getId());

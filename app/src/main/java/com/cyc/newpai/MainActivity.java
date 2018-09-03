@@ -32,11 +32,12 @@ import com.cyc.newpai.widget.ToastManager;
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
-    private BaseFragment []mFragmensts;
+    private BaseFragment []mFragments;
     private TabLayout mTabLayout;
     private static int showPosition;
     private boolean isRestoreActivity;
     private String showFragmentTag;
+    private long firstTime = 0l;
 
     public static void startAct(Context context){
         startAct(context,false);
@@ -57,7 +58,7 @@ public class MainActivity extends BaseActivity {
         Log.i(TAG,"onCreate");
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        mFragmensts = DataGenerator.getFragments("");
+        mFragments = DataGenerator.getFragments("");
         if(savedInstanceState!=null){
             isRestoreActivity = savedInstanceState.getBoolean("isRestoreActivity");
             showFragmentTag = savedInstanceState.getString("showFragmentTag");
@@ -102,12 +103,12 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         /*FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        for(Fragment fragment : mFragmensts){
+        for(Fragment fragment : mFragments){
             fragmentTransaction.remove(fragment);
         }
         fragmentTransaction.commitNowAllowingStateLoss();*/
         outState.putBoolean("isRestoreActivity",true);
-        outState.putString("showFragmentTag",mFragmensts[showPosition].getClass().getName());
+        outState.putString("showFragmentTag",mFragments[showPosition].getClass().getName());
         super.onSaveInstanceState(outState);
     }
 
@@ -121,8 +122,8 @@ public class MainActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         Log.i(TAG,"newIntent");
-        if(LoginUtil.isLogin(this)&& mFragmensts[showPosition] instanceof MeFragment){
-            ((MeFragment)mFragmensts[showPosition]).initData();
+        if(LoginUtil.isLogin(this)&& mFragments[showPosition] instanceof MeFragment){
+            ((MeFragment)mFragments[showPosition]).initData();
         }
     }
 
@@ -156,7 +157,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void onTabItemSelected(int position){
-        BaseFragment fragment = mFragmensts[position];
+        BaseFragment fragment = mFragments[position];
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if(isRestoreActivity){
             Fragment oldShowFragment = getSupportFragmentManager().findFragmentByTag(showFragmentTag);
@@ -168,8 +169,8 @@ public class MainActivity extends BaseActivity {
         if(fragment!=null&&!fragment.isAdded()) {
             fragmentTransaction.add(R.id.fragment_container,fragment,fragment.getClass().getName());
         }
-        if(mFragmensts[showPosition]!=null){
-            fragmentTransaction.hide(mFragmensts[showPosition]);
+        if(mFragments[showPosition]!=null){
+            fragmentTransaction.hide(mFragments[showPosition]);
         }
         fragmentTransaction.show(fragment).commit();
         showPosition = position;
@@ -197,11 +198,9 @@ public class MainActivity extends BaseActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==1){
-            ((MeFragment)mFragmensts[showPosition]).review();
+            mFragments[showPosition].review();
         }
     }
-
-    private long firstTime = 0l;
 
     @Override
     public void onBackPressed() {

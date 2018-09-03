@@ -107,6 +107,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
         }
     }
 
+    @Override
     public void review() {
         handler.post(() -> {
             avator.setImageResource(R.drawable.ic_avator_default);
@@ -119,8 +120,8 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     private void updateData(UserInfoBean item) {
         handler.post(() -> {
             try {
-                if(getActivity()!=null&&!getActivity().isDestroyed()){
-                    GlideApp.with(getActivity())
+                if(getMyActivity()!=null&&!getMyActivity().isDestroyed()){
+                    GlideApp.with(getMyActivity())
                             .load(item.getImg())
                             .placeholder(R.drawable.ic_avator_default)
                             .transform(new GlideCircleTransform(getContext()))

@@ -82,7 +82,9 @@ public class OrderDetailActivity extends BaseActivity {
                                 orderDetailResultBean = data.getResult().getItem();
                                 title.setText(data.getResult().getItem().getGoods_name());
                                 dealPrice.setText(data.getResult().getItem().getDeal_price());
-                                GlideApp.with(OrderDetailActivity.this).load(data.getResult().getItem().getImage()).placeholder(R.drawable.shop_iphonex).into(shopIcon);
+                                if(!OrderDetailActivity.this.isDestroyed()){
+                                    GlideApp.with(OrderDetailActivity.this).load(data.getResult().getItem().getImage()).placeholder(R.drawable.shop_iphonex).into(shopIcon);
+                                }
                                 long time = (Long.valueOf(data.getResult().getItem().getLast_bid_time())*1000+7200000-System.currentTimeMillis());
                                 Date countDownDate = new Date(time>0?time:0);
                                 countDownTime.setText("剩余:"+(time>0?countDownDate.getDay():0)+"天"+(time>0?countDownDate.getHours():0)+"小时"+(time>0?countDownDate.getMinutes():0)+"分钟"+(time>0?countDownDate.getSeconds():0)+"秒");

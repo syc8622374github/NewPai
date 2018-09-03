@@ -192,7 +192,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void initBannerData() {
-        OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_BANNER_URL, null, new Callback() {
+        OkHttpManager.getInstance(getMyActivity()).postAsyncHttp(HttpUrl.HTTP_BANNER_URL, null, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -248,7 +248,7 @@ public class HomeFragment extends BaseFragment {
             }
         });
 
-        OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_HEADLINE_URL, null, new Callback() {
+        OkHttpManager.getInstance(getMyActivity()).postAsyncHttp(HttpUrl.HTTP_HEADLINE_URL, null, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
 
@@ -281,7 +281,7 @@ public class HomeFragment extends BaseFragment {
         param.put("type", type);
         param.put("pagesize", String.valueOf(pageSize));
         param.put("p", selectType);
-        OkHttpManager.getInstance(getActivity()).postAsyncHttp(HttpUrl.HTTP_INDEX_URL, param, callback);
+        OkHttpManager.getInstance(getMyActivity()).postAsyncHttp(HttpUrl.HTTP_INDEX_URL, param, callback);
     }
 
     private void updateTopLine(List<TopLineBean> topLineBean) {
@@ -316,17 +316,17 @@ public class HomeFragment extends BaseFragment {
         GridLayoutManager gridLayoutManager = new WrapContentGridLayoutManager(getContext(), 2);
         rvMain.setLayoutManager(gridLayoutManager);
         rvMain.addItemDecoration(new GridDivider(getContext(), 2, getResources().getColor(R.color.divider)));
-        newHomeRecyclerViewAdapter = new NewHomeRecyclerViewAdapter(getActivity(), null, true, NewHomeRecyclerViewAdapter.HOME_DATA_TYPE);
+        newHomeRecyclerViewAdapter = new NewHomeRecyclerViewAdapter(getMyActivity(), null, true, NewHomeRecyclerViewAdapter.HOME_DATA_TYPE);
         //初始化 开始加载更多的loading View
-        newHomeRecyclerViewAdapter.setLoadingView(ViewUtil.getFootView(getActivity(), LoadingFooter.State.Loading));
-        //newHomeRecyclerViewAdapter.setReloadView(LayoutInflater.from(getActivity()).inflate(R.layout.layout_emptyview, (ViewGroup) rvMain.getParent(), false));
+        newHomeRecyclerViewAdapter.setLoadingView(ViewUtil.getFootView(getMyActivity(), LoadingFooter.State.Loading));
+        //newHomeRecyclerViewAdapter.setReloadView(LayoutInflater.from(getMyActivity()).inflate(R.layout.layout_emptyview, (ViewGroup) rvMain.getParent(), false));
         //加载失败，更新footer view提示
-        newHomeRecyclerViewAdapter.setLoadFailedView(ViewUtil.getFootView(getActivity(), LoadingFooter.State.NetWorkError));
+        newHomeRecyclerViewAdapter.setLoadFailedView(ViewUtil.getFootView(getMyActivity(), LoadingFooter.State.NetWorkError));
         //加载完成，更新footer view提示
-        newHomeRecyclerViewAdapter.setLoadEndView(ViewUtil.getFootView(getActivity(), LoadingFooter.State.TheEnd));
+        newHomeRecyclerViewAdapter.setLoadEndView(ViewUtil.getFootView(getMyActivity(), LoadingFooter.State.TheEnd));
         //RecyclerViewUtil.addHearView(rvMain,headView);
         newHomeRecyclerViewAdapter.addHeaderView(headView);
-        //newHomeRecyclerViewAdapter.setEmptyView(Util.inflate(getActivity(),R.layout.layout_emptyview,(ViewGroup) rvMain,false));
+        //newHomeRecyclerViewAdapter.setEmptyView(Util.inflate(getMyActivity(),R.layout.layout_emptyview,(ViewGroup) rvMain,false));
         //设置加载更多触发的事件监听
         newHomeRecyclerViewAdapter.setOnLoadMoreListener(isReload -> getView().postDelayed(() -> {
             pageSize += 10;
@@ -431,7 +431,7 @@ public class HomeFragment extends BaseFragment {
     }
 
     private void onTabItemSelected(int position) {
-        selectType = position + 1 + "";
+        selectType = (position + 1) + "";
         varyViewHelper.showLoadingView();
         newHomeRecyclerViewAdapter.setData(new ArrayList());
         updateIndexData(selectType, new Callback() {
@@ -481,7 +481,7 @@ public class HomeFragment extends BaseFragment {
         int columns = 5;
         int rows = (int) Math.ceil(beanList.size() / columns);
         LinearLayout windowRoot = view.findViewById(R.id.ll_window_root);
-        //windowRoot.setPadding(ScreenUtil.dp2px(getActivity(),10),0,ScreenUtil.dp2px(getActivity(),10),0);
+        //windowRoot.setPadding(ScreenUtil.dp2px(getMyActivity(),10),0,ScreenUtil.dp2px(getMyActivity(),10),0);
         for (int i = 0; i < rows; i++) {
             LinearLayout child = (LinearLayout) windowRoot.getChildAt(i);
             if (child == null) {
@@ -496,9 +496,9 @@ public class HomeFragment extends BaseFragment {
             for (int j = 0; j < columns; j++) {
                 View childItem = child.getChildAt(j);
                 if (childItem == null) {
-                    int itemWidth = ScreenUtil.getScreenWidth(getActivity()) / columns;
+                    int itemWidth = ScreenUtil.getScreenWidth(getMyActivity()) / columns;
                     childItem = View.inflate(getContext(), R.layout.home_window_item, null);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(itemWidth - ScreenUtil.dp2px(getActivity(),20), itemWidth - ScreenUtil.dp2px(getActivity(),20));
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(itemWidth - ScreenUtil.dp2px(getMyActivity(),20), itemWidth - ScreenUtil.dp2px(getMyActivity(),20));
                     childItem.findViewById(R.id.iv_home_window_icon).setLayoutParams(layoutParams);
                     child.addView(childItem);
                     int finalI = i;
