@@ -65,12 +65,18 @@ public class SubmitOrderActivity extends BaseActivity {
     private TextView realPayPrice;
     private AddressBean selectAddr;
     private String payType="1";
+    public static final String TYPE_SUBMIT_ORDER_STATUS = "type_submit_order_status";
+    public static final String TYPE_CREATE_PAY_STATUS = "type_create_pay_status";
+    public static final String TYPE_REPAY_STATUS = "type_create_repay_status";
+    private String status = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         orderDetailResultBean = (OrderDetailResultBean) getIntent().getSerializableExtra(OrderDetailActivity.ORDER_DETAIL_BEAN);
         myAuctionBean = (MyAuctionBean) getIntent().getSerializableExtra(OrderDetailActivity.ORDER_DATA_BEAN);
+        status = (String) getIntent().getSerializableExtra(SubmitOrderActivity.TYPE_SUBMIT_ORDER_STATUS);
+        status = TextUtils.isEmpty(status)?TYPE_CREATE_PAY_STATUS:TYPE_REPAY_STATUS;
         initView();
         initData();
     }
@@ -121,6 +127,7 @@ public class SubmitOrderActivity extends BaseActivity {
             Float fCoupon = Float.valueOf(coupon.getText().toString());
             payPrice.setText("￥"+(fNowPrice+fFreight-fCoupon));
             realPayPrice.setText(payPrice.getText());
+            freight.setText(orderDetailResultBean.getGoods_name());
         }
     }
 
@@ -172,7 +179,11 @@ public class SubmitOrderActivity extends BaseActivity {
                 params.put("addr_mobile",phone.getText().toString());
                 params.put("address",address.getText().toString());
                 params.put("pay_type",payType);
-                OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_PAY_SUBMIT_ORDER_URL, params, new Callback() {
+                String httpUrl = HttpUrl.HTTP_PAY_SUBMIT_ORDER_URL;
+                if(status.equals(TYPE_REPAY_STATUS)){
+                    httpUrl = HttpUrl.HTTP_REPAY_SUBMIT_ORDER_URL;
+                }
+                OkHttpManager.getInstance(this).postAsyncHttp(httpUrl, params, new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
 

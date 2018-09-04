@@ -111,9 +111,9 @@ public class HomeFragment extends BaseFragment {
                     case 2:
                         if (recyclerCount < topLineBeanList.size()) {
                             // 设置切入动画
-                            topLine.setInAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_in_bottom));
+                            topLine.setInAnimation(AnimationUtils.loadAnimation(getMyActivity(), R.anim.slide_in_bottom));
                             // 设置切出动画
-                            topLine.setOutAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.slide_out_up));
+                            topLine.setOutAnimation(AnimationUtils.loadAnimation(getMyActivity(), R.anim.slide_out_up));
                             //items是一个字符串列表，index就是动态的要显示的items中的索引
                             topLine.setText(Html.fromHtml("恭喜"
                                     + topLineBeanList.get(recyclerCount).getNickname()
@@ -217,8 +217,6 @@ public class HomeFragment extends BaseFragment {
             }
         });
     }
-
-    ;
 
     private void initData() {
         updateIndexData(selectType, new Callback() {

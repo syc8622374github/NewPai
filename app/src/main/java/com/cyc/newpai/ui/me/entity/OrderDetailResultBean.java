@@ -17,6 +17,7 @@ public class OrderDetailResultBean implements Serializable{
     private String pay_time;
     private Integer pay_status;
     private Integer create_order_limit_sec;
+    private Integer logistics_fee;
     private Integer InternalError;
 
     public String getGoods_name() {
@@ -129,6 +130,14 @@ public class OrderDetailResultBean implements Serializable{
 
     public void setCreate_order_limit_sec(Integer create_order_limit_sec) {
         this.create_order_limit_sec = create_order_limit_sec;
+    }
+
+    public Integer getLogistics_fee() {
+        return logistics_fee;
+    }
+
+    public void setLogistics_fee(Integer logistics_fee) {
+        this.logistics_fee = logistics_fee;
     }
 
     public Integer getInternalError() {

@@ -457,6 +457,12 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                             }
                             gid = shopDetailBean.getGid();
                             isDeal = shopDetailBean.getDeal_status().equals("1") ? true : false;
+                            if(isDeal){
+                                if(timer!=null){
+                                    timer.cancel();
+                                    timer = null;
+                                }
+                            }
                             if (ageLists.size() == 0) {
                                 getAgeData(shopDetailBean.getGid());
                             }

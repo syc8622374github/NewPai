@@ -143,7 +143,7 @@ public class BaseWebViewActivity extends BaseActivity{
                                             }
 
                                             @Override
-                                            public void onResponse(Call call, Response response) throws IOException {
+                                            public void onResponse(Call call, Response response) {
                                                 try {
                                                     if(response.isSuccessful()){
                                                         String str = response.body().string();
@@ -156,7 +156,7 @@ public class BaseWebViewActivity extends BaseActivity{
                                                             progressDialog.cancel();
                                                             timer.cancel();
                                                         }
-                                                        Log.i(TAG,data.getResult().toString());
+                                                        Log.i(TAG,"weichatpay:"+data.getResult().toString());
                                                     }
                                                 } catch (Exception e) {
                                                     e.printStackTrace();

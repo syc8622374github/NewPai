@@ -87,6 +87,8 @@ public class HttpUrl {
 
     public static final String HTTP_PAY_SUBMIT_ORDER_URL = HTTP_SERVICE_URL + "/Api/Jingpai/createOrder"; //竞拍订单支付发起
 
+    public static final String HTTP_REPAY_SUBMIT_ORDER_URL = HTTP_SERVICE_URL + "/Api/Jingpai/payOrder"; //竞拍订单支付重新发起
+
     /*-------------------------------------------------------------------*/
 
     /**
