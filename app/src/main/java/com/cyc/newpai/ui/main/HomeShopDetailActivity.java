@@ -73,7 +73,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     private View head;
     private HistoryCompleteTransactionAdapter historyCompleteTransactionAdapter;
     boolean isLoadMore = false;
-    private TextView bidNume;
+    private TextView bidNum;
     private TextView nowPrice;
     private TextView marketPrice;
     private TextView shopName;
@@ -99,6 +99,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     private boolean isDeal;
     private ProgressDialog progressDialog;
     private ImageView priceIcon;
+    boolean isBidClick;
 
     Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -196,7 +197,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
 
     private void initBidMenu() {
         findViewById(R.id.tv_bid_less).setOnClickListener(this);
-        bidNume = findViewById(R.id.tv_bid_num);
+        bidNum = findViewById(R.id.tv_bid_num);
         findViewById(R.id.tv_bid_add).setOnClickListener(this);
         llBidNum = findViewById(R.id.ll_shop_detail_bid_num);
         btnBid = findViewById(R.id.btn_bid);
@@ -619,24 +620,31 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_bid_add:
-                bidNume.setText(Integer.valueOf(bidNume.getText().toString()) + 1 + "");
+                bidNum.setText(Integer.valueOf(bidNum.getText().toString()) + 1 + "");
                 break;
             case R.id.tv_bid_less:
-                int n = Integer.valueOf(bidNume.getText().toString());
+                int n = Integer.valueOf(bidNum.getText().toString());
                 if (n > 1)
-                    bidNume.setText(n - 1 + "");
+                    bidNum.setText(n - 1 + "");
                 break;
             case R.id.btn_bid:
                 if (LoginUtil.isLogin(HomeShopDetailActivity.this)) {
                     if (isDeal) {
 
                     } else {
-                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                        if(isBidClick){
+                            ToastManager.showToast(HomeShopDetailActivity.this,"正在竞拍中。。。",Toast.LENGTH_SHORT);
+                            return;
+                        }
+                        isBidClick = true;
+                        bid();
+                        ToastManager.showToast(HomeShopDetailActivity.this,"竞拍中。。",Toast.LENGTH_SHORT);
+                        /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                         alertDialog.setTitle("交易提示")
                                 .setCancelable(false)
-                                .setMessage("确认支付" + bidNume.getText() + "个拍币竞拍？")
+                                .setMessage("确认支付" + bidNum.getText() + "个拍币竞拍？")
                                 .setNegativeButton("取消", (dialog, which) -> {
-                                }).setPositiveButton("确定", (dialog, which) -> bid()).show();
+                                }).setPositiveButton("确定", (dialog, which) -> bid()).show();*/
                     }
                 } else {
                     startActivityForResult(new Intent(HomeShopDetailActivity.this, LoginActivity.class), 1);
@@ -649,10 +657,11 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     private void bid() {
         Map<String, String> params = new HashMap<>();
         params.put("shopid", id);
-        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_URL, params, new Callback() {
+        params.put("times",bidNum.getText().toString());
+        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_AUTO_BID_URL, params, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                isBidClick = false;
             }
 
             @Override
@@ -672,6 +681,8 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                     }
                 } catch (Exception e) {
                     Log.e(TAG, e.getMessage());
+                } finally {
+                    isBidClick = false;
                 }
             }
         });

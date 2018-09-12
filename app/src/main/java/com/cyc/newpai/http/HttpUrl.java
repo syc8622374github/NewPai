@@ -38,6 +38,8 @@ public class HttpUrl {
 
     public static final String HTTP_BID_RECORD_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/Jingpai/bidRecord";//竞拍出价记录
 
+    public static final String HTTP_AUTO_BID_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/Jingpai/autoBid";//用户自动竞拍提交
+
     public static final String HTTP_BID_RECORD_AGO_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/Jingpai/dealRecordAgo";//竞拍以往成成交记录
 
     public static final String HTTP_LUCKY_SHOW_URL = HttpUrl.HTTP_SERVICE_URL + "/Api/Jingpai/lucyShow"; //竞拍商品的幸运晒台记录
