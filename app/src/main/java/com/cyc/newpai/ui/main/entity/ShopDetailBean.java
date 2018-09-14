@@ -10,17 +10,21 @@ public class ShopDetailBean {
     private String last_bid_time;
     private String season;
     private String begin_time;
+    private String deal_price;
+    private String deal_time;
     private String deal_uid;
     private String deal_status;
     private String goods_name;
     private String detail;
     private String image;
+    private String show;
     private String nickname;
     private String mobile;
+    private String img;
     private List<String> images;
     private int left_timesecond;
     private int limit_second;
-    private String show;
+    private int each_price;
 
     public String getId() {
         return id;
@@ -78,6 +82,22 @@ public class ShopDetailBean {
         this.begin_time = begin_time;
     }
 
+    public String getDeal_price() {
+        return deal_price;
+    }
+
+    public void setDeal_price(String deal_price) {
+        this.deal_price = deal_price;
+    }
+
+    public String getDeal_time() {
+        return deal_time;
+    }
+
+    public void setDeal_time(String deal_time) {
+        this.deal_time = deal_time;
+    }
+
     public String getDeal_uid() {
         return deal_uid;
     }
@@ -118,6 +138,14 @@ public class ShopDetailBean {
         this.image = image;
     }
 
+    public String getShow() {
+        return show;
+    }
+
+    public void setShow(String show) {
+        this.show = show;
+    }
+
     public String getNickname() {
         return nickname;
     }
@@ -132,6 +160,14 @@ public class ShopDetailBean {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
     public List<String> getImages() {
@@ -158,35 +194,11 @@ public class ShopDetailBean {
         this.limit_second = limit_second;
     }
 
-    public String getShow() {
-        return show;
+    public int getEach_price() {
+        return each_price;
     }
 
-    public void setShow(String show) {
-        this.show = show;
-    }
-
-    @Override
-    public String toString() {
-        return "ShopDetailBean{" +
-                "id=" + id +
-                ", gid=" + gid +
-                ", market_price=" + market_price +
-                ", now_price=" + now_price +
-                ", last_bid_time=" + last_bid_time +
-                ", season=" + season +
-                ", begin_time='" + begin_time + '\'' +
-                ", deal_uid=" + deal_uid +
-                ", deal_status=" + deal_status +
-                ", goods_name='" + goods_name + '\'' +
-                ", detail='" + detail + '\'' +
-                ", image='" + image + '\'' +
-                ", nickname='" + nickname + '\'' +
-                ", mobile='" + mobile + '\'' +
-                ", images=" + images +
-                ", left_timesecond=" + left_timesecond +
-                ", limit_second=" + limit_second +
-                ", show=" + show +
-                '}';
+    public void setEach_price(int each_price) {
+        this.each_price = each_price;
     }
 }

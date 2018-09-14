@@ -21,6 +21,7 @@ import com.cyc.newpai.http.entity.ResponseResultBean;
 import com.cyc.newpai.ui.main.HomeShopDetailActivity;
 import com.cyc.newpai.ui.me.adapter.MyAutionAllRecyclerViewAdapter;
 import com.cyc.newpai.ui.me.entity.MyAuctionBean;
+import com.cyc.newpai.ui.me.entity.OrderDetailResultBean;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
@@ -80,6 +81,36 @@ public class MyOrderListActivity extends BaseActivity {
                 intent.putExtra(OrderDetailActivity.ORDER_DATA_BEAN, itemBean);
                 startActivity(intent);
             } else if (auctionType.equals("4")) {
+                Map<String,String> params = new HashMap<>();
+                params.put("shopid",itemBean.getId());
+                OkHttpManager.getInstance(MyOrderListActivity.this).postAsyncHttp(HttpUrl.HTTP_PAY_SUCCESS_SHOP_DETAIL_URL, params, new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        try {
+                            if(response.isSuccessful()){
+                                String str = response.body().string();
+                                ResponseBean<ResponseResultBean<OrderDetailResultBean>> data = getGson().fromJson(str,new TypeToken<ResponseBean<ResponseResultBean<OrderDetailResultBean>>>(){}.getType());
+                                if(data.getCode()==200){
+                                    handler.post(()->{
+                                        OrderDetailResultBean orderDetailResultBean = data.getResult().getItem();
+                                        Intent intent = new Intent(MyOrderListActivity.this,SubmitOrderActivity.class);
+                                        intent.putExtra(OrderDetailActivity.ORDER_DETAIL_BEAN,orderDetailResultBean);
+                                        intent.putExtra(OrderDetailActivity.ORDER_DATA_BEAN,itemBean);
+                                        intent.putExtra(SubmitOrderActivity.TYPE_SUBMIT_ORDER_STATUS,SubmitOrderActivity.TYPE_REPAY_STATUS);
+                                        startActivity(intent);
+                                    });
+                                }
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
         HeaderAndFooterRecyclerViewAdapter headerAndFooterRecyclerViewAdapter = new HeaderAndFooterRecyclerViewAdapter(myAutionAllRecyclerViewAdapter);

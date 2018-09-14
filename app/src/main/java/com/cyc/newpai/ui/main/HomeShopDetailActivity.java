@@ -50,6 +50,8 @@ import com.youth.banner.Banner;
 import com.youth.banner.BannerConfig;
 import com.youth.banner.loader.ImageLoader;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,6 +115,9 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     };
     private LinearLayout llBidNum;
     private Button btnBid;
+    private TextView tvBeginPrice;
+    private TextView tvPriceIncrease;
+    private TextView tvFee;
 
     private void updateMainBidInfo(BidRecordItemBean item) {
         handler.post(() -> {
@@ -140,7 +145,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                     priceIcon.setBackgroundResource(R.drawable.ic_shop_detail_new_pricer);
                     prompt.setText("若无人出价，将以￥" + item.getMoney() + "拍的本商品");
                     llBidNum.setVisibility(View.VISIBLE);
-                    btnBid.setText("出价\n一拍币/次");
+                    btnBid.setText("出价\n"+shopDetailBean.getEach_price()+"拍币/次");
                 }
                 nowPrice.setText("￥" + item.getMoney());
                 if (oldBidRecordItemBean == null
@@ -319,6 +324,9 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
         avator = head.findViewById(R.id.iv_shop_detail_avator);
         prompt = head.findViewById(R.id.tv_shop_detail_win_prompt);
         useBi = head.findViewById(R.id.tv_shop_detail_use_bi);
+        tvBeginPrice = head.findViewById(R.id.tv_shop_detail_begin_price);
+        tvPriceIncrease = head.findViewById(R.id.tv_shop_detail_increase);
+        tvFee = head.findViewById(R.id.tv_shop_detail_fee);
         startTime();
     }
 
@@ -453,7 +461,11 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                             }
                             shopDetailBean = responseBean.getResult().getItem();
                             if (isUpdateBanner) {
-                                handler.post(() -> banner.update(shopDetailBean.getImages()));
+                                handler.post(() -> {
+                                    banner.update(shopDetailBean.getImages());
+                                    tvPriceIncrease.setText("￥"+shopDetailBean.getEach_price());
+                                    tvFee.setText(shopDetailBean.getEach_price()+"拍币/一次");
+                                });
                                 isUpdateBanner = false;
                             }
                             gid = shopDetailBean.getGid();
@@ -637,7 +649,11 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                             return;
                         }
                         isBidClick = true;
-                        bid();
+                        if(Integer.valueOf(bidNum.getText().toString())<=1){
+                            bid();
+                        }else {
+                            autoBid();
+                        }
                         ToastManager.showToast(HomeShopDetailActivity.this,"竞拍中。。",Toast.LENGTH_SHORT);
                         /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
                         alertDialog.setTitle("交易提示")
@@ -655,6 +671,39 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     }
 
     private void bid() {
+        Map<String, String> params = new HashMap<>();
+        params.put("shopid", id);
+        OkHttpManager.getInstance(this).postAsyncHttp(HttpUrl.HTTP_BID_URL, params, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                isBidClick = false;
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    if (response.isSuccessful()) {
+                        String str = response.body().string();
+                        ResponseBean<ResponseResultBean<BidResultBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<BidResultBean>>>() {
+                        }.getType());
+                        if (responseBean.getCode() == 1 && responseBean.getResult() != null) {
+                            bidResultBean = responseBean.getResult().getItem();
+                            handler.post(() -> useBi.setText("我已消耗" + bidResultBean.getMoney() + "拍币/赠币"));
+                            updateBidView();
+                            getShopDetailHttp(new HashMap<>());
+                        }
+                        handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, responseBean.getMsg(), Toast.LENGTH_SHORT));
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, e.getMessage());
+                } finally {
+                    isBidClick = false;
+                }
+            }
+        });
+    }
+
+    private void autoBid() {
         Map<String, String> params = new HashMap<>();
         params.put("shopid", id);
         params.put("times",bidNum.getText().toString());

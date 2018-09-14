@@ -82,7 +82,7 @@
             android:textColor="@android:color/black"
             android:textSize="36sp"
             android:textStyle="bold" />
-        
+
         <ImageView
             android:id="@+id/iv_shop_detail_price_icon"
             android:layout_width="300dp"
@@ -193,7 +193,7 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="80dp"
         android:background="@drawable/ic_shop_detail_prompt"
         android:scaleType="centerCrop" />
 
@@ -223,6 +223,7 @@
                     android:textColor="@android:color/black" />
 
                 <TextView
+                    android:id="@+id/tv_shop_detail_begin_price"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -245,6 +246,7 @@
                     android:textColor="@android:color/black" />
 
                 <TextView
+                    android:id="@+id/tv_shop_detail_increase"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -276,6 +278,7 @@
                     android:textColor="@android:color/black" />
 
                 <TextView
+                    android:id="@+id/tv_shop_detail_fee"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

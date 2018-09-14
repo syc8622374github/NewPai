@@ -3,6 +3,7 @@ package com.cyc.newpai.ui.main.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -79,7 +80,11 @@ public class HistoryCompleteTransactionAdapter extends CommonBaseAdapter<BidAgeR
                 holder.setText(R.id.tv_hist_deal_price,"￥"+data.getDeal_price());
                 holder.setText(R.id.tv_his_bid_market_price,data.getMarket_price());
                 holder.setText(R.id.tv_his_bid_deal_time,data.getDeal_time());
-                holder.setText(R.id.tv_his_bid_rate,data.getSave_rate());
+                if(!TextUtils.isEmpty(data.getRate())){
+                    holder.setText(R.id.tv_his_bid_rate,data.getRate());
+                }else if(!TextUtils.isEmpty(data.getSave_rate())){
+                    holder.setText(R.id.tv_his_bid_rate,data.getSave_rate());
+                }
                 ImageView avator = holder.getView(R.id.iv_avator);
                 GlideApp.with(mContext)
                         .load(getAllData().get(position).getImage())
