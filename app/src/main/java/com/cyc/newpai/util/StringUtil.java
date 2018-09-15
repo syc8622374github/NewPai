@@ -1,5 +1,7 @@
 package com.cyc.newpai.util;
 
+import android.text.TextUtils;
+
 public class StringUtil {
     //导致TextView异常换行的原因：安卓默认数字、字母不能为第一行以后每行的开头字符，因为数字、字母为半角字符
     //所以我们只需要将半角字符转换为全角字符即可，方法如下
@@ -13,5 +15,17 @@ public class StringUtil {
             }
         }
         return new String(c);
+    }
+
+    public static boolean isNumeric(String str){
+        if(TextUtils.isEmpty(str))
+            return false;
+        for (int i = 0; i < str.length(); i++){
+            System.out.println(str.charAt(i));
+            if (!Character.isDigit(str.charAt(i))){
+                return false;
+            }
+        }
+        return true;
     }
 }

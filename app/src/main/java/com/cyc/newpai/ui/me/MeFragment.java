@@ -58,7 +58,6 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_me, container, false);
         initView();
-        initData();
         Log.i(TAG, "onCreateView");
         return view;
     }
@@ -73,6 +72,7 @@ public class MeFragment extends BaseFragment implements View.OnClickListener {
     public void onStart() {
         super.onStart();
         Log.i(TAG, "onStart");
+        initData();
     }
 
     public void initData() {

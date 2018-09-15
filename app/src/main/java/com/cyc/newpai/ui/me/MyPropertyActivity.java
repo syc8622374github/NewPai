@@ -66,10 +66,10 @@ public class MyPropertyActivity extends BaseActivity {
                 fragment = MyPropertyAllRecordFragment.newInstance(MyPropertyAllRecordFragment.TYPE_ALL_RECORD);
                 break;
             case 1:
-                fragment = MyPropertyAllRecordFragment.newInstance(MyPropertyAllRecordFragment.TYPE_PAY_RECORD);
+                fragment = MyPropertyAllRecordFragment.newInstance(MyPropertyAllRecordFragment.TYPE_INCOME_RECORD);
                 break;
             case 2:
-                fragment = MyPropertyAllRecordFragment.newInstance(MyPropertyAllRecordFragment.TYPE_INCOME_RECORD);
+                fragment = MyPropertyAllRecordFragment.newInstance(MyPropertyAllRecordFragment.TYPE_PAY_RECORD);
                 break;
         }
         if(fragment !=null) {

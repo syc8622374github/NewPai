@@ -13,10 +13,12 @@ import android.support.design.widget.TabLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,6 +32,7 @@ import com.cyc.newpai.http.HttpUrl;
 import com.cyc.newpai.http.OkHttpManager;
 import com.cyc.newpai.http.entity.ResponseBean;
 import com.cyc.newpai.http.entity.ResponseResultBean;
+import com.cyc.newpai.ui.common.RechargeActivity;
 import com.cyc.newpai.ui.main.adapter.BidRecordRecyclerViewAdapter;
 import com.cyc.newpai.ui.main.adapter.HistoryCompleteTransactionAdapter;
 import com.cyc.newpai.ui.main.entity.BidAgeRecordBean;
@@ -41,7 +44,9 @@ import com.cyc.newpai.ui.user.LoginActivity;
 import com.cyc.newpai.util.DialogUtil;
 import com.cyc.newpai.util.GlideCircleTransform;
 import com.cyc.newpai.util.GsonManager;
+import com.cyc.newpai.util.KeyboardUtil;
 import com.cyc.newpai.util.LoginUtil;
+import com.cyc.newpai.util.StringUtil;
 import com.cyc.newpai.util.ViewUtil;
 import com.cyc.newpai.widget.LoadingFooter;
 import com.cyc.newpai.widget.ToastManager;
@@ -75,7 +80,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     private View head;
     private HistoryCompleteTransactionAdapter historyCompleteTransactionAdapter;
     boolean isLoadMore = false;
-    private TextView bidNum;
+    private EditText bidNum;
     private TextView nowPrice;
     private TextView marketPrice;
     private TextView shopName;
@@ -102,6 +107,7 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
     private ProgressDialog progressDialog;
     private ImageView priceIcon;
     boolean isBidClick;
+    private int expendPaibi;
 
     Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -630,43 +636,68 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.tv_bid_add:
-                bidNum.setText(Integer.valueOf(bidNum.getText().toString()) + 1 + "");
-                break;
-            case R.id.tv_bid_less:
-                int n = Integer.valueOf(bidNum.getText().toString());
-                if (n > 1)
-                    bidNum.setText(n - 1 + "");
-                break;
-            case R.id.btn_bid:
-                if (LoginUtil.isLogin(HomeShopDetailActivity.this)) {
-                    if (isDeal) {
-
-                    } else {
-                        if(isBidClick){
-                            ToastManager.showToast(HomeShopDetailActivity.this,"正在竞拍中。。。",Toast.LENGTH_SHORT);
-                            return;
-                        }
-                        isBidClick = true;
-                        if(Integer.valueOf(bidNum.getText().toString())<=1){
-                            bid();
-                        }else {
-                            autoBid();
-                        }
-                        ToastManager.showToast(HomeShopDetailActivity.this,"竞拍中。。",Toast.LENGTH_SHORT);
-                        /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
-                        alertDialog.setTitle("交易提示")
-                                .setCancelable(false)
-                                .setMessage("确认支付" + bidNum.getText() + "个拍币竞拍？")
-                                .setNegativeButton("取消", (dialog, which) -> {
-                                }).setPositiveButton("确定", (dialog, which) -> bid()).show();*/
+        try {
+            switch (v.getId()) {
+                case R.id.tv_bid_add:
+                    KeyboardUtil.close(this,bidNum);
+                    bidNum.clearFocus();
+                    String nStr = bidNum.getText().toString();
+                    if(StringUtil.isNumeric(nStr)){
+                        int n = Integer.valueOf(nStr);
+                        if (n != 0)
+                            bidNum.setText(n + 1 + "");
+                    }else{
+                        bidNum.setText("1");
                     }
-                } else {
-                    startActivityForResult(new Intent(HomeShopDetailActivity.this, LoginActivity.class), 1);
-                    ToastManager.showToast(HomeShopDetailActivity.this, "未检测账号登录", Toast.LENGTH_SHORT);
-                }
-                break;
+                    break;
+                case R.id.tv_bid_less:
+                    KeyboardUtil.close(this,bidNum);
+                    bidNum.clearFocus();
+                    String nSt2 = bidNum.getText().toString();
+                    if(StringUtil.isNumeric(nSt2)){
+                        int n2 = Integer.valueOf(nSt2);
+                        if (n2 > 1)
+                            bidNum.setText(n2 - 1 + "");
+                    }else{
+                        bidNum.setText("1");
+                    }
+                    break;
+                case R.id.btn_bid:
+                    if (LoginUtil.isLogin(HomeShopDetailActivity.this)) {
+                        if (isDeal) {
+
+                        } else {
+                            if(isBidClick){
+                                ToastManager.showToast(HomeShopDetailActivity.this,"正在竞拍中。。。",Toast.LENGTH_SHORT);
+                                return;
+                            }
+                            isBidClick = true;
+                            if(!StringUtil.isNumeric(bidNum.getText().toString())){
+                                bidNum.setText("1");
+                            }
+                            KeyboardUtil.close(this,bidNum);
+                            bidNum.clearFocus();
+                            if(Integer.valueOf(bidNum.getText().toString())<=1){
+                                bid();
+                            }else {
+                                autoBid();
+                            }
+                            ToastManager.showToast(HomeShopDetailActivity.this,"竞拍中。。",Toast.LENGTH_SHORT);
+                            /*AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+                            alertDialog.setTitle("交易提示")
+                                    .setCancelable(false)
+                                    .setMessage("确认支付" + bidNum.getText() + "个拍币竞拍？")
+                                    .setNegativeButton("取消", (dialog, which) -> {
+                                    }).setPositiveButton("确定", (dialog, which) -> bid()).show();*/
+                        }
+                    } else {
+                        startActivityForResult(new Intent(HomeShopDetailActivity.this, LoginActivity.class), 1);
+                        ToastManager.showToast(HomeShopDetailActivity.this, "未检测账号登录", Toast.LENGTH_SHORT);
+                    }
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -688,9 +719,12 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                         }.getType());
                         if (responseBean.getCode() == 1 && responseBean.getResult() != null) {
                             bidResultBean = responseBean.getResult().getItem();
-                            handler.post(() -> useBi.setText("我已消耗" + bidResultBean.getMoney() + "拍币/赠币"));
+                            expendPaibi += Integer.valueOf(bidNum.getText().toString());
+                            handler.post(() -> useBi.setText("我已消耗" + expendPaibi*shopDetailBean.getEach_price() + "拍币/赠币"));
                             updateBidView();
                             getShopDetailHttp(new HashMap<>());
+                        }else if(responseBean.getCode()==666){
+                            handler.postDelayed(() -> startActivity(new Intent(HomeShopDetailActivity.this, RechargeActivity.class)),1000);
                         }
                         handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, responseBean.getMsg(), Toast.LENGTH_SHORT));
                     }
@@ -720,11 +754,14 @@ public class HomeShopDetailActivity extends BaseActivity implements View.OnClick
                         String str = response.body().string();
                         ResponseBean<ResponseResultBean<BidResultBean>> responseBean = GsonManager.getInstance().getGson().fromJson(str, new TypeToken<ResponseBean<ResponseResultBean<BidResultBean>>>() {
                         }.getType());
-                        if (responseBean.getCode() == 1 && responseBean.getResult() != null) {
-                            bidResultBean = responseBean.getResult().getItem();
-                            handler.post(() -> useBi.setText("我已消耗" + bidResultBean.getMoney() + "拍币/赠币"));
+                        if (responseBean.getCode() == 200) {
+                            //bidResultBean = responseBean.getResult().getItem();
+                            expendPaibi += Integer.valueOf(bidNum.getText().toString());
+                            handler.post(() -> useBi.setText("我已消耗" + expendPaibi*shopDetailBean.getEach_price() + "拍币/赠币"));
                             updateBidView();
                             getShopDetailHttp(new HashMap<>());
+                        }else if(responseBean.getCode()==666){
+                            handler.postDelayed(() -> startActivity(new Intent(HomeShopDetailActivity.this, RechargeActivity.class)),1000);
                         }
                         handler.post(() -> ToastManager.showToast(HomeShopDetailActivity.this, responseBean.getMsg(), Toast.LENGTH_SHORT));
                     }

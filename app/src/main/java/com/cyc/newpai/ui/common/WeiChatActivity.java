@@ -70,7 +70,7 @@ public class WeiChatActivity extends BaseActivity {
                                             startActivity(intent);
                                             timer.cancel();
                                         }
-                                        Log.i(TAG,"alipay:"+data.getResult().toString());
+                                        Log.i(TAG,"wcpay:"+data.getResult().toString());
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();

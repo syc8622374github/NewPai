@@ -33,15 +33,13 @@ public class AllRecordRecyclerViewAdapter extends BaseRecyclerAdapter<AllRecordB
         viewHolder.setText(R.id.tv_all_record_shop_name,mList.get(position).getTitle());
         String type = mList.get(position).getType();
         TextView pay = viewHolder.getView(R.id.tv_all_record__pay);
-        switch (type){
-            case AllRecordBean.RECORD_PRODUCT:
-                pay.setTextColor(mContext.getResources().getColor(R.color.color_category_title_default));
-                ((TextView)viewHolder.getView(R.id.tv_all_record__pay)).setTextColor(mContext.getResources().getColor(android.R.color.black));
-                viewHolder.setText(R.id.tv_all_record__pay, Html.fromHtml("<font color='#000000'>+"+mList.get(position).getMoney()).toString());
-                break;
-            default:
-                viewHolder.setText(R.id.tv_all_record__pay, Html.fromHtml("<font color='"+mContext.getResources().getColor(R.color.colorPrimary)+"'>-"+mList.get(position).getMoney()).toString());
-                break;
+        if(Integer.valueOf(mList.get(position).getMoney())>0){
+            pay.setTextColor(mContext.getResources().getColor(R.color.color_category_title_default));
+            ((TextView)viewHolder.getView(R.id.tv_all_record__pay)).setTextColor(mContext.getResources().getColor(android.R.color.black));
+            viewHolder.setText(R.id.tv_all_record__pay, Html.fromHtml("<font color='#000000'>"+mList.get(position).getMoney()).toString());
+        }else{
+            viewHolder.setText(R.id.tv_all_record__pay, Html.fromHtml("<font color='"+mContext.getResources().getColor(R.color.colorPrimary)+"'>"+mList.get(position).getMoney()).toString());
+
         }
         viewHolder.setText(R.id.tv_all_record_type,"["+mList.get(position).getType()+"]");
         viewHolder.setText(R.id.tv_all_record_time,mList.get(position).getAdd_time());
